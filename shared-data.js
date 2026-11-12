@@ -7,8 +7,8 @@
 (function (global) {
   'use strict';
 
-  const STORAGE_KEY = 'sheep_ios_normalized_db_v3';
-  const CHANNEL_NAME = 'sheep_ios_sync_v3';
+  const STORAGE_KEY = 'sheep_ios_normalized_db_v5';
+  const CHANNEL_NAME = 'sheep_ios_sync_v5';
 
   const LOCAL_SHEEP_PHOTOS = Object.freeze([
     './images/sheep-1.webp',
@@ -273,7 +273,7 @@
         EarTagNumber: 'UA-2600418901',
         GpsTrackerId: 'GPS-UA-4101',
         Farmer: 'FRM-00001',
-        EarTagPhoto: './images/sheep-4.jpg',
+        EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-1.webp',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-2600418901', 'Зірка', 'ФГ «Карпатська Отара»', '2026-10-14'),
         Token: 'tk_evivtsia_9f8a21c4e7b031d6a58290f41c8e',
@@ -288,7 +288,7 @@
         EarTagNumber: 'UA-2600418902',
         GpsTrackerId: 'GPS-UA-4102',
         Farmer: 'FRM-00001',
-        EarTagPhoto: './images/sheep-2.jpg',
+        EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-3.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-2600418902', 'Буковель', 'ФГ «Карпатська Отара»', '2026-10-19'),
         Token: 'tk_evivtsia_4d12e8b903a7f6c1e55928d0b4a6',
@@ -303,7 +303,7 @@
         EarTagNumber: 'UA-2600418903',
         GpsTrackerId: 'GPS-UA-4103',
         Farmer: 'FRM-00001',
-        EarTagPhoto: './images/sheep-4.jpg',
+        EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-5.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-2600418903', 'Черемош', 'ФГ «Карпатська Отара»', '2026-11-11'),
         Token: 'tk_evivtsia_7c31f0a8d5e249b6c17309e8a4f2',
@@ -318,7 +318,7 @@
         EarTagNumber: 'UA-2600418904',
         GpsTrackerId: 'GPS-UA-4104',
         Farmer: 'FRM-00001',
-        EarTagPhoto: './images/sheep-1.webp',
+        EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-2.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-2600418904', 'Марічка', 'ФГ «Карпатська Отара»', '2026-11-08', true),
         Token: 'tk_evivtsia_2a95b7d4c1e863f0941275b8d3c6',
@@ -333,7 +333,7 @@
         EarTagNumber: 'UA-6800192301',
         GpsTrackerId: 'GPS-UA-6801',
         Farmer: 'FRM-00002',
-        EarTagPhoto: './images/sheep-1.webp',
+        EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-4.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-6800192301', 'Квітка', 'ФГ «Подільські Луки»', '2026-10-22'),
         Token: 'tk_evivtsia_8e40c2f7a1b953d6e28410c7b5a3',
@@ -348,7 +348,7 @@
         EarTagNumber: 'UA-6800192302',
         GpsTrackerId: 'GPS-UA-6802',
         Farmer: 'FRM-00002',
-        EarTagPhoto: './images/sheep-2.jpg',
+        EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-5.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-6800192302', 'Дністер', 'ФГ «Подільські Луки»', '2026-11-02'),
         Token: 'tk_evivtsia_5b73d9e1c4a082f6b39104e7d2c8',
@@ -578,7 +578,7 @@
       const cleanTag = earTagNumber.trim();
       const cleanGps = String(gpsTrackerId || '').trim();
       const fallbackBody = LOCAL_SHEEP_PHOTOS[db.Catalogs.Sheep.length % LOCAL_SHEEP_PHOTOS.length] || './images/sheep-2.jpg';
-      const fallbackEar = LOCAL_SHEEP_PHOTOS[(db.Catalogs.Sheep.length + 1) % LOCAL_SHEEP_PHOTOS.length] || './images/sheep-4.jpg';
+      const fallbackEar = './images/ear-tag-demo.jpg';
       const fallbackCert = generateStateCertificatePhoto(cleanTag, cleanName, farmer.FarmName, nowIso.slice(0, 10));
 
       const sheepRecord = {
@@ -656,6 +656,31 @@
       });
       saveDb(db, 'verification_changed');
       return sheep;
+    },
+
+    deleteSheep(sheepCode, reason = '') {
+      const db = loadDb();
+      const idx = db.Catalogs.Sheep.findIndex((s) => s.Code === sheepCode);
+      if (idx === -1) return null;
+      const [removed] = db.Catalogs.Sheep.splice(idx, 1);
+
+      for (const farmer of db.Catalogs.Farmers) {
+        farmer.Herd = farmer.Herd.filter((r) => r.Sheep !== sheepCode);
+      }
+      for (const inv of db.Catalogs.Investors) {
+        inv.InvestorSheep = inv.InvestorSheep.filter((r) => r.Sheep !== sheepCode);
+      }
+
+      const cleanReason = String(reason || 'Не вказано').trim();
+      db.EventLog.unshift({
+        EventId: nextCode('EVT', db.EventLog, 'EventId', 4),
+        Timestamp: new Date().toISOString(),
+        Title: `Видалено вівцю «${removed.Description}»`,
+        Subtitle: `Причина: ${cleanReason} • Бирка ${removed.EarTagNumber}`
+      });
+
+      saveDb(db, 'sheep_deleted');
+      return removed;
     },
 
     investInSheepBatch({ investorCode, items }) {

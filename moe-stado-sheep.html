@@ -60,6 +60,22 @@
         <main class="ios-scroll" id="page-content" style="padding-block: 14px 40px;"></main>
       </div>
 
+      <!-- iOS Action Sheet вибору причини видалення вівці -->
+      <dialog id="delete-reason-dialog" class="ios-action-sheet-dialog" closedby="any" aria-labelledby="delete-sheet-title">
+        <form method="dialog" class="ios-action-sheet-form">
+          <div class="ios-action-sheet-group">
+            <div class="ios-action-sheet-header">
+              <h2 id="delete-sheet-title" class="ios-action-sheet-title">Видалити вівцю?</h2>
+              <p class="ios-action-sheet-sub">Вкажіть причину списання вівці зі стада</p>
+            </div>
+            <button type="submit" class="ios-action-sheet-btn destructive" value="Помилково додали">Помилково додали</button>
+            <button type="submit" class="ios-action-sheet-btn destructive" value="Пустили на мʼясо">Пустили на мʼясо</button>
+            <button type="submit" class="ios-action-sheet-btn destructive" value="Нещасний випадок">Нещасний випадок</button>
+          </div>
+          <button type="submit" class="ios-action-sheet-cancel" value="cancel" autofocus>Скасувати</button>
+        </form>
+      </dialog>
+
       <div class="home-indicator" aria-hidden="true"></div>
     </div>
   </div>
@@ -164,7 +180,16 @@
               </div>
             </div>
           </div>
+
+          <button type="button" class="ios-secondary-btn" id="delete-sheep-btn" style="color:var(--ios-red);">
+            Видалити вівцю
+          </button>
         `;
+
+        content.querySelector('#delete-sheep-btn').addEventListener('click', () => {
+          const dlg = document.getElementById('delete-reason-dialog');
+          if (dlg) dlg.showModal();
+        });
 
         content.querySelector('#detail-purpose').addEventListener('change', (e) => {
           const next = e.target.value;
@@ -186,6 +211,45 @@
             UI.showBanner('Повторно надіслано', `Картка «${s.Description}» на перевірці`);
           });
         }
+      }
+
+      const deleteDialog = document.getElementById('delete-reason-dialog');
+      if (deleteDialog) {
+        if (!('closedBy' in HTMLDialogElement.prototype)) {
+          const outside = (e, dialog) => {
+            const r = dialog.getBoundingClientRect();
+            return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+          };
+          let pressedOutside = false;
+          deleteDialog.addEventListener('pointerdown', (e) => {
+            pressedOutside = outside(e, deleteDialog);
+          });
+          deleteDialog.addEventListener('pointerup', (e) => {
+            if (pressedOutside && outside(e, deleteDialog)) deleteDialog.close();
+          });
+        }
+
+        deleteDialog.addEventListener('close', () => {
+          const reason = deleteDialog.returnValue;
+          deleteDialog.returnValue = '';
+          if (!reason || reason === 'cancel') return;
+
+          const db = Store.getState();
+          const s = Store.getSheepByCode(sheepCode, db) || db.Catalogs.Sheep[0];
+          if (!s) return;
+
+          const removed = Store.deleteSheep(s.Code, reason);
+          if (removed) {
+            sessionStorage.setItem(
+              'farmer_flash_banner',
+              JSON.stringify({
+                title: `«${removed.Description}» видалено`,
+                sub: `Причина: ${reason}`
+              })
+            );
+            location.href = './moe-stado.html';
+          }
+        });
       }
 
       Store.subscribe(render);

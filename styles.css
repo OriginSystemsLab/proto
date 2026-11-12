@@ -1529,6 +1529,118 @@ input:focus-visible + .ios-shutter-btn,
 }
 
 /* ==========================================================================
+   iOS UIAlertController Action Sheet (<dialog>)
+   ========================================================================== */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+.ios-action-sheet-dialog[open] {
+  position: fixed;
+  inset-block: auto 34px;
+  inset-inline: 0;
+  margin-inline: auto;
+  inline-size: min(369px, calc(100vw - 24px));
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ios-label);
+  font: inherit;
+}
+
+.ios-action-sheet-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.ios-action-sheet-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ios-action-sheet-group {
+  background: rgba(248, 248, 248, 0.92);
+  backdrop-filter: saturate(180%) blur(24px);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  border-radius: 14px;
+  overflow: clip;
+  display: flex;
+  flex-direction: column;
+}
+
+.ios-action-sheet-header {
+  padding: 14px 16px 12px;
+  text-align: center;
+  border-block-end: 0.5px solid var(--ios-separator);
+}
+
+.ios-action-sheet-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6D6D72;
+}
+
+.ios-action-sheet-sub {
+  margin: 3px 0 0;
+  font-size: 12px;
+  color: #8E8E93;
+}
+
+.ios-action-sheet-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  inline-size: 100%;
+  min-block-size: 56px;
+  padding: 12px 16px;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: -0.3px;
+  color: #007AFF;
+  text-align: center;
+  cursor: pointer;
+}
+
+.ios-action-sheet-btn + .ios-action-sheet-btn {
+  border-block-start: 0.5px solid var(--ios-separator);
+}
+
+.ios-action-sheet-btn.destructive {
+  color: var(--ios-red);
+}
+
+.ios-action-sheet-btn:active,
+.ios-action-sheet-cancel:active {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.ios-action-sheet-cancel {
+  appearance: none;
+  border: 0;
+  background: #FFFFFF;
+  border-radius: 14px;
+  inline-size: 100%;
+  min-block-size: 56px;
+  padding: 12px 16px;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: #007AFF;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* ==========================================================================
    єВівця: плаваюча скляна панель вкладок (на всіх вкладках інвестора)
    ========================================================================== */
 body.app-investor {

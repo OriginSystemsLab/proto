@@ -561,11 +561,9 @@
         setError(4, '');
       });
 
-      // Демо-фото (використовує збережені локальні фото овець на весь екран)
+      // Демо-фото (використовує збережене фото вуха з біркою та локальні фото овець на весь екран)
       document.getElementById('demo-ear-btn').addEventListener('click', () => {
-        const earCandidates = ['./images/sheep-4.jpg', './images/sheep-1.webp'];
-        const chosen = earCandidates[Math.floor(Math.random() * earCandidates.length)];
-        updateViewfinderUI('ear', 2, chosen);
+        updateViewfinderUI('ear', 2, './images/ear-tag-demo.jpg');
         setError(2, '');
         if (!earTagInput.value.trim()) {
           const scanned = randomTag();

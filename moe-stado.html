@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>МоєСтадо — iOS</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="app-farmer">
+  <div id="sr-live" class="visually-hidden" aria-live="polite"></div>
+
+  <!-- Мінімалістичний перемикач поза межами iPhone -->
+  <nav class="studio-bar" aria-label="Перемикання додатків">
+    <a class="studio-link active" href="./moe-stado.html">МоєСтадо</a>
+    <a class="studio-link" href="./ye-vivtsia.html">єВівця</a>
+  </nav>
+
+  <!-- Фізичний корпус iPhone -->
+  <div class="iphone-device">
+    <div class="iphone-screen" id="iphone-screen">
+      <!-- iOS Status Bar + Dynamic Island -->
+      <div class="ios-statusbar" aria-hidden="true">
+        <span class="ios-time">9:41</span>
+        <div class="dynamic-island"></div>
+        <div class="ios-status-icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor">
+            <rect x="0" y="7" width="3" height="4" rx="1"/>
+            <rect x="4.5" y="5" width="3" height="6" rx="1"/>
+            <rect x="9" y="2.5" width="3" height="8.5" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="11" rx="1"/>
+          </svg>
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor">
+            <path d="M7.5 10.8a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6Zm-3.3-3a4.7 4.7 0 0 1 6.6 0l1.2-1.2a6.4 6.4 0 0 0-9 0l1.2 1.2Zm-2.6-2.6a8.3 8.3 0 0 1 11.8 0L14.6 4A10 10 0 0 0 .4 4l1.2 1.2Z"/>
+          </svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+            <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+            <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+            <path d="M23 4v4a2 2 0 0 0 0-4Z" fill="currentColor" fill-opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- iOS Top Notification Banner -->
+      <div id="ios-banner" class="ios-banner" role="status">
+        <p class="ios-banner-title"></p>
+        <p class="ios-banner-sub"></p>
+      </div>
+
+      <!-- Мінімалістичний iOS Launch Screen — показується, доки не клікнеш -->
+      <button type="button" id="splash-screen" class="ios-splash-screen" aria-label="МоєСтадо">
+        <div class="ios-splash-center">
+          <img
+            class="ios-splash-logo"
+            src="./images/osl-logo.png"
+            alt="МоєСтадо"
+            width="112"
+            height="112"
+            fetchpriority="high"
+          >
+        </div>
+      </button>
+
+      <!-- Головна оболонка додатку -->
+      <div id="main-app" class="ios-app" inert>
+        <!-- ВКЛАДКА 1: СТАДО -->
+        <main id="view-herd" class="ios-view" aria-label="Стадо">
+          <header class="ios-navbar">
+            <div class="ios-navbar-top">
+              <div class="ios-navbar-farm-picker">
+                <label for="farm-eyebrow" class="visually-hidden">Вибрати господарство</label>
+                <select id="farm-eyebrow" class="ios-navbar-farm-select"></select>
+                <svg class="ios-navbar-farm-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m6 9 6 6 6-6"/>
+                </svg>
+              </div>
+              <a class="ios-nav-btn ios-bar-icon-btn" id="open-add-btn" href="./moe-stado-add.html" aria-label="Додати вівцю">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" aria-hidden="true">
+                  <path d="M11 3.75v14.5M3.75 11h14.5"/>
+                </svg>
+              </a>
+            </div>
+          </header>
+
+          <div class="ios-scroll">
+            <search>
+              <form class="ios-search" id="search-form" action="#">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/>
+                </svg>
+                <label for="herd-q" class="visually-hidden">Пошук вівці</label>
+                <input type="search" id="herd-q" name="q" placeholder="Пошук" autocorrect="off" autocapitalize="none" spellcheck="false">
+              </form>
+            </search>
+
+            <div class="ios-segmented" role="group" aria-label="Фільтр за призначенням" id="purpose-filter-seg">
+              <button type="button" class="ios-seg-btn active" data-filter="ALL">Усі</button>
+              <button type="button" class="ios-seg-btn" data-filter="ForBreeding">Розмноження</button>
+              <button type="button" class="ios-seg-btn" data-filter="ForMeat">На м'ясо</button>
+            </div>
+
+            <div class="ios-stats-card" aria-label="Статистика стада">
+              <div class="ios-stat-cell">
+                <p class="ios-stat-val" id="stat-total">0</p>
+                <p class="ios-stat-lbl">У стаді</p>
+              </div>
+              <div class="ios-stat-cell">
+                <p class="ios-stat-val" id="stat-verified" style="color: var(--ios-green-ink);">0</p>
+                <p class="ios-stat-lbl">Верифіковано</p>
+              </div>
+              <div class="ios-stat-cell">
+                <p class="ios-stat-val" id="stat-pending" style="color: #B25000;">0</p>
+                <p class="ios-stat-lbl">На перевірці</p>
+              </div>
+            </div>
+
+            <div class="ios-section-header">Ваше стадо</div>
+            <div class="ios-group" id="herd-list"></div>
+          </div>
+        </main>
+
+        <!-- ВКЛАДКА 2: ПЕРЕВІРКА ТА ІВЕНТИ ТОКЕНУ -->
+        <section id="view-verify" class="ios-view" hidden aria-labelledby="verify-title">
+          <header class="ios-navbar">
+            <div class="ios-navbar-top">
+              <span class="ios-navbar-eyebrow">Держреєстр та токени</span>
+            </div>
+            <h2 class="ios-large-title" id="verify-title">Перевірка</h2>
+          </header>
+
+          <div class="ios-scroll">
+            <div class="ios-section-header">Очікують верифікації</div>
+            <div class="ios-group" id="pending-verify-list"></div>
+
+            <div class="ios-section-header">Журнал івентів токену</div>
+            <div class="ios-group" id="events-list"></div>
+          </div>
+        </section>
+
+        <!-- ВКЛАДКА 3: ПРОФІЛЬ ФЕРМЕРА -->
+        <section id="view-profile" class="ios-view" hidden aria-labelledby="profile-title">
+          <header class="ios-navbar">
+            <div class="ios-navbar-top">
+              <span class="ios-navbar-eyebrow">Обліковий запис</span>
+              <button type="button" class="ios-nav-btn semibold" id="save-farmer-btn">Зберегти</button>
+            </div>
+            <h2 class="ios-large-title" id="profile-title">Господарство</h2>
+          </header>
+
+          <div class="ios-scroll">
+            <div class="ios-section-header">Змінити фермера</div>
+            <div class="ios-group">
+              <div class="ios-field-row">
+                <label for="farmer-switcher">Профіль</label>
+                <select id="farmer-switcher"></select>
+              </div>
+            </div>
+
+            <div class="ios-section-header">Реквізити фермера</div>
+            <form id="farmer-form" class="ios-group" action="#">
+              <div class="ios-field-row">
+                <label for="f-farmname">Назва</label>
+                <input type="text" id="f-farmname" name="FarmName" autocomplete="organization">
+              </div>
+              <div class="ios-field-row">
+                <label for="f-desc">ПІБ</label>
+                <input type="text" id="f-desc" name="Description" autocomplete="name">
+              </div>
+              <div class="ios-field-row">
+                <label for="f-tax">ЄДРПОУ</label>
+                <input type="text" id="f-tax" name="TaxId" inputmode="numeric">
+              </div>
+              <div class="ios-field-row">
+                <label for="f-phone">Телефон</label>
+                <input type="tel" id="f-phone" name="Phone" autocomplete="tel">
+              </div>
+              <div class="ios-field-row">
+                <label for="f-addr">Локація</label>
+                <input type="text" id="f-addr" name="FarmAddress" autocomplete="street-address">
+              </div>
+            </form>
+
+            <button type="button" class="ios-secondary-btn" id="reset-db-btn" style="color: var(--ios-red);">
+              Скинути демо-дані
+            </button>
+          </div>
+        </section>
+
+        <!-- iOS Tab Bar -->
+        <nav class="ios-tabbar" aria-label="Головна навігація">
+          <button type="button" class="ios-tab" data-tab="herd" aria-selected="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+              <rect x="3" y="4" width="8" height="7" rx="2"/><rect x="13" y="4" width="8" height="7" rx="2"/>
+              <rect x="3" y="13" width="8" height="7" rx="2"/><rect x="13" y="13" width="8" height="7" rx="2"/>
+            </svg>
+            <span>Стадо</span>
+          </button>
+          <button type="button" class="ios-tab" data-tab="verify" aria-selected="false">
+            <span class="ios-tab-badge" id="verify-badge" hidden>0</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+              <path d="M12 3 4.5 6.5v5.2c0 4.6 3.2 8.8 7.5 9.8 4.3-1 7.5-5.2 7.5-9.8V6.5L12 3Z"/>
+              <path d="m9 12 2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Перевірка</span>
+          </button>
+          <button type="button" class="ios-tab" data-tab="profile" aria-selected="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+              <circle cx="12" cy="8.5" r="3.8"/><path d="M5 19.5c1.6-3 4.1-4.5 7-4.5s5.4 1.5 7 4.5" stroke-linecap="round"/>
+            </svg>
+            <span>Господарство</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="home-indicator" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <script src="./shared-data.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const Store = window.SheepSystemStore;
+      const UI = window.SheepSystemUI;
+
+      let activeFarmerCode = localStorage.getItem('ios_farmer_code') || 'FRM-00001';
+      let purposeFilter = 'ALL';
+      const searchInput = document.getElementById('herd-q');
+
+      function esc(str) {
+        return String(str ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // Перемикання нижнього Tab Bar
+      const views = {
+        herd: document.getElementById('view-herd'),
+        verify: document.getElementById('view-verify'),
+        profile: document.getElementById('view-profile')
+      };
+
+      document.querySelectorAll('.ios-tab').forEach((tabBtn) => {
+        tabBtn.addEventListener('click', () => {
+          const target = tabBtn.dataset.tab;
+          document.querySelectorAll('.ios-tab').forEach((b) => {
+            b.setAttribute('aria-selected', String(b === tabBtn));
+          });
+          Object.entries(views).forEach(([key, el]) => {
+            el.hidden = key !== target;
+          });
+        });
+      });
+
+      // Фільтр за призначенням у списку стада
+      document.getElementById('purpose-filter-seg').addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-filter]');
+        if (!btn) return;
+        purposeFilter = btn.dataset.filter;
+        document.querySelectorAll('#purpose-filter-seg .ios-seg-btn').forEach((b) => {
+          b.classList.toggle('active', b === btn);
+        });
+        renderAll();
+      });
+
+      document.getElementById('search-form').addEventListener('submit', (e) => e.preventDefault());
+      searchInput.addEventListener('input', renderAll);
+
+      function statusDotClass(status) {
+        if (status === 'Verified') return 'dot-verified';
+        if (status === 'Rejected') return 'dot-rejected';
+        return 'dot-pending';
+      }
+
+      function renderHerd(db) {
+        if (!db.Catalogs.Farmers.some((f) => f.Code === activeFarmerCode) && db.Catalogs.Farmers.length) {
+          activeFarmerCode = db.Catalogs.Farmers[0].Code;
+        }
+        const farmer = Store.getFarmerByCode(activeFarmerCode, db);
+        if (!farmer) return;
+        const farmEyebrow = document.getElementById('farm-eyebrow');
+        farmEyebrow.innerHTML = db.Catalogs.Farmers
+          .map((f) => `<option value="${esc(f.Code)}" ${f.Code === activeFarmerCode ? 'selected' : ''}>${esc(f.FarmName)}</option>`)
+          .join('');
+
+        const herd = Store.getFarmerHerdResolved(activeFarmerCode, db);
+        const verifiedCount = herd.filter((s) => s.VerificationStatus === 'Verified').length;
+        const pendingCount = herd.filter((s) => s.VerificationStatus !== 'Verified').length;
+
+        document.getElementById('stat-total').textContent = String(herd.length);
+        document.getElementById('stat-verified').textContent = String(verifiedCount);
+        document.getElementById('stat-pending').textContent = String(pendingCount);
+
+        const q = searchInput.value.trim().toLowerCase();
+        const filtered = herd.filter((s) => {
+          if (purposeFilter !== 'ALL' && s.Purpose !== purposeFilter) return false;
+          if (q && !`${s.Description} ${s.EarTagNumber} ${s.Token}`.toLowerCase().includes(q)) return false;
+          return true;
+        });
+
+        const listEl = document.getElementById('herd-list');
+        if (!filtered.length) {
+          listEl.innerHTML = `<div class="ios-empty">Овець не знайдено</div>`;
+          return;
+        }
+
+        listEl.innerHTML = filtered
+          .map((s) => {
+            const pLabel = Store.Enums.SheepPurpose[s.Purpose].shortLabel;
+            const stText =
+              s.VerificationStatus === 'PendingVerification'
+                ? 'На перевірці'
+                : s.VerificationStatus === 'Rejected'
+                  ? 'Відхилена'
+                  : '';
+            return `
+              <a class="ios-row has-thumb" href="./moe-stado-sheep.html?code=${encodeURIComponent(s.Code)}" data-sheep-link="${esc(s.Code)}">
+                <div class="ios-thumb">
+                  <img src="${s.FullBodyPhoto}" alt="${esc(s.Description)}" width="50" height="50">
+                </div>
+                <div class="ios-row-main">
+                  <p class="ios-row-title">
+                    <span>${esc(s.Description)}</span>
+                    <span class="status-dot ${statusDotClass(s.VerificationStatus)}" aria-hidden="true"></span>
+                  </p>
+                  <p class="ios-row-sub">${esc(s.EarTagNumber)} • ${esc(pLabel)}</p>
+                </div>
+                <div class="ios-row-Side">
+                  ${stText ? `<span style="font-size:13px;">${stText}</span>` : ''}
+                  <span class="ios-chevron" aria-hidden="true">›</span>
+                </div>
+              </a>
+            `;
+          })
+          .join('');
+      }
+
+      function renderVerifyAndEvents(db) {
+        const pendingAll = db.Catalogs.Sheep.filter((s) => s.VerificationStatus === 'PendingVerification');
+        const badge = document.getElementById('verify-badge');
+        badge.hidden = pendingAll.length === 0;
+        badge.textContent = String(pendingAll.length);
+
+        const pendingEl = document.getElementById('pending-verify-list');
+        if (!pendingAll.length) {
+          pendingEl.innerHTML = `<div class="ios-empty" style="padding:24px;">Усі вівці перевірено</div>`;
+        } else {
+          pendingEl.innerHTML = pendingAll
+            .map((s) => `
+              <div class="ios-row has-thumb">
+                <div class="ios-thumb">
+                  <img src="${s.StateCertificatePhoto}" alt="Свідоцтво ${esc(s.Description)}" width="50" height="50">
+                </div>
+                <div class="ios-row-main">
+                  <p class="ios-row-title">${esc(s.Description)}</p>
+                  <p class="ios-row-sub">${esc(s.EarTagNumber)}</p>
+                </div>
+                <div style="display:flex;gap:6px;">
+                  <button type="button" class="ios-pill green" style="border:0;padding:6px 10px;cursor:pointer;" data-approve="${esc(s.Code)}">Підтвердити</button>
+                  <button type="button" class="ios-pill red" style="border:0;padding:6px 10px;cursor:pointer;" data-reject="${esc(s.Code)}">✕</button>
+                </div>
+              </div>
+            `)
+            .join('');
+        }
+
+        const eventsEl = document.getElementById('events-list');
+        eventsEl.innerHTML = db.EventLog.slice(0, 10)
+          .map((ev) => `
+            <div class="ios-row">
+              <div class="ios-row-main">
+                <p class="ios-row-title" style="font-size:15px;font-weight:500;">${esc(ev.Title)}</p>
+                <p class="ios-row-sub">${esc(ev.Subtitle)}</p>
+              </div>
+              <span style="font-size:12px;color:var(--ios-secondary);flex:none;">${esc(UI.formatDate(ev.Timestamp))}</span>
+            </div>
+          `)
+          .join('');
+      }
+
+      function renderFarmerProfile(db) {
+        const switcher = document.getElementById('farmer-switcher');
+        if (!db.Catalogs.Farmers.some((f) => f.Code === activeFarmerCode) && db.Catalogs.Farmers.length) {
+          activeFarmerCode = db.Catalogs.Farmers[0].Code;
+        }
+        switcher.innerHTML = db.Catalogs.Farmers
+          .map((f) => `<option value="${esc(f.Code)}" ${f.Code === activeFarmerCode ? 'selected' : ''}>${esc(f.FarmName)}</option>`)
+          .join('');
+
+        const f = Store.getFarmerByCode(activeFarmerCode, db);
+        if (!f) return;
+        document.getElementById('f-farmname').value = f.FarmName;
+        document.getElementById('f-desc').value = f.Description;
+        document.getElementById('f-tax').value = f.TaxId;
+        document.getElementById('f-phone').value = f.Phone;
+        document.getElementById('f-addr').value = f.FarmAddress;
+      }
+
+      function renderAll() {
+        const db = Store.getState();
+        renderHerd(db);
+        renderVerifyAndEvents(db);
+        renderFarmerProfile(db);
+      }
+
+      // Обробка кліків у списках
+      document.addEventListener('click', (e) => {
+        const sheepLink = e.target.closest('[data-sheep-link]');
+        if (sheepLink) {
+          sessionStorage.setItem('farmer_selected_sheep', sheepLink.dataset.sheepLink);
+          return;
+        }
+        const approveBtn = e.target.closest('[data-approve]');
+        if (approveBtn) {
+          const s = Store.setSheepVerificationStatus(approveBtn.dataset.approve, 'Verified', 'Перевірено держреєстратором');
+          if (s) UI.showBanner(`«${s.Description}» верифіковано`, 'Вівця тепер доступна у додатку «єВівця»');
+          return;
+        }
+        const rejectBtn = e.target.closest('[data-reject]');
+        if (rejectBtn) {
+          const s = Store.setSheepVerificationStatus(rejectBtn.dataset.reject, 'Rejected', 'Нечітке фото рожевого свідоцтва.');
+          if (s) UI.showBanner(`«${s.Description}» відхилено`, 'Потрібно замінити фото свідоцтва');
+        }
+      });
+
+      // Перемикання господарства у шапці списку стада та в профілі
+      function handleFarmSwitch(e) {
+        activeFarmerCode = e.target.value;
+        localStorage.setItem('ios_farmer_code', activeFarmerCode);
+        renderAll();
+      }
+
+      document.getElementById('farm-eyebrow').addEventListener('change', handleFarmSwitch);
+      document.getElementById('farmer-switcher').addEventListener('change', handleFarmSwitch);
+
+      document.getElementById('save-farmer-btn').addEventListener('click', () => {
+        Store.updateFarmerProfile(activeFarmerCode, {
+          FarmName: document.getElementById('f-farmname').value.trim(),
+          Description: document.getElementById('f-desc').value.trim(),
+          TaxId: document.getElementById('f-tax').value.trim(),
+          Phone: document.getElementById('f-phone').value.trim(),
+          FarmAddress: document.getElementById('f-addr').value.trim()
+        });
+        UI.showBanner('Профіль збережено');
+      });
+
+      document.getElementById('reset-db-btn').addEventListener('click', () => {
+        Store.resetToDemoData();
+        UI.showBanner('Демо-дані відновлено');
+      });
+
+      Store.subscribe(renderAll);
+      renderAll();
+
+      // Екран завантаження (Launch Screen) — закривається по кліку
+      const iphoneScreen = document.getElementById('iphone-screen');
+      const splashScreen = document.getElementById('splash-screen');
+      const mainApp = document.getElementById('main-app');
+      const flashRaw = sessionStorage.getItem('farmer_flash_banner');
+
+      function showPendingFlashBanner() {
+        if (!flashRaw) return;
+        sessionStorage.removeItem('farmer_flash_banner');
+        try {
+          const flash = JSON.parse(flashRaw);
+          if (flash && flash.title) {
+            UI.showBanner(flash.title, flash.sub || '');
+          }
+        } catch (_) {}
+      }
+
+      function dismissSplashScreen() {
+        if (!splashScreen || splashScreen.hidden) return;
+        iphoneScreen.classList.remove('is-splash-active');
+        mainApp.removeAttribute('inert');
+        splashScreen.classList.add('is-dismissing');
+
+        const finishDismiss = () => {
+          splashScreen.hidden = true;
+          showPendingFlashBanner();
+        };
+
+        if (splashScreen.getAnimations().length === 0) {
+          finishDismiss();
+        } else {
+          splashScreen.addEventListener('transitionend', finishDismiss, { once: true });
+        }
+      }
+
+      if (flashRaw) {
+        // Якщо щойно додали вівцю з майстра — одразу показуємо стадо та пуш-банер
+        iphoneScreen.classList.remove('is-splash-active');
+        mainApp.removeAttribute('inert');
+        splashScreen.hidden = true;
+        showPendingFlashBanner();
+      } else {
+        splashScreen.addEventListener('click', dismissSplashScreen);
+      }
+    })();
+  </script>
+</body>
+</html>

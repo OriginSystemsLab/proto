@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Нова вівця — МоєСтадо</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="app-farmer">
+  <div id="sr-live" class="visually-hidden" aria-live="polite"></div>
+
+  <nav class="studio-bar" aria-label="Перемикання додатків">
+    <a class="studio-link active" href="./moe-stado.html">МоєСтадо</a>
+    <a class="studio-link" href="./ye-vivtsia.html">єВівця</a>
+  </nav>
+
+  <div class="iphone-device">
+    <div class="iphone-screen" id="iphone-screen">
+      <!-- iOS Status Bar + Dynamic Island -->
+      <div class="ios-statusbar" aria-hidden="true">
+        <span class="ios-time">9:41</span>
+        <div class="dynamic-island"></div>
+        <div class="ios-status-icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor">
+            <rect x="0" y="7" width="3" height="4" rx="1"/>
+            <rect x="4.5" y="5" width="3" height="6" rx="1"/>
+            <rect x="9" y="2.5" width="3" height="8.5" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="11" rx="1"/>
+          </svg>
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor">
+            <path d="M7.5 10.8a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6Zm-3.3-3a4.7 4.7 0 0 1 6.6 0l1.2-1.2a6.4 6.4 0 0 0-9 0l1.2 1.2Zm-2.6-2.6a8.3 8.3 0 0 1 11.8 0L14.6 4A10 10 0 0 0 .4 4l1.2 1.2Z"/>
+          </svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+            <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+            <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+            <path d="M23 4v4a2 2 0 0 0 0-4Z" fill="currentColor" fill-opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- iOS Push Banner -->
+      <div id="ios-banner" class="ios-banner" role="status">
+        <p class="ios-banner-title"></p>
+        <p class="ios-banner-sub"></p>
+      </div>
+
+      <!-- Покроковий iOS Візард створення вівці -->
+      <div class="ios-app">
+        <header class="ios-subpage-navbar">
+          <a class="ios-back-link" id="wizard-back-nav" href="./moe-stado.html" style="visibility:hidden;pointer-events:none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+              <path d="m15 19-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span id="wizard-back-label">Назад</span>
+          </a>
+
+          <h1 id="wizard-header-title">Нова вівця</h1>
+
+          <a class="ios-nav-btn ios-subpage-end" id="wizard-cancel-btn" href="./moe-stado.html" style="font-size:16px;padding-inline-end:4px;">Скасувати</a>
+        </header>
+
+        <nav aria-label="Етапи створення вівці">
+          <ol class="ios-wizard-progress" id="wizard-progress">
+            <li class="ios-wizard-bar" aria-current="step"><span class="visually-hidden">Крок 1: Кличка вівці</span></li>
+            <li class="ios-wizard-bar"><span class="visually-hidden">Крок 2: Вухо з біркою</span></li>
+            <li class="ios-wizard-bar"><span class="visually-hidden">Крок 3: Фото у повний зріст</span></li>
+            <li class="ios-wizard-bar"><span class="visually-hidden">Крок 4: Рожеве свідоцтво</span></li>
+            <li class="ios-wizard-bar"><span class="visually-hidden">Крок 5: Картка вівці</span></li>
+          </ol>
+        </nav>
+
+        <form id="sheep-wizard-form" class="ios-wizard-form" method="POST" action="#" aria-labelledby="wizard-header-title" novalidate>
+          <!-- КРОК 1: ОКРЕМО ЛИШЕ ПОЛЕ ДЛЯ ВВОДУ КЛИЧКИ ВІВЦІ -->
+          <section class="ios-wizard-step" id="step-1" data-step="1">
+            <div class="ios-wizard-head">
+              <h2 class="ios-wizard-title" id="step-1-heading" tabindex="-1">Кличка вівці</h2>
+              <p class="ios-wizard-sub">Введіть ім'я (кличку) нової вівці для обліку у стаді</p>
+            </div>
+
+            <div class="ios-group">
+              <div class="ios-field-row">
+                <label for="in-sheep-name">Кличка</label>
+                <input
+                  type="text"
+                  id="in-sheep-name"
+                  name="sheepName"
+                  placeholder="Напр., Говерла"
+                  enterkeyhint="next"
+                  aria-describedby="step1-error"
+                  autofocus
+                  required
+                >
+              </div>
+            </div>
+
+            <p class="ios-field-error" id="step1-error" role="alert" hidden></p>
+          </section>
+
+          <!-- КРОК 2: ПОВНОЕКРАННЕ ФОТО ВУХА З БІРКОЮ + ПУНКТИРНИЙ СИЛУЕТ ВУХА З БІРКОЮ -->
+          <section class="ios-wizard-step ios-cam-step" id="step-2" data-step="2" hidden>
+            <div class="ios-cam-canvas" id="vf-ear">
+              <img class="ios-viewfinder-img" id="preview-ear" alt="Знімок вуха з біркою" width="393" height="852" hidden>
+            </div>
+
+            <div class="ios-cam-head">
+              <h2 class="ios-cam-title" id="step-2-heading" tabindex="-1">Вухо з біркою</h2>
+              <p class="ios-cam-sub">Сумістіть вухо та бирку з пунктирним контуром</p>
+              <span class="ios-vf-status" id="status-ear" hidden>✓ Фото бирки додано</span>
+            </div>
+
+            <!-- Пунктирний силует у вигляді вуха вівці з прикріпленою біркою -->
+            <div class="ios-cam-guide" aria-hidden="true">
+              <svg viewBox="0 0 280 250" fill="none">
+                <defs>
+                  <mask id="ear-behind-tag-mask">
+                    <rect x="0" y="0" width="280" height="250" fill="#FFFFFF"/>
+                    <path d="M128 100 Q128 88 148 88 Q168 88 168 100 L172 124 L200 148 Q205 153 205 160 L205 224 Q205 235 194 235 L102 235 Q91 235 91 224 L91 160 Q91 153 96 148 L124 124 Z" fill="#000000"/>
+                  </mask>
+                </defs>
+
+                <!-- Лінія прилягання до голови вівці зліва -->
+                <path
+                  d="M28 32 C42 62, 42 118, 26 154"
+                  stroke="rgba(255,255,255,0.52)"
+                  stroke-width="2.4"
+                  stroke-dasharray="6 6"
+                  stroke-linecap="round"
+                />
+
+                <!-- Силует вуха вівці (пунктиром) -->
+                <g mask="url(#ear-behind-tag-mask)">
+                  <path
+                    d="M38 58 C88 24, 188 22, 250 66 C268 79, 268 103, 248 117 C198 150, 114 152, 38 124"
+                    stroke="#FFFFFF"
+                    stroke-width="2.8"
+                    stroke-dasharray="8 6"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <!-- Внутрішня складка вушної раковини -->
+                  <path
+                    d="M62 78 C110 54, 180 54, 226 82"
+                    stroke="rgba(255,255,255,0.6)"
+                    stroke-width="2.1"
+                    stroke-dasharray="6 6"
+                    stroke-linecap="round"
+                  />
+                </g>
+
+                <!-- Силует вушної бірки (пунктиром), закріпленої на вусі -->
+                <path
+                  d="M131 102 Q131 92 148 92 Q165 92 165 102 L169 126 L196 150 Q200 154 200 160 L200 222 Q200 232 190 232 L106 232 Q96 232 96 222 L96 160 Q96 154 100 150 L127 126 Z"
+                  stroke="#FFFFFF"
+                  stroke-width="2.8"
+                  stroke-dasharray="8 6"
+                  stroke-linejoin="round"
+                />
+                <!-- Кліпса-шпилька проколу на вусі -->
+                <circle
+                  cx="148"
+                  cy="108"
+                  r="6.5"
+                  stroke="#FFFFFF"
+                  stroke-width="2.3"
+                  stroke-dasharray="4 3"
+                />
+                <!-- Пунктирні лінії коду UA на бірці -->
+                <path
+                  d="M114 174 H182 M114 194 H182 M126 212 H170"
+                  stroke="rgba(255,255,255,0.62)"
+                  stroke-width="2.1"
+                  stroke-dasharray="5 5"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+
+            <div class="ios-cam-dock">
+              <div id="manual-tag-wrap" hidden>
+                <div class="ios-cam-glass-card">
+                  <div class="ios-cam-glass-row">
+                    <label for="in-ear-tag">Номер бірки</label>
+                    <input
+                      type="text"
+                      id="in-ear-tag"
+                      name="earTagNumber"
+                      placeholder="UA-2600501234"
+                      autocorrect="off"
+                      autocapitalize="none"
+                      spellcheck="false"
+                      enterkeyhint="next"
+                      aria-describedby="step2-error"
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <p class="ios-cam-error" id="step2-error" role="alert" hidden></p>
+
+              <div class="ios-cam-controls-row">
+                <button type="button" class="ios-vf-chip" id="demo-ear-btn">Демо-фото</button>
+                <div>
+                  <input type="file" id="photo-ear-file" name="earTagPhoto" accept="image/*" capture="environment" class="visually-hidden">
+                  <label for="photo-ear-file" class="ios-shutter-btn" aria-label="Сфотографувати вухо з біркою"></label>
+                </div>
+                <span></span>
+              </div>
+
+              <button type="button" class="ios-cam-manual-btn" id="manual-tag-btn" aria-expanded="false" aria-controls="manual-tag-wrap">
+                Ввести номер бірки вручну
+              </button>
+            </div>
+          </section>
+
+          <!-- КРОК 3: ПОВНОЕКРАННЕ ФОТО ВІВЦІ У ПОВНИЙ ЗРІСТ -->
+          <section class="ios-wizard-step ios-cam-step" id="step-3" data-step="3" hidden>
+            <div class="ios-cam-canvas" id="vf-body">
+              <img class="ios-viewfinder-img" id="preview-body" alt="Фото вівці у повний зріст" width="393" height="852" hidden>
+            </div>
+
+            <div class="ios-cam-head">
+              <h2 class="ios-cam-title" id="step-3-heading" tabindex="-1">У повний зріст</h2>
+              <p class="ios-cam-sub">Помістіть вівцю збоку у повний зріст у контур кадру</p>
+              <span class="ios-vf-status" id="status-body" hidden>✓ Фото додано</span>
+            </div>
+
+            <div class="ios-cam-guide" aria-hidden="true">
+              <svg viewBox="0 0 280 210" fill="none">
+                <rect x="14" y="14" width="252" height="182" rx="22" stroke="rgba(255,255,255,0.45)" stroke-width="2" stroke-dasharray="7 6"/>
+                <path
+                  d="M74 134 C58 130, 52 112, 60 98 C56 82, 68 66, 86 66 C98 52, 124 50, 140 60 C158 50, 184 56, 194 72 C206 66, 224 68, 232 78 C240 88, 232 100, 218 102 C214 118, 200 130, 184 134 L184 168 M164 136 L164 168 M104 136 L104 168 M84 134 L84 168"
+                  stroke="#FFFFFF"
+                  stroke-width="2.6"
+                  stroke-dasharray="7 5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+
+            <div class="ios-cam-dock">
+              <p class="ios-cam-error" id="step3-error" role="alert" hidden></p>
+
+              <div class="ios-cam-controls-row">
+                <button type="button" class="ios-vf-chip" id="demo-body-btn">Демо-фото</button>
+                <div>
+                  <input type="file" id="photo-body-file" name="fullBodyPhoto" accept="image/*" capture="environment" class="visually-hidden">
+                  <label for="photo-body-file" class="ios-shutter-btn" aria-label="Сфотографувати вівцю у повний зріст"></label>
+                </div>
+                <span></span>
+              </div>
+            </div>
+          </section>
+
+          <!-- КРОК 4: ПОВНОЕКРАННЕ ФОТО РОЖЕВОГО СВІДОЦТВА -->
+          <section class="ios-wizard-step ios-cam-step" id="step-4" data-step="4" hidden>
+            <div class="ios-cam-canvas" id="vf-cert">
+              <img class="ios-viewfinder-img" id="preview-cert" alt="Рожеве державне свідоцтво" width="393" height="852" hidden>
+            </div>
+
+            <div class="ios-cam-head">
+              <h2 class="ios-cam-title" id="step-4-heading" tabindex="-1">Рожеве свідоцтво</h2>
+              <p class="ios-cam-sub">Наведіть камеру на рожевий бланк державного зразка</p>
+              <span class="ios-vf-status" id="status-cert" hidden>✓ Фото додано</span>
+            </div>
+
+            <div class="ios-cam-guide" aria-hidden="true">
+              <svg viewBox="0 0 240 280" fill="none">
+                <rect x="28" y="16" width="184" height="248" rx="14" stroke="#FFFFFF" stroke-width="2.7" stroke-dasharray="8 6"/>
+                <path d="M58 62 H182 M58 94 H182 M58 126 H156 M58 158 H172" stroke="rgba(255,255,255,0.58)" stroke-width="2.2" stroke-dasharray="6 6" stroke-linecap="round"/>
+                <circle cx="158" cy="212" r="22" stroke="rgba(255,255,255,0.62)" stroke-width="2.2" stroke-dasharray="5 5"/>
+              </svg>
+            </div>
+
+            <div class="ios-cam-dock">
+              <p class="ios-cam-error" id="step4-error" role="alert" hidden></p>
+
+              <div class="ios-cam-controls-row">
+                <button type="button" class="ios-vf-chip" id="demo-cert-btn">Демо-фото</button>
+                <div>
+                  <input type="file" id="photo-cert-file" name="stateCertificatePhoto" accept="image/*" capture="environment" class="visually-hidden">
+                  <label for="photo-cert-file" class="ios-shutter-btn" aria-label="Сфотографувати рожеве свідоцтво"></label>
+                </div>
+                <span></span>
+              </div>
+            </div>
+          </section>
+
+          <!-- КРОК 5: ПІДСУМОК ТА ПРИЗНАЧЕННЯ -->
+          <section class="ios-wizard-step" id="step-5" data-step="5" hidden>
+            <div class="ios-wizard-head">
+              <h2 class="ios-wizard-title" id="step-5-heading" tabindex="-1">Картка вівці</h2>
+              <p class="ios-wizard-sub">Перевірте дані та оберіть призначення вівці у стаді</p>
+            </div>
+
+            <div class="ios-section-header">Основні дані</div>
+            <div class="ios-group">
+              <div class="ios-field-row">
+                <label for="in-sheep-name-review">Кличка</label>
+                <input
+                  type="text"
+                  id="in-sheep-name-review"
+                  name="sheepNameConfirm"
+                  placeholder="Напр., Говерла"
+                  enterkeyhint="done"
+                  aria-describedby="step5-error"
+                  required
+                >
+              </div>
+              <div class="ios-field-row">
+                <label for="in-ear-tag-review">Бирка</label>
+                <input
+                  type="text"
+                  id="in-ear-tag-review"
+                  name="earTagNumberConfirm"
+                  placeholder="UA-2600501234"
+                  autocorrect="off"
+                  autocapitalize="none"
+                  spellcheck="false"
+                  enterkeyhint="done"
+                  aria-describedby="step5-error"
+                >
+              </div>
+              <div class="ios-field-row">
+                <label for="in-purpose">Призначення</label>
+                <select id="in-purpose" name="purpose">
+                  <option value="ForBreeding" selected>На розмноження</option>
+                  <option value="ForMeat">На м'ясо</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="ios-section-header">Фотографії (необов'язково)</div>
+            <div class="ios-group" id="review-photos-list"></div>
+
+            <div class="ios-section-header">GPS-маячок</div>
+            <div class="ios-group">
+              <div class="ios-field-row">
+                <label for="in-gps-tracker">ID маячка</label>
+                <input
+                  type="text"
+                  id="in-gps-tracker"
+                  name="gpsTrackerId"
+                  placeholder="GPS-UA-0000"
+                  autocorrect="off"
+                  autocapitalize="none"
+                  spellcheck="false"
+                  enterkeyhint="done"
+                >
+              </div>
+              <div class="ios-row">
+                <div class="ios-row-main">
+                  <p class="ios-row-title" style="font-size:15px;font-weight:500;">Bluetooth / LoRaWAN трекер</p>
+                  <p class="ios-row-sub" id="gps-pair-status">Не підключено</p>
+                </div>
+                <button type="button" class="ios-nav-btn" id="pair-gps-btn" style="font-size:14px;">Знайти поруч</button>
+              </div>
+            </div>
+
+            <p class="ios-field-error" id="step5-error" role="alert" hidden></p>
+          </section>
+
+          <div class="ios-wizard-footer">
+            <button type="button" class="ios-primary-btn" id="wizard-next-btn" enterkeyhint="next">Далі</button>
+            <button type="submit" class="ios-primary-btn" id="wizard-submit-btn" hidden>Додати вівцю</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="home-indicator" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <script src="./shared-data.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const Store = window.SheepSystemStore;
+      const UI = window.SheepSystemUI;
+
+      const activeFarmerCode = localStorage.getItem('ios_farmer_code') || 'FRM-00001';
+      let currentStep = 1;
+      const totalSteps = 5;
+
+      const stagedPhotos = {
+        ear: '',
+        body: '',
+        cert: ''
+      };
+
+      const iphoneScreen = document.getElementById('iphone-screen');
+      const form = document.getElementById('sheep-wizard-form');
+      const backNav = document.getElementById('wizard-back-nav');
+      const nextBtn = document.getElementById('wizard-next-btn');
+      const submitBtn = document.getElementById('wizard-submit-btn');
+      const progressBars = Array.from(document.querySelectorAll('#wizard-progress .ios-wizard-bar'));
+
+      const manualTagBtn = document.getElementById('manual-tag-btn');
+      const manualTagWrap = document.getElementById('manual-tag-wrap');
+      const earTagInput = document.getElementById('in-ear-tag');
+      const earTagReviewInput = document.getElementById('in-ear-tag-review');
+      const sheepNameInput = document.getElementById('in-sheep-name');
+      const sheepNameReviewInput = document.getElementById('in-sheep-name-review');
+      const purposeSelect = document.getElementById('in-purpose');
+      const gpsTrackerInput = document.getElementById('in-gps-tracker');
+      const pairGpsBtn = document.getElementById('pair-gps-btn');
+      const gpsPairStatus = document.getElementById('gps-pair-status');
+
+      const stepEls = {
+        1: document.getElementById('step-1'),
+        2: document.getElementById('step-2'),
+        3: document.getElementById('step-3'),
+        4: document.getElementById('step-4'),
+        5: document.getElementById('step-5')
+      };
+
+      function esc(str) {
+        return String(str ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function randomTag() {
+        return 'UA-' + Math.floor(2600500000 + Math.random() * 899999);
+      }
+
+      function randomGpsId() {
+        return 'GPS-UA-' + Math.floor(1000 + Math.random() * 8999);
+      }
+
+      function updateGpsStatusUI() {
+        const val = gpsTrackerInput.value.trim();
+        if (val) {
+          gpsPairStatus.textContent = `Прив’язано (${val}) • Сигнал 98%`;
+          gpsPairStatus.style.color = 'var(--ios-green-ink)';
+          pairGpsBtn.textContent = 'Змінити';
+        } else {
+          gpsPairStatus.textContent = 'Не підключено';
+          gpsPairStatus.style.color = 'var(--ios-secondary)';
+          pairGpsBtn.textContent = 'Знайти поруч';
+        }
+      }
+
+      pairGpsBtn.addEventListener('click', () => {
+        gpsTrackerInput.value = randomGpsId();
+        updateGpsStatusUI();
+      });
+
+      gpsTrackerInput.addEventListener('input', updateGpsStatusUI);
+
+      function setError(stepNum, message, invalidControl) {
+        const el = document.getElementById(`step${stepNum}-error`);
+        if (!el) return;
+        if (message) {
+          el.textContent = message;
+          el.hidden = false;
+          if (invalidControl) {
+            invalidControl.setAttribute('aria-invalid', 'true');
+            invalidControl.focus({ preventScroll: true });
+          }
+        } else {
+          el.textContent = '';
+          el.hidden = true;
+        }
+      }
+
+      function clearAllErrors() {
+        [1, 2, 3, 4, 5].forEach((n) => setError(n, ''));
+        [sheepNameInput, sheepNameReviewInput, earTagInput, earTagReviewInput].forEach((inp) => inp.removeAttribute('aria-invalid'));
+      }
+
+      function updateViewfinderUI(key, stepNum, src) {
+        stagedPhotos[key] = src;
+        const stepSection = stepEls[stepNum];
+        const img = document.getElementById(`preview-${key}`);
+        const st = document.getElementById(`status-${key}`);
+        if (src) {
+          img.src = src;
+          img.hidden = false;
+          st.hidden = false;
+          stepSection.classList.add('has-photo');
+        } else {
+          img.removeAttribute('src');
+          img.hidden = true;
+          st.hidden = true;
+          stepSection.classList.remove('has-photo');
+        }
+      }
+
+      function revealManualTagInput(focusField) {
+        manualTagWrap.hidden = false;
+        manualTagBtn.setAttribute('aria-expanded', 'true');
+        if (focusField) {
+          earTagInput.focus();
+        }
+      }
+
+      // Кнопка «Ввести номер бірки вручну» на Кроці 2
+      manualTagBtn.addEventListener('click', () => {
+        setError(2, '');
+        revealManualTagInput(true);
+      });
+
+      // Синхронізація клички між Кроком 1 та Кроком 5
+      sheepNameInput.addEventListener('input', () => {
+        sheepNameInput.removeAttribute('aria-invalid');
+        setError(1, '');
+        sheepNameReviewInput.value = sheepNameInput.value;
+      });
+
+      sheepNameReviewInput.addEventListener('input', () => {
+        sheepNameReviewInput.removeAttribute('aria-invalid');
+        setError(5, '');
+        sheepNameInput.value = sheepNameReviewInput.value;
+      });
+
+      // Синхронізація номера бирки між Кроком 2 та Кроком 5
+      earTagInput.addEventListener('input', () => {
+        earTagInput.removeAttribute('aria-invalid');
+        setError(2, '');
+        earTagReviewInput.value = earTagInput.value;
+      });
+
+      earTagReviewInput.addEventListener('input', () => {
+        earTagReviewInput.removeAttribute('aria-invalid');
+        setError(5, '');
+        earTagInput.value = earTagReviewInput.value;
+      });
+
+      // Завантаження фото з камери або галереї (Кроки 2, 3, 4)
+      document.getElementById('photo-ear-file').addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const url = await UI.readFileAsDataUrl(file);
+        updateViewfinderUI('ear', 2, url);
+        setError(2, '');
+        if (!earTagInput.value.trim()) {
+          const scanned = randomTag();
+          earTagInput.value = scanned;
+          earTagReviewInput.value = scanned;
+          revealManualTagInput(false);
+        }
+      });
+
+      document.getElementById('photo-body-file').addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const url = await UI.readFileAsDataUrl(file);
+        updateViewfinderUI('body', 3, url);
+        setError(3, '');
+      });
+
+      document.getElementById('photo-cert-file').addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const url = await UI.readFileAsDataUrl(file);
+        updateViewfinderUI('cert', 4, url);
+        setError(4, '');
+      });
+
+      // Демо-фото (використовує збережені локальні фото овець на весь екран)
+      document.getElementById('demo-ear-btn').addEventListener('click', () => {
+        const earCandidates = ['./images/sheep-4.jpg', './images/sheep-1.webp'];
+        const chosen = earCandidates[Math.floor(Math.random() * earCandidates.length)];
+        updateViewfinderUI('ear', 2, chosen);
+        setError(2, '');
+        if (!earTagInput.value.trim()) {
+          const scanned = randomTag();
+          earTagInput.value = scanned;
+          earTagReviewInput.value = scanned;
+        }
+        revealManualTagInput(false);
+      });
+
+      document.getElementById('demo-body-btn').addEventListener('click', () => {
+        const bodyCandidates = ['./images/sheep-2.jpg', './images/sheep-3.jpg', './images/sheep-5.jpg'];
+        const chosen = bodyCandidates[Math.floor(Math.random() * bodyCandidates.length)];
+        updateViewfinderUI('body', 3, chosen);
+        setError(3, '');
+      });
+
+      document.getElementById('demo-cert-btn').addEventListener('click', () => {
+        const farmer = Store.getFarmerByCode(activeFarmerCode);
+        const tagVal = earTagInput.value.trim() || randomTag();
+        if (!earTagInput.value.trim()) {
+          earTagInput.value = tagVal;
+          earTagReviewInput.value = tagVal;
+        }
+        const certSvg = Store.generateStateCertificatePhoto(
+          tagVal,
+          sheepNameInput.value.trim() || 'Нова вівця',
+          farmer ? farmer.FarmName : 'Господарство',
+          new Date().toISOString().slice(0, 10)
+        );
+        updateViewfinderUI('cert', 4, certSvg);
+        setError(4, '');
+      });
+
+      function renderReviewStep() {
+        sheepNameReviewInput.value = sheepNameInput.value.trim();
+        if (!earTagInput.value.trim() && !earTagReviewInput.value.trim()) {
+          const generated = randomTag();
+          earTagInput.value = generated;
+          earTagReviewInput.value = generated;
+        } else if (earTagInput.value.trim()) {
+          earTagReviewInput.value = earTagInput.value.trim();
+        }
+        const list = document.getElementById('review-photos-list');
+        const rows = [
+          { key: 'ear', label: '1. Вухо з біркою', step: 2 },
+          { key: 'body', label: '2. У повний зріст', step: 3 },
+          { key: 'cert', label: '3. Рожеве свідоцтво', step: 4 }
+        ];
+        list.innerHTML = rows
+          .map((r) => {
+            const has = Boolean(stagedPhotos[r.key]);
+            return `
+              <div class="ios-row has-thumb">
+                <div class="ios-thumb">
+                  ${has ? `<img src="${stagedPhotos[r.key]}" alt="${esc(r.label)}" width="50" height="50">` : ''}
+                </div>
+                <div class="ios-row-main">
+                  <p class="ios-row-title" style="font-size:15px;font-weight:500;">${esc(r.label)}</p>
+                  <p class="ios-row-sub" style="color:${has ? 'var(--ios-green-ink)' : 'var(--ios-secondary)'};">
+                    ${has ? 'Додано ✓' : 'Не додано (необов’язково)'}
+                  </p>
+                </div>
+                <button type="button" class="ios-nav-btn" data-goto-step="${r.step}" style="font-size:14px;">
+                  ${has ? 'Змінити' : 'Додати'}
+                </button>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      document.getElementById('review-photos-list').addEventListener('click', (e) => {
+        const gotoBtn = e.target.closest('[data-goto-step]');
+        if (gotoBtn) {
+          goToStep(Number(gotoBtn.dataset.gotoStep));
+        }
+      });
+
+      function goToStep(targetStep) {
+        currentStep = Math.max(1, Math.min(totalSteps, targetStep));
+        clearAllErrors();
+
+        Object.entries(stepEls).forEach(([num, el]) => {
+          el.hidden = Number(num) !== currentStep;
+        });
+
+        const isCameraStep = currentStep >= 2 && currentStep <= 4;
+        iphoneScreen.classList.toggle('is-camera-step', isCameraStep);
+
+        progressBars.forEach((bar, idx) => {
+          const stepIdx = idx + 1;
+          bar.classList.toggle('done', stepIdx < currentStep);
+          if (stepIdx === currentStep) {
+            bar.setAttribute('aria-current', 'step');
+          } else {
+            bar.removeAttribute('aria-current');
+          }
+        });
+
+        const onFirst = currentStep === 1;
+        const onLast = currentStep === totalSteps;
+
+        backNav.style.visibility = onFirst ? 'hidden' : 'visible';
+        backNav.style.pointerEvents = onFirst ? 'none' : 'auto';
+
+        nextBtn.hidden = onLast;
+        submitBtn.hidden = !onLast;
+
+        if (onLast) {
+          renderReviewStep();
+        }
+
+        if (onFirst) {
+          sheepNameInput.focus({ preventScroll: true });
+        } else {
+          const heading = document.getElementById(`step-${currentStep}-heading`);
+          if (heading) {
+            heading.focus({ preventScroll: true });
+          }
+        }
+      }
+
+      function validateCurrentStep() {
+        if (currentStep === 1) {
+          if (!sheepNameInput.value.trim()) {
+            setError(1, 'Вкажіть кличку вівці.', sheepNameInput);
+            return false;
+          }
+        }
+        return true;
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (!validateCurrentStep()) return;
+        goToStep(currentStep + 1);
+      });
+
+      backNav.addEventListener('click', (e) => {
+        if (currentStep > 1) {
+          e.preventDefault();
+          goToStep(currentStep - 1);
+        }
+      });
+
+      form.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.isComposing && currentStep < totalSteps && e.target.tagName === 'INPUT') {
+          e.preventDefault();
+          if (validateCurrentStep()) {
+            goToStep(currentStep + 1);
+          }
+        }
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (currentStep < totalSteps) {
+          if (validateCurrentStep()) goToStep(currentStep + 1);
+          return;
+        }
+
+        const nameVal = sheepNameReviewInput.value.trim() || sheepNameInput.value.trim();
+        const tagVal = earTagReviewInput.value.trim() || earTagInput.value.trim() || randomTag();
+
+        if (!nameVal) {
+          setError(5, 'Вкажіть кличку вівці.', sheepNameReviewInput);
+          return;
+        }
+
+        const purpose = purposeSelect ? purposeSelect.value : 'ForBreeding';
+        const gpsTrackerId = gpsTrackerInput ? gpsTrackerInput.value.trim() : '';
+
+        submitBtn.disabled = true;
+
+        const created = Store.registerSheep({
+          farmerCode: activeFarmerCode,
+          name: nameVal,
+          earTagNumber: tagVal,
+          purpose,
+          gpsTrackerId,
+          earTagPhoto: stagedPhotos.ear,
+          fullBodyPhoto: stagedPhotos.body,
+          stateCertificatePhoto: stagedPhotos.cert
+        });
+
+        sessionStorage.setItem(
+          'farmer_flash_banner',
+          JSON.stringify({
+            title: `«${created.Description}» вже у стаді`,
+            sub: 'Токен створено • Передано на верифікацію'
+          })
+        );
+        location.href = './moe-stado.html';
+      });
+    })();
+  </script>
+</body>
+</html>

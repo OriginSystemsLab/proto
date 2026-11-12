@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>єВівця — Кіберферма</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="app-investor">
+  <div id="sr-live" class="visually-hidden" aria-live="polite"></div>
+
+  <!-- Мінімалістичний перемикач поза межами iPhone -->
+  <nav class="studio-bar" aria-label="Перемикання додатків">
+    <a class="studio-link" href="./moe-stado.html">МоєСтадо</a>
+    <a class="studio-link active" href="./ye-vivtsia.html">єВівця</a>
+  </nav>
+
+  <!-- Фізичний корпус iPhone -->
+  <div class="iphone-device">
+    <div class="iphone-screen">
+      <!-- iOS Status Bar + Dynamic Island -->
+      <div class="ios-statusbar" aria-hidden="true">
+        <span class="ios-time">9:41</span>
+        <div class="dynamic-island"></div>
+        <div class="ios-status-icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor">
+            <rect x="0" y="7" width="3" height="4" rx="1"/>
+            <rect x="4.5" y="5" width="3" height="6" rx="1"/>
+            <rect x="9" y="2.5" width="3" height="8.5" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="11" rx="1"/>
+          </svg>
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor">
+            <path d="M7.5 10.8a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6Zm-3.3-3a4.7 4.7 0 0 1 6.6 0l1.2-1.2a6.4 6.4 0 0 0-9 0l1.2 1.2Zm-2.6-2.6a8.3 8.3 0 0 1 11.8 0L14.6 4A10 10 0 0 0 .4 4l1.2 1.2Z"/>
+          </svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+            <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+            <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+            <path d="M23 4v4a2 2 0 0 0 0-4Z" fill="currentColor" fill-opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- iOS Push Banner -->
+      <div id="ios-banner" class="ios-banner" role="status">
+        <p class="ios-banner-title"></p>
+        <p class="ios-banner-sub"></p>
+      </div>
+
+      <!-- Головна оболонка додатку -->
+      <div id="main-app" class="ios-app">
+        <!-- ВКЛАДКА 1 (ПЕРШИЙ ЕКРАН): повноекранне фото вівці + шторка із заробітком -->
+        <main id="view-portfolio" class="ios-view hero-view" aria-labelledby="portfolio-title">
+          <div class="hero-photo" id="hero-photo" aria-hidden="true"></div>
+          <div class="hero-shade" aria-hidden="true"></div>
+
+          <div class="hero-topbar">
+            <span class="hero-brand">єВівця</span>
+          </div>
+          <div class="hero-dots" id="hero-dots" aria-hidden="true"></div>
+
+          <section class="earn-sheet" id="earn-sheet" aria-labelledby="portfolio-title">
+            <button type="button" class="earn-handle" id="earn-handle" aria-expanded="false" aria-controls="earn-body">
+              <span class="earn-grabber" aria-hidden="true"></span>
+              <span class="earn-caption" id="portfolio-title">Мій заробіток</span>
+              <span class="earn-amount" id="earn-yield">+0 ₴</span>
+              <span class="earn-sub">
+                <span>Активи <strong id="wallet-networth">0 ₴</strong></span>
+                <span class="earn-dot" aria-hidden="true">·</span>
+                <span id="earn-roi">0%</span>
+              </span>
+            </button>
+
+            <div class="earn-body ios-scroll" id="earn-body" inert>
+              <div class="earn-stats">
+                <div class="earn-stat">
+                  <p class="earn-stat-val" id="wallet-invested">0 ₴</p>
+                  <p class="earn-stat-lbl">Вкладено</p>
+                </div>
+                <div class="earn-stat">
+                  <p class="earn-stat-val green" id="wallet-yield">+0 ₴</p>
+                  <p class="earn-stat-lbl">Дохід</p>
+                </div>
+                <div class="earn-stat">
+                  <p class="earn-stat-val" id="earn-count">0</p>
+                  <p class="earn-stat-lbl">Овець</p>
+                </div>
+              </div>
+
+              <div class="ios-section-header">Мій набір овець</div>
+              <div class="ios-group" id="portfolio-list"></div>
+
+              <div class="ios-section-header">Облікові операції</div>
+              <div class="ios-group" id="ledger-list"></div>
+            </div>
+          </section>
+        </main>
+
+        <!-- ВКЛАДКА 2: КАТАЛОГ ОВЕЦЬ -->
+        <section id="view-catalog" class="ios-view" hidden aria-labelledby="catalog-title">
+          <header class="ios-navbar">
+            <div class="ios-navbar-top">
+              <span class="ios-navbar-eyebrow">Верифіковане поголів'я</span>
+              <button type="button" class="ios-nav-btn" id="toggle-select-mode-btn">Обрати</button>
+            </div>
+            <h2 class="ios-large-title" id="catalog-title">Інвестувати</h2>
+          </header>
+
+          <div class="ios-scroll" style="padding-block-end: 76px;">
+            <search>
+              <form class="ios-search" id="cat-search-form" action="#">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/>
+                </svg>
+                <label for="cat-q" class="visually-hidden">Пошук овець</label>
+                <input type="search" id="cat-q" name="q" placeholder="Пошук за ім'ям або фермою" autocorrect="off" autocapitalize="none" spellcheck="false">
+              </form>
+            </search>
+
+            <div class="ios-section-header">Доступні для інвестування</div>
+            <div class="ios-group" id="catalog-list"></div>
+          </div>
+
+          <!-- Компактна плаваюча кнопка пакетного інвестування в режимі вибору -->
+          <div id="batch-cta-wrap" hidden style="position:absolute;inset-inline:0;inset-block-end:8px;z-index:10;">
+            <button type="button" class="ios-primary-btn" id="open-batch-sheet-btn" style="margin-block:0;box-shadow:0 8px 24px rgba(0,122,255,0.32);">
+              Інвестувати у вибраних (0)
+            </button>
+          </div>
+        </section>
+
+        <!-- ВКЛАДКА 3: ПРОФІЛЬ ІНВЕСТОРА -->
+        <section id="view-account" class="ios-view" hidden aria-labelledby="account-title">
+          <header class="ios-navbar">
+            <div class="ios-navbar-top">
+              <span class="ios-navbar-eyebrow">єВівця ID</span>
+              <button type="button" class="ios-nav-btn semibold" id="save-investor-btn">Зберегти</button>
+            </div>
+            <h2 class="ios-large-title" id="account-title">Профіль</h2>
+          </header>
+
+          <div class="ios-scroll">
+            <div class="ios-section-header">Активний інвестор</div>
+            <div class="ios-group">
+              <div class="ios-field-row">
+                <label for="investor-switcher">Акаунт</label>
+                <select id="investor-switcher"></select>
+              </div>
+            </div>
+
+            <div class="ios-section-header">Особисті дані та виплати</div>
+            <form id="investor-form" class="ios-group" action="#">
+              <div class="ios-field-row">
+                <label for="i-desc">ПІБ</label>
+                <input type="text" id="i-desc" name="Description" autocomplete="name">
+              </div>
+              <div class="ios-field-row">
+                <label for="i-phone">Телефон</label>
+                <input type="tel" id="i-phone" name="Phone" autocomplete="tel">
+              </div>
+              <div class="ios-field-row">
+                <label for="i-tax">ІПН</label>
+                <input type="text" id="i-tax" name="TaxId" inputmode="numeric">
+              </div>
+              <div class="ios-field-row">
+                <label for="i-iban">IBAN</label>
+                <input type="text" id="i-iban" name="PayoutDetails" autocorrect="off" autocapitalize="none" spellcheck="false">
+              </div>
+            </form>
+
+            <button type="button" class="ios-secondary-btn" id="reset-db-btn" style="color: var(--ios-red);">
+              Скинути демо-дані
+            </button>
+          </div>
+        </section>
+
+        <!-- iOS Tab Bar -->
+        <nav class="ios-tabbar" aria-label="Головна навігація">
+          <button type="button" class="ios-tab" data-tab="portfolio" aria-selected="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+              <path d="M8.4 8.6a2.8 2.8 0 0 1 4.9-1.7 2.8 2.8 0 0 1 4.8.5 2.8 2.8 0 0 1 2.5 4.5 2.8 2.8 0 0 1-2.3 4.5 2.8 2.8 0 0 1-4.6.5 2.8 2.8 0 0 1-4.4-1.5" stroke-linejoin="round"/>
+              <ellipse cx="5.7" cy="11.3" rx="2.8" ry="3.3" transform="rotate(-15 5.7 11.3)"/>
+              <path d="M3.3 9 1.9 8.1M10.6 17v3.4M16.4 17v3.4" stroke-linecap="round"/>
+            </svg>
+            <span>Кіберферма</span>
+          </button>
+          <button type="button" class="ios-tab" data-tab="catalog" aria-selected="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+              <path d="M12 3v18M16.6 7.4C16.2 5.8 14.4 4.8 12 4.8c-2.7 0-4.5 1.3-4.5 3.3 0 4.8 9.3 2.6 9.3 7.6 0 2.1-2 3.5-4.8 3.5-2.6 0-4.4-1.1-4.9-3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Інвестувати</span>
+          </button>
+          <button type="button" class="ios-tab" data-tab="account" aria-selected="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+              <circle cx="12" cy="8.5" r="3.8"/><path d="M5 19.5c1.6-3 4.1-4.5 7-4.5s5.4 1.5 7 4.5" stroke-linecap="round"/>
+            </svg>
+            <span>Профіль</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- iOS Sheet: Пакетна інвестиція у кілька овець -->
+      <div id="sheet-batch" class="ios-sheet-layer" hidden role="dialog" aria-labelledby="batch-sheet-title">
+        <div class="ios-sheet">
+          <div class="ios-sheet-grabber"></div>
+          <div class="ios-sheet-header">
+            <button type="button" class="ios-nav-btn start-action" id="close-batch-sheet-btn">Скасувати</button>
+            <h2 id="batch-sheet-title">Пакетна інвестиція</h2>
+            <button type="submit" form="batch-form" class="ios-nav-btn semibold end-action">Підтвердити</button>
+          </div>
+          <form id="batch-form" class="ios-sheet-body" action="#"></form>
+        </div>
+      </div>
+
+      <div class="home-indicator" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <script src="./shared-data.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const Store = window.SheepSystemStore;
+      const UI = window.SheepSystemUI;
+
+      let activeInvestorCode = localStorage.getItem('ios_investor_code') || 'INV-00001';
+      let selectMode = false;
+      const selectedCodes = new Set();
+      let lastInvoker = null;
+
+      const mainApp = document.getElementById('main-app');
+      const sheetBatch = document.getElementById('sheet-batch');
+      const catQ = document.getElementById('cat-q');
+
+      function esc(str) {
+        return String(str ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      const views = {
+        portfolio: document.getElementById('view-portfolio'),
+        catalog: document.getElementById('view-catalog'),
+        account: document.getElementById('view-account')
+      };
+
+      function switchTab(target) {
+        if (!views[target]) target = 'portfolio';
+        document.querySelectorAll('.ios-tab').forEach((b) => {
+          b.setAttribute('aria-selected', String(b.dataset.tab === target));
+        });
+        Object.entries(views).forEach(([key, el]) => {
+          el.hidden = key !== target;
+        });
+        const hero = target === 'portfolio';
+        mainApp.classList.toggle('hero-mode', hero);
+        document.querySelector('.iphone-screen').classList.toggle('status-light', hero);
+        if (hero && window.EarnSheet) requestAnimationFrame(() => window.EarnSheet.measure());
+      }
+
+      document.querySelectorAll('.ios-tab').forEach((tabBtn) => {
+        tabBtn.addEventListener('click', () => {
+          const target = tabBtn.dataset.tab;
+          switchTab(target);
+          history.replaceState(null, '', target === 'portfolio' ? location.pathname + location.search : `#${target}`);
+        });
+      });
+
+      const initialTab = location.hash === '#catalog' ? 'catalog' : location.hash === '#account' ? 'account' : 'portfolio';
+
+      document.getElementById('cat-search-form').addEventListener('submit', (e) => e.preventDefault());
+      catQ.addEventListener('input', renderAll);
+
+      // Режим пакетного вибору в каталозі
+      document.getElementById('toggle-select-mode-btn').addEventListener('click', (e) => {
+        selectMode = !selectMode;
+        if (!selectMode) selectedCodes.clear();
+        e.currentTarget.textContent = selectMode ? 'Готово' : 'Обрати';
+        e.currentTarget.classList.toggle('semibold', selectMode);
+        renderAll();
+      });
+
+      function updateBatchBar() {
+        const wrap = document.getElementById('batch-cta-wrap');
+        const btn = document.getElementById('open-batch-sheet-btn');
+        if (selectMode && selectedCodes.size > 0) {
+          wrap.hidden = false;
+          btn.textContent = `Інвестувати у вибраних (${selectedCodes.size})`;
+        } else {
+          wrap.hidden = true;
+        }
+      }
+
+      function renderCatalog(db) {
+        const inv = Store.getInvestorByCode(activeInvestorCode, db);
+        const ownedSet = new Set((inv ? inv.InvestorSheep : []).map((r) => r.Sheep));
+
+        const q = catQ.value.trim().toLowerCase();
+        const verified = db.Catalogs.Sheep.filter((s) => {
+          if (s.VerificationStatus !== 'Verified') return false;
+          if (q) {
+            const farmer = Store.getFarmerByCode(s.Farmer, db);
+            const hay = `${s.Description} ${s.EarTagNumber} ${farmer ? farmer.FarmName : ''}`.toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          return true;
+        });
+
+        updateBatchBar();
+
+        const listEl = document.getElementById('catalog-list');
+        if (!verified.length) {
+          listEl.innerHTML = `<div class="ios-empty">Немає верифікованих овець за цим фільтром</div>`;
+          return;
+        }
+
+        listEl.innerHTML = verified
+          .map((s) => {
+            const farmer = Store.getFarmerByCode(s.Farmer, db);
+            const pMeta = Store.Enums.SheepPurpose[s.Purpose];
+            const isOwned = ownedSet.has(s.Code);
+            const isSelected = selectedCodes.has(s.Code);
+
+            return `
+              <a class="ios-row has-thumb" href="./ye-vivtsia-sheep.html?code=${encodeURIComponent(s.Code)}&from=catalog" data-cat-sheep="${esc(s.Code)}">
+                ${selectMode ? `
+                  <span style="inline-size:22px;block-size:22px;border-radius:99px;display:grid;place-items:center;flex:none;border:${isSelected ? '0' : '1.5px solid #C7C7CC'};background:${isSelected ? 'var(--ios-tint)' : 'transparent'};color:#fff;font-size:13px;">
+                    ${isSelected ? '✓' : ''}
+                  </span>
+                ` : ''}
+                <div class="ios-thumb">
+                  <img src="${s.FullBodyPhoto}" alt="${esc(s.Description)}" width="50" height="50">
+                </div>
+                <div class="ios-row-main">
+                  <p class="ios-row-title">
+                    <span>${esc(s.Description)}</span>
+                    ${isOwned ? '<span class="ios-pill blue">У наборі</span>' : ''}
+                  </p>
+                  <p class="ios-row-sub">${farmer ? esc(farmer.FarmName) : ''} • ${esc(pMeta.shortLabel)}</p>
+                </div>
+                <div class="ios-row-Side">
+                  <span style="font-size:13px;color:var(--ios-green-ink);font-weight:500;">${esc(pMeta.apr.split(' ')[0])}</span>
+                  <span class="ios-chevron" aria-hidden="true">›</span>
+                </div>
+              </a>
+            `;
+          })
+          .join('');
+      }
+
+      function renderPortfolio(db) {
+        const inv = Store.getInvestorByCode(activeInvestorCode, db);
+        if (!inv) return;
+
+        const sum = Store.calculateInvestorSummary(activeInvestorCode, db);
+        document.getElementById('wallet-networth').textContent = UI.formatMoney(sum.netWorth);
+        document.getElementById('wallet-invested').textContent = UI.formatMoney(sum.totalInvested);
+        document.getElementById('wallet-yield').textContent = '+' + UI.formatMoney(sum.totalYield);
+        document.getElementById('earn-yield').textContent = '+' + UI.formatMoney(sum.totalYield);
+        document.getElementById('earn-count').textContent = String(sum.sheepCount);
+        const roi = sum.totalInvested > 0 ? (sum.totalYield / sum.totalInvested) * 100 : 0;
+        document.getElementById('earn-roi').textContent =
+          `+${roi.toLocaleString('uk-UA', { maximumFractionDigits: 1 })}% до вкладень`;
+
+        const portfolio = Store.getInvestorPortfolioResolved(activeInvestorCode, db);
+        const portEl = document.getElementById('portfolio-list');
+        if (!portfolio.length) {
+          portEl.innerHTML = `<div class="ios-empty">Оберіть овець у вкладці «Інвестувати»</div>`;
+        } else {
+          portEl.innerHTML = portfolio
+            .map(({ sheep, accounting }) => {
+              const pMeta = Store.Enums.SheepPurpose[sheep.Purpose];
+              return `
+                <a class="ios-row has-thumb" href="./ye-vivtsia-sheep.html?code=${encodeURIComponent(sheep.Code)}&from=portfolio" data-port-sheep="${esc(sheep.Code)}">
+                  <div class="ios-thumb">
+                    <img src="${sheep.FullBodyPhoto}" alt="${esc(sheep.Description)}" width="50" height="50">
+                  </div>
+                  <div class="ios-row-main">
+                    <p class="ios-row-title">${esc(sheep.Description)}</p>
+                    <p class="ios-row-sub">${esc(pMeta.shortLabel)} • ${esc(sheep.EarTagNumber)}</p>
+                  </div>
+                  <div style="text-align:end;flex:none;">
+                    <div style="font-size:15px;font-weight:600;">${UI.formatMoney(accounting.invested)}</div>
+                    ${accounting.yieldAccrued > 0 ? `<div style="font-size:12px;color:var(--ios-green-ink);">+${UI.formatMoney(accounting.yieldAccrued)}</div>` : ''}
+                  </div>
+                  <span class="ios-chevron" aria-hidden="true">›</span>
+                </a>
+              `;
+            })
+            .join('');
+        }
+
+        const myDocs = db.Documents.InvestmentOperations.filter((d) => d.Investor === activeInvestorCode);
+        const ledgerEl = document.getElementById('ledger-list');
+        if (!myDocs.length) {
+          ledgerEl.innerHTML = `<div class="ios-empty" style="padding:24px;">Операцій поки немає</div>`;
+        } else {
+          ledgerEl.innerHTML = myDocs
+            .map((d) => {
+              const isYield = d.OperationType === 'YieldAccrual';
+              return `
+                <div class="ios-row">
+                  <div class="ios-row-main">
+                    <p class="ios-row-title" style="font-size:15px;font-weight:500;">${esc(d.Note)}</p>
+                    <p class="ios-row-sub">${esc(d.DocNumber)} • ${esc(UI.formatDate(d.Date))}</p>
+                  </div>
+                  <span style="font-size:15px;font-weight:600;white-space:nowrap;color:${isYield ? 'var(--ios-green-ink)' : 'var(--ios-label)'};">
+                    ${isYield ? '+' : ''}${UI.formatMoney(d.Amount)}
+                  </span>
+                </div>
+              `;
+            })
+            .join('');
+        }
+      }
+
+      // ---------- Повноекранне фото з галереї (не прив'язане до конкретної вівці) ----------
+      const ASSETS = 'https://originsystemlab.com/__l5e/assets-v1';
+      const GALLERY = [
+        { src: `${ASSETS}/6d038bcc-f909-4e8a-a8db-5dcce3da0f45/Golden_Hour_Shepherd_in_the_Carpathians.png`, pos: '50% 50%' },
+        { src: `${ASSETS}/3708ed0c-9032-440c-bbf1-fb2eafeb7daa/sheep-bilka-post3.png`, pos: '50% 45%' },
+        { src: `${ASSETS}/20ee45d5-94df-4659-a1b1-b51fce1ec84f/carpathian-flock-golden-hour.png`, pos: '50% 50%' },
+        { src: './images/sheep-2.jpg', pos: '46% 35%' },
+        { src: './images/sheep-1.webp', pos: '50% 45%' },
+        { src: './images/sheep-3.jpg', pos: '50% 40%' },
+        { src: './images/sheep-4.jpg', pos: '82% 40%' }
+      ];
+      let heroIndex = 0;
+      let heroTimer = null;
+
+      function renderHero() {
+        const slides = GALLERY;
+        heroIndex = 0;
+        document.getElementById('hero-photo').innerHTML = slides
+          .map((x, i) => `<img src="${esc(x.src)}" alt="" style="object-position:${x.pos}" class="${i === 0 ? 'active' : ''}" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}>`)
+          .join('');
+        document.getElementById('hero-dots').innerHTML = slides.length > 1
+          ? slides.map((_, i) => `<span class="hero-dot${i === 0 ? ' active' : ''}"></span>`).join('')
+          : '';
+        // Якщо якесь фото не завантажилось — прибираємо його з показу
+        document.querySelectorAll('#hero-photo img').forEach((img) => {
+          img.addEventListener('error', () => {
+            const imgs = Array.from(document.querySelectorAll('#hero-photo img'));
+            const k = imgs.indexOf(img);
+            const wasActive = img.classList.contains('active');
+            img.remove();
+            const dot = document.querySelectorAll('.hero-dot')[k];
+            if (dot) dot.remove();
+            if (wasActive || heroIndex >= imgs.length - 1) goHero(Math.min(k, imgs.length - 2), true);
+          }, { once: true });
+        });
+        restartHeroTimer();
+      }
+
+      function goHero(i) {
+        const imgs = document.querySelectorAll('#hero-photo img');
+        if (!imgs.length) return;
+        heroIndex = (i + imgs.length) % imgs.length;
+        imgs.forEach((img, k) => img.classList.toggle('active', k === heroIndex));
+        document.querySelectorAll('.hero-dot').forEach((d, k) => d.classList.toggle('active', k === heroIndex));
+      }
+
+      function restartHeroTimer() {
+        clearInterval(heroTimer);
+        if (document.querySelectorAll('#hero-photo img').length > 1 && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          heroTimer = setInterval(() => goHero(heroIndex + 1), 7000);
+        }
+      }
+
+      // ---------- Плаваюча картка заробітку: тягнеш угору — розгортаються деталі ----------
+      window.EarnSheet = (function () {
+        const view = views.portfolio;
+        const sheet = document.getElementById('earn-sheet');
+        const handle = document.getElementById('earn-handle');
+        const body = document.getElementById('earn-body');
+        const TOP_GAP = 60;
+        let h = 0;
+        let minH = 0;
+        let maxH = 0;
+        let expanded = false;
+        let drag = null;
+        let suppressClick = false;
+
+        function setH(v, animate) {
+          h = v;
+          sheet.classList.toggle('animating', !!animate);
+          sheet.style.blockSize = `${h}px`;
+          const p = maxH > minH ? Math.min(1, Math.max(0, (h - minH) / (maxH - minH))) : 0;
+          view.style.setProperty('--p', p.toFixed(3));
+        }
+
+        function measure() {
+          if (view.hidden || !view.offsetHeight) return;
+          minH = handle.offsetHeight;
+          const bottom = parseFloat(getComputedStyle(sheet).bottom) || 0;
+          maxH = view.offsetHeight - bottom - TOP_GAP;
+          view.style.setProperty('--peek', `${minH + bottom}px`);
+          setH(expanded ? maxH : minH, false);
+        }
+
+        function snap(open) {
+          expanded = open;
+          handle.setAttribute('aria-expanded', String(open));
+          view.classList.toggle('sheet-open', open);
+          if (open) body.removeAttribute('inert');
+          else {
+            body.setAttribute('inert', '');
+            body.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+          setH(open ? maxH : minH, true);
+          if (open) clearInterval(heroTimer); else restartHeroTimer();
+        }
+
+        sheet.addEventListener('pointerdown', (e) => {
+          if (e.button !== 0) return;
+          const inHandle = handle.contains(e.target);
+          if (expanded && !inHandle && body.scrollTop > 0) return;
+          drag = { id: e.pointerId, startY: e.clientY, startH: h, inHandle, moved: false, samples: [[e.timeStamp, e.clientY]] };
+        });
+
+        sheet.addEventListener('pointermove', (e) => {
+          if (!drag || e.pointerId !== drag.id) return;
+          const dy = e.clientY - drag.startY;
+          if (!drag.moved) {
+            if (Math.abs(dy) < 6) return;
+            if (expanded && !drag.inHandle && dy < 0) { drag = null; return; }
+            drag.moved = true;
+            sheet.setPointerCapture(e.pointerId);
+          }
+          let next = drag.startH - dy;
+          if (next > maxH) next = maxH + (next - maxH) / 3;
+          if (next < minH) next = minH - (minH - next) / 3;
+          setH(next, false);
+          drag.samples.push([e.timeStamp, e.clientY]);
+          if (drag.samples.length > 5) drag.samples.shift();
+        });
+
+        function endDrag(e) {
+          if (!drag || e.pointerId !== drag.id) return;
+          const d = drag;
+          drag = null;
+          if (!d.moved) return;
+          suppressClick = true;
+          setTimeout(() => { suppressClick = false; }, 0);
+          const [t0, y0] = d.samples[0];
+          const [t1, y1] = d.samples[d.samples.length - 1];
+          const v = t1 > t0 ? (y1 - y0) / (t1 - t0) : 0;
+          let open;
+          if (v < -0.35) open = true;
+          else if (v > 0.35) open = false;
+          else open = h > (minH + maxH) / 2;
+          snap(open);
+        }
+        sheet.addEventListener('pointerup', endDrag);
+        sheet.addEventListener('pointercancel', endDrag);
+
+        sheet.addEventListener('click', (e) => {
+          if (suppressClick) { e.preventDefault(); e.stopPropagation(); }
+        }, true);
+
+        handle.addEventListener('click', () => snap(!expanded));
+
+        let wheelLock = 0;
+        view.addEventListener('wheel', (e) => {
+          if (Date.now() < wheelLock) return;
+          if (!expanded && e.deltaY > 12) { snap(true); wheelLock = Date.now() + 600; }
+          else if (expanded && e.deltaY < -12 && body.scrollTop <= 0 && !drag) { snap(false); wheelLock = Date.now() + 600; }
+        }, { passive: true });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && expanded && sheetBatch.hidden && !view.hidden) snap(false);
+        });
+
+        new ResizeObserver(() => { if (!drag && !sheet.classList.contains('animating')) measure(); }).observe(view);
+        return { measure, snap };
+      })();
+
+      renderHero();
+
+      function renderAccount(db) {
+        const switcher = document.getElementById('investor-switcher');
+        if (!db.Catalogs.Investors.some((i) => i.Code === activeInvestorCode) && db.Catalogs.Investors.length) {
+          activeInvestorCode = db.Catalogs.Investors[0].Code;
+        }
+        switcher.innerHTML = db.Catalogs.Investors
+          .map((i) => `<option value="${esc(i.Code)}" ${i.Code === activeInvestorCode ? 'selected' : ''}>${esc(i.Description)}</option>`)
+          .join('');
+
+        const inv = Store.getInvestorByCode(activeInvestorCode, db);
+        if (!inv) return;
+        document.getElementById('i-desc').value = inv.Description;
+        document.getElementById('i-phone').value = inv.Phone;
+        document.getElementById('i-tax').value = inv.TaxId;
+        document.getElementById('i-iban').value = inv.PayoutDetails;
+      }
+
+      function renderAll() {
+        const db = Store.getState();
+        renderPortfolio(db);
+        renderCatalog(db);
+        renderAccount(db);
+      }
+
+      // Відкриття пакетної інвестиції
+      document.getElementById('open-batch-sheet-btn').addEventListener('click', (e) => {
+        lastInvoker = e.currentTarget;
+        const db = Store.getState();
+        const list = Array.from(selectedCodes).map((c) => Store.getSheepByCode(c, db)).filter(Boolean);
+        if (!list.length) return;
+
+        const form = document.getElementById('batch-form');
+        form.innerHTML = `
+          <div class="ios-section-header">Сума для кожної обраної вівці</div>
+          <div class="ios-group">
+            ${list.map((s) => `
+              <div class="ios-field-row">
+                <label for="b-amt-${esc(s.Code)}">${esc(s.Description)}</label>
+                <input type="text" inputmode="numeric" id="b-amt-${esc(s.Code)}" data-batch-sheep="${esc(s.Code)}" value="10000" required>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        UI.openSheet(sheetBatch, mainApp);
+      });
+
+      document.getElementById('batch-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const inputs = Array.from(e.target.querySelectorAll('[data-batch-sheep]'));
+        const items = inputs
+          .map((inp) => ({ sheepCode: inp.dataset.batchSheep, amount: parseInt(inp.value.replace(/\s+/g, ''), 10) }))
+          .filter((i) => Number.isFinite(i.amount) && i.amount > 0);
+        if (!items.length) return;
+
+        const docs = Store.investInSheepBatch({ investorCode: activeInvestorCode, items });
+        selectedCodes.clear();
+        selectMode = false;
+        document.getElementById('toggle-select-mode-btn').textContent = 'Обрати';
+        document.getElementById('toggle-select-mode-btn').classList.remove('semibold');
+        UI.closeSheet(sheetBatch, mainApp, null);
+        switchTab('portfolio');
+        history.replaceState(null, '', location.pathname + location.search);
+        const total = docs.reduce((a, d) => a + d.Amount, 0);
+        UI.showBanner(`Інвестовано ${UI.formatMoney(total)}`, `Додано у Кіберферму: ${docs.length}`);
+      });
+
+      document.addEventListener('click', (e) => {
+        const catRow = e.target.closest('[data-cat-sheep]');
+        if (catRow) {
+          const code = catRow.dataset.catSheep;
+          if (selectMode) {
+            e.preventDefault();
+            if (selectedCodes.has(code)) selectedCodes.delete(code);
+            else selectedCodes.add(code);
+            renderAll();
+          } else {
+            sessionStorage.setItem('investor_selected_sheep', code);
+            sessionStorage.setItem('investor_from_tab', 'catalog');
+          }
+          return;
+        }
+        const portRow = e.target.closest('[data-port-sheep]');
+        if (portRow) {
+          sessionStorage.setItem('investor_selected_sheep', portRow.dataset.portSheep);
+          sessionStorage.setItem('investor_from_tab', 'portfolio');
+        }
+      });
+
+      document.getElementById('close-batch-sheet-btn').addEventListener('click', () => {
+        UI.closeSheet(sheetBatch, mainApp, lastInvoker);
+      });
+
+      sheetBatch.addEventListener('click', (e) => {
+        if (e.target === sheetBatch) UI.closeSheet(sheetBatch, mainApp, lastInvoker);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !sheetBatch.hidden) {
+          UI.closeSheet(sheetBatch, mainApp, lastInvoker);
+        }
+      });
+
+      // Профіль інвестора
+      document.getElementById('investor-switcher').addEventListener('change', (e) => {
+        activeInvestorCode = e.target.value;
+        localStorage.setItem('ios_investor_code', activeInvestorCode);
+        selectedCodes.clear();
+        renderAll();
+      });
+
+      document.getElementById('save-investor-btn').addEventListener('click', () => {
+        Store.updateInvestorProfile(activeInvestorCode, {
+          Description: document.getElementById('i-desc').value.trim(),
+          Phone: document.getElementById('i-phone').value.trim(),
+          TaxId: document.getElementById('i-tax').value.trim(),
+          PayoutDetails: document.getElementById('i-iban').value.trim()
+        });
+        UI.showBanner('Профіль оновлено');
+      });
+
+      document.getElementById('reset-db-btn').addEventListener('click', () => {
+        Store.resetToDemoData();
+        UI.showBanner('Демо-дані відновлено');
+      });
+
+      Store.subscribe(renderAll);
+      renderAll();
+      switchTab(initialTab);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Картка вівці — МоєСтадо</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body class="app-farmer">
+  <div id="sr-live" class="visually-hidden" aria-live="polite"></div>
+
+  <nav class="studio-bar" aria-label="Перемикання додатків">
+    <a class="studio-link active" href="./moe-stado.html">МоєСтадо</a>
+    <a class="studio-link" href="./ye-vivtsia.html">єВівця</a>
+  </nav>
+
+  <div class="iphone-device">
+    <div class="iphone-screen">
+      <!-- iOS Status Bar + Dynamic Island -->
+      <div class="ios-statusbar" aria-hidden="true">
+        <span class="ios-time">9:41</span>
+        <div class="dynamic-island"></div>
+        <div class="ios-status-icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor">
+            <rect x="0" y="7" width="3" height="4" rx="1"/>
+            <rect x="4.5" y="5" width="3" height="6" rx="1"/>
+            <rect x="9" y="2.5" width="3" height="8.5" rx="1"/>
+            <rect x="13.5" y="0" width="3" height="11" rx="1"/>
+          </svg>
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor">
+            <path d="M7.5 10.8a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6Zm-3.3-3a4.7 4.7 0 0 1 6.6 0l1.2-1.2a6.4 6.4 0 0 0-9 0l1.2 1.2Zm-2.6-2.6a8.3 8.3 0 0 1 11.8 0L14.6 4A10 10 0 0 0 .4 4l1.2 1.2Z"/>
+          </svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+            <rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/>
+            <rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/>
+            <path d="M23 4v4a2 2 0 0 0 0-4Z" fill="currentColor" fill-opacity="0.4"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- iOS Push Banner -->
+      <div id="ios-banner" class="ios-banner" role="status">
+        <p class="ios-banner-title"></p>
+        <p class="ios-banner-sub"></p>
+      </div>
+
+      <!-- Окрема сторінка перегляду вівці -->
+      <div class="ios-app">
+        <header class="ios-subpage-navbar">
+          <a class="ios-back-link" href="./moe-stado.html">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+              <path d="m15 19-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Стадо</span>
+          </a>
+          <h1 id="page-title">Вівця</h1>
+          <div class="ios-subpage-end" id="page-status"></div>
+        </header>
+
+        <main class="ios-scroll" id="page-content" style="padding-block: 14px 40px;"></main>
+      </div>
+
+      <div class="home-indicator" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <script src="./shared-data.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      const Store = window.SheepSystemStore;
+      const UI = window.SheepSystemUI;
+
+      const params = new URLSearchParams(location.search);
+      const sheepCode = params.get('code') || sessionStorage.getItem('farmer_selected_sheep') || 'SHP-00101';
+
+      function esc(str) {
+        return String(str ?? '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function statusPillHtml(status) {
+        if (status === 'Verified') return '<span class="ios-pill green">Верифікована</span>';
+        if (status === 'Rejected') return '<span class="ios-pill red">Відхилена</span>';
+        return '<span class="ios-pill orange">На перевірці</span>';
+      }
+
+      function render() {
+        const db = Store.getState();
+        const s = Store.getSheepByCode(sheepCode, db) || db.Catalogs.Sheep[0];
+        if (!s) return;
+
+        const farmer = Store.getFarmerByCode(s.Farmer, db);
+        document.title = `${s.Description} — МоєСтадо`;
+        document.getElementById('page-title').textContent = s.Description;
+        document.getElementById('page-status').innerHTML = statusPillHtml(s.VerificationStatus);
+
+        const content = document.getElementById('page-content');
+        content.innerHTML = `
+          <div class="ios-photo-carousel">
+            <div class="ios-photo-slide">
+              <img src="${s.FullBodyPhoto}" alt="У повний зріст — ${esc(s.Description)}" width="320" height="213">
+              <div class="ios-photo-caption"><span>Повний зріст</span><span>1 / 3</span></div>
+            </div>
+            <div class="ios-photo-slide">
+              <img src="${s.EarTagPhoto}" alt="Вушна бирка ${esc(s.EarTagNumber)}" width="320" height="213">
+              <div class="ios-photo-caption"><span>Вухо з номером</span><span>2 / 3</span></div>
+            </div>
+            <div class="ios-photo-slide">
+              <img src="${s.StateCertificatePhoto}" alt="Рожеве державне свідоцтво" width="320" height="213">
+              <div class="ios-photo-caption"><span>Рожеве свідоцтво</span><span>3 / 3</span></div>
+            </div>
+          </div>
+
+          ${s.VerificationStatus === 'Rejected' && s.VerificationComment ? `
+            <div class="ios-group" style="padding:12px 16px;background:rgba(255,59,48,0.08);">
+              <p style="margin:0 0 10px;font-size:13.5px;color:#D70015;">${esc(s.VerificationComment)}</p>
+              <button type="button" class="ios-pill red" id="resubmit-cert-btn" style="border:0;padding:8px 12px;cursor:pointer;font-weight:600;">
+                Замінити свідоцтво та подати знову
+              </button>
+            </div>
+          ` : ''}
+
+          <div class="ios-section-header">Цифровий паспорт</div>
+          <div class="ios-group">
+            <div class="ios-row">
+              <div class="ios-row-main"><p class="ios-row-title" style="font-weight:400;">Кличка</p></div>
+              <span style="color:var(--ios-secondary);font-size:15px;">${esc(s.Description)}</span>
+            </div>
+            <div class="ios-row">
+              <div class="ios-row-main"><p class="ios-row-title" style="font-weight:400;">Номер бирки</p></div>
+              <span style="color:var(--ios-secondary);font-size:15px;">${esc(s.EarTagNumber)}</span>
+            </div>
+            <div class="ios-field-row">
+              <label for="detail-purpose">Призначення</label>
+              <select id="detail-purpose" name="purpose" style="color:var(--ios-secondary);font-size:15px;cursor:pointer;">
+                <option value="ForBreeding" ${s.Purpose === 'ForBreeding' ? 'selected' : ''}>На розмноження</option>
+                <option value="ForMeat" ${s.Purpose === 'ForMeat' ? 'selected' : ''}>На м'ясо</option>
+              </select>
+            </div>
+            <div class="ios-row">
+              <div class="ios-row-main"><p class="ios-row-title" style="font-weight:400;">GPS-маячок</p></div>
+              <span style="color:${s.GpsTrackerId ? 'var(--ios-green-ink)' : 'var(--ios-secondary)'};font-size:15px;">${s.GpsTrackerId ? esc(s.GpsTrackerId) : 'Не підключено'}</span>
+            </div>
+            <div class="ios-row">
+              <div class="ios-row-main"><p class="ios-row-title" style="font-weight:400;">Господарство</p></div>
+              <span style="color:var(--ios-secondary);font-size:14px;">${farmer ? esc(farmer.FarmName) : ''}</span>
+            </div>
+            <div class="ios-row">
+              <div class="ios-row-main"><p class="ios-row-title" style="font-weight:400;">Зареєстровано</p></div>
+              <span style="color:var(--ios-secondary);font-size:15px;">${esc(UI.formatDate(s.RegistrationDate))}</span>
+            </div>
+          </div>
+
+          <div class="ios-section-header">Токен у картці вівці</div>
+          <div class="ios-group">
+            <div class="ios-row">
+              <div class="ios-row-main">
+                <p class="ios-row-title" style="font-size:14px;font-weight:500;font-family:ui-monospace,monospace;">${esc(s.Token)}</p>
+              </div>
+            </div>
+          </div>
+        `;
+
+        content.querySelector('#detail-purpose').addEventListener('change', (e) => {
+          const next = e.target.value;
+          Store.updateSheepPurpose(s.Code, next);
+          UI.showBanner('Призначення оновлено', `${s.Description} → ${Store.Enums.SheepPurpose[next].label}`);
+        });
+
+        const resub = content.querySelector('#resubmit-cert-btn');
+        if (resub) {
+          resub.addEventListener('click', () => {
+            const cleanCert = Store.generateStateCertificatePhoto(
+              s.EarTagNumber,
+              s.Description,
+              farmer ? farmer.FarmName : 'Господарство',
+              new Date().toISOString().slice(0, 10),
+              false
+            );
+            Store.resubmitSheepPhotos(s.Code, { stateCertificatePhoto: cleanCert });
+            UI.showBanner('Повторно надіслано', `Картка «${s.Description}» на перевірці`);
+          });
+        }
+      }
+
+      Store.subscribe(render);
+      render();
+    })();
+  </script>
+</body>
+</html>

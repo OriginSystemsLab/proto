@@ -1,0 +1,1860 @@
+/* ==========================================================================
+   iOS 18 Human Interface Guidelines Minimalist System + iPhone Hardware Frame
+   ========================================================================== */
+
+@view-transition {
+  navigation: auto;
+}
+
+:root {
+  --studio-bg: #E5E5EA;
+  --ios-bg: #F2F2F7;
+  --ios-card: #FFFFFF;
+  --ios-fill: rgba(118, 118, 128, 0.12);
+  --ios-label: #000000;
+  --ios-secondary: #8E8E93;
+  --ios-tertiary: #C7C7CC;
+  --ios-separator: rgba(60, 60, 67, 0.2);
+  --ios-tint: #007AFF;
+  --ios-green: #34C759;
+  --ios-green-ink: #1E7E34;
+  --ios-orange: #FF9500;
+  --ios-red: #FF3B30;
+  --target-size: 24px;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --target-size: 44px;
+  }
+}
+
+body.app-farmer {
+  --ios-tint: #248A3D;
+}
+
+body.app-investor {
+  --ios-tint: #007AFF;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  color: var(--ios-label);
+  background: var(--studio-bg);
+}
+
+body {
+  margin: 0;
+  min-block-size: 100dvh;
+  background: var(--studio-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  gap: 14px;
+  overflow-wrap: anywhere;
+}
+
+img,
+svg {
+  display: block;
+  max-inline-size: 100%;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+[hidden]:not([hidden="until-found"]) {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute;
+  clip-path: inset(50%);
+  overflow: hidden;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ios-tint);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Зовнішній мінімалістичний перемикач над корпусом iPhone
+   ========================================================================== */
+.studio-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 4px;
+  border-radius: 999px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.studio-link {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3A3A3C;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.studio-link:hover {
+  color: #000000;
+}
+
+.studio-link.active {
+  background: #FFFFFF;
+  color: #000000;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   Фізичний корпус iPhone (393 × 852 pt внутрішній екран)
+   ========================================================================== */
+.iphone-device {
+  position: relative;
+  padding: 12px;
+  border-radius: 58px;
+  background: #1C1C1E;
+  box-shadow:
+    0 0 0 2px #3A3A3C,
+    0 0 0 4px #AEAEB2,
+    0 30px 70px rgba(0, 0, 0, 0.24),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+  flex: none;
+}
+
+/* Бічні фізичні кнопки iPhone */
+.iphone-device::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: -6px;
+  inset-block-start: 148px;
+  inline-size: 3px;
+  block-size: 30px;
+  background: #8E8E93;
+  border-radius: 2px 0 0 2px;
+  box-shadow: 0 48px 0 #8E8E93, 0 108px 0 #8E8E93;
+}
+
+.iphone-device::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -6px;
+  inset-block-start: 210px;
+  inline-size: 3px;
+  block-size: 82px;
+  background: #8E8E93;
+  border-radius: 0 2px 2px 0;
+}
+
+.iphone-screen {
+  position: relative;
+  inline-size: 393px;
+  block-size: 852px;
+  border-radius: 46px;
+  background: #000000;
+  overflow: clip;
+  user-select: none;
+}
+
+/* ==========================================================================
+   iOS Системна оболонка (Status Bar, Dynamic Island, Home Indicator)
+   ========================================================================== */
+.ios-statusbar {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 54px;
+  padding: 14px 28px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  z-index: 70;
+  pointer-events: none;
+}
+
+.ios-time {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: #000000;
+  line-height: 22px;
+}
+
+.dynamic-island {
+  position: absolute;
+  inset-block-start: 11px;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  inline-size: 122px;
+  block-size: 35px;
+  border-radius: 20px;
+  background: #000000;
+}
+
+.ios-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  block-size: 22px;
+  color: #000000;
+}
+
+.home-indicator {
+  position: absolute;
+  inset-block-end: 8px;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  inline-size: 134px;
+  block-size: 5px;
+  border-radius: 99px;
+  background: #000000;
+  opacity: 0.85;
+  z-index: 70;
+  pointer-events: none;
+}
+
+/* iOS Push Banner під Dynamic Island */
+.ios-banner {
+  position: absolute;
+  inset-block-start: 54px;
+  inset-inline: 12px;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-radius: 18px;
+  padding: 12px 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
+  transform: translateY(-130px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.25s ease;
+}
+
+.ios-banner.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.ios-banner-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #000000;
+}
+
+.ios-banner-sub {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--ios-secondary);
+}
+
+/* ==========================================================================
+   Головний iOS View та стек навігації
+   ========================================================================== */
+.ios-app {
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+  background: var(--ios-bg);
+  display: flex;
+  flex-direction: column;
+  padding-block-start: 54px;
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), border-radius 0.32s ease, filter 0.32s ease;
+  transform-origin: center top;
+}
+
+.ios-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-block-size: 0;
+  position: relative;
+}
+
+.ios-view[hidden] {
+  display: none;
+}
+
+.ios-app.scaled-back {
+  transform: scale(0.93) translateY(8px);
+  border-radius: 32px;
+  overflow: clip;
+  filter: brightness(0.9);
+}
+
+.ios-navbar {
+  padding: 2px 16px 8px;
+  background: var(--ios-bg);
+  flex: none;
+}
+
+/* Верхня панель окремої сторінки перегляду (UINavigationBar з кнопкою «Назад») */
+.ios-subpage-navbar {
+  min-block-size: 44px;
+  padding: 0 12px 0 6px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  background: rgba(242, 242, 247, 0.88);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-block-end: 0.5px solid var(--ios-separator);
+  flex: none;
+}
+
+.ios-subpage-navbar h1 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  text-align: center;
+}
+
+.ios-back-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-block-size: 44px;
+  padding-inline: 4px 8px;
+  color: var(--ios-tint);
+  font-size: 17px;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.ios-subpage-end {
+  justify-self: end;
+}
+
+.ios-navbar-top {
+  min-block-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ios-navbar-eyebrow {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ios-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ios-navbar-farm-picker {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-inline-size: 0;
+  max-inline-size: calc(100% - 48px);
+}
+
+.ios-navbar-farm-select {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 6px 22px 6px 0;
+  margin: 0;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.35px;
+  color: var(--ios-label);
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  outline: none;
+}
+
+.ios-navbar-farm-chevron {
+  position: absolute;
+  inset-inline-end: 2px;
+  color: var(--ios-secondary);
+  pointer-events: none;
+}
+
+.ios-large-title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 41px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--ios-label);
+}
+
+.ios-nav-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ios-tint);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 400;
+  padding: 6px 4px;
+  min-block-size: 44px;
+  min-inline-size: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+}
+
+.ios-nav-btn:active,
+.ios-back-link:active {
+  opacity: 0.35;
+}
+
+.ios-nav-btn.semibold {
+  font-weight: 600;
+}
+
+/* Стандартний UIBarButtonItem(.add) за iOS HIG: 44x44pt зона кліку, чистий SF Symbol plus без заливки */
+.ios-bar-icon-btn {
+  margin-inline-end: -10px;
+  padding: 0;
+}
+
+/* Скрол-область екрана */
+.ios-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 4px 20px;
+  scrollbar-width: none;
+}
+
+.ios-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================================================
+   iOS Компоненти: Search, Segmented Control, Summary, Inset Grouped List
+   ========================================================================== */
+.ios-search {
+  margin: 0 16px 12px;
+  background: var(--ios-fill);
+  border-radius: 10px;
+  padding: 0 10px;
+  min-block-size: 36px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ios-search svg {
+  flex: none;
+  color: var(--ios-secondary);
+}
+
+.ios-search input {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  inline-size: 100%;
+  min-block-size: 36px;
+  font: inherit;
+  font-size: max(1rem, 17px);
+  color: var(--ios-label);
+  outline: none;
+}
+
+.ios-search input::placeholder {
+  color: var(--ios-secondary);
+}
+
+.ios-segmented {
+  margin: 0 16px 16px;
+  padding: 2px;
+  background: var(--ios-fill);
+  border-radius: 9px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+.ios-seg-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  border-radius: 7px;
+  min-block-size: 28px;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ios-label);
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ios-seg-btn[aria-selected="true"],
+.ios-seg-btn.active {
+  background: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+}
+
+/* Мінімалістична картка метрик */
+.ios-stats-card {
+  margin: 0 16px 16px;
+  background: var(--ios-card);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.ios-stat-cell {
+  min-inline-size: 0;
+}
+
+.ios-stat-cell + .ios-stat-cell {
+  border-inline-start: 0.5px solid var(--ios-separator);
+  padding-inline-start: 10px;
+}
+
+.ios-stat-val {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ios-stat-lbl {
+  margin: 1px 0 0;
+  font-size: 11.5px;
+  color: var(--ios-secondary);
+}
+
+/* Wallet-style Hero Card для портфеля в єВівця */
+.ios-wallet-card {
+  margin: 0 16px 18px;
+  background: var(--ios-card);
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+}
+
+.ios-wallet-caption {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ios-secondary);
+}
+
+.ios-wallet-balance {
+  margin: 2px 0 12px;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ios-wallet-subrow {
+  padding-block-start: 12px;
+  border-block-start: 0.5px solid var(--ios-separator);
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+/* Section header & Inset Grouped List */
+.ios-section-header {
+  padding: 0 32px 6px;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: -0.08px;
+  color: #6D6D72;
+}
+
+.ios-group {
+  margin: 0 16px 20px;
+  background: var(--ios-card);
+  border-radius: 12px;
+  overflow: clip;
+}
+
+.ios-row {
+  position: relative;
+  inline-size: 100%;
+  min-block-size: 48px;
+  padding: 11px 16px;
+  background: transparent;
+  border: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: start;
+  font: inherit;
+  color: var(--ios-label);
+}
+
+button.ios-row,
+a.ios-row {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+button.ios-row:active,
+a.ios-row:active {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.ios-row + .ios-row::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 16px 0;
+  border-block-start: 0.5px solid var(--ios-separator);
+}
+
+.ios-row.has-thumb + .ios-row::before {
+  inset-inline-start: 78px;
+}
+
+.ios-thumb {
+  inline-size: 50px;
+  block-size: 50px;
+  border-radius: 10px;
+  overflow: clip;
+  background: #EFEFF4;
+  flex: none;
+}
+
+.ios-thumb img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.ios-row-main {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+.ios-row-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  line-height: 1.25;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ios-row-sub {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--ios-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ios-row-Side {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  color: var(--ios-secondary);
+  font-size: 15px;
+}
+
+.ios-chevron {
+  color: var(--ios-tertiary);
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+/* Статус-крапки та лаконічні мітки */
+.status-dot {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 99px;
+  flex: none;
+}
+
+.dot-verified {
+  background: var(--ios-green);
+}
+
+.dot-pending {
+  background: var(--ios-orange);
+}
+
+.dot-rejected {
+  background: var(--ios-red);
+}
+
+.ios-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--ios-fill);
+  color: #3A3A3C;
+}
+
+.ios-pill.green {
+  background: rgba(52, 199, 89, 0.14);
+  color: var(--ios-green-ink);
+}
+
+.ios-pill.orange {
+  background: rgba(255, 149, 0, 0.15);
+  color: #B25000;
+}
+
+.ios-pill.red {
+  background: rgba(255, 59, 48, 0.14);
+  color: #D70015;
+}
+
+.ios-pill.blue {
+  background: rgba(0, 122, 255, 0.12);
+  color: #0062CC;
+}
+
+/* Поля вводу у стилі iOS Settings / Contacts */
+.ios-field-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-block-size: 48px;
+  padding: 6px 16px;
+}
+
+.ios-field-row + .ios-field-row::before,
+.ios-row + .ios-field-row::before,
+.ios-field-row + .ios-row::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 16px 0;
+  border-block-start: 0.5px solid var(--ios-separator);
+}
+
+.ios-field-row label {
+  inline-size: 112px;
+  flex: none;
+  font-size: 16px;
+  color: var(--ios-label);
+}
+
+.ios-field-row input,
+.ios-field-row select {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  min-block-size: 36px;
+  font: inherit;
+  font-size: max(1rem, 16px);
+  color: var(--ios-label);
+  text-align: end;
+  outline: none;
+}
+
+.ios-field-row input::placeholder {
+  color: var(--ios-tertiary);
+}
+
+/* Основні кнопки iOS */
+.ios-primary-btn {
+  appearance: none;
+  border: 0;
+  inline-size: calc(100% - 32px);
+  margin: 4px 16px 12px;
+  min-block-size: 50px;
+  border-radius: 14px;
+  background: var(--ios-tint);
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.ios-primary-btn:active {
+  opacity: 0.82;
+}
+
+.ios-secondary-btn {
+  appearance: none;
+  border: 0;
+  inline-size: calc(100% - 32px);
+  margin: 0 16px 12px;
+  min-block-size: 48px;
+  border-radius: 14px;
+  background: rgba(118, 118, 128, 0.12);
+  color: var(--ios-tint);
+  font: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   iOS Bottom Tab Bar (UITabBar)
+   ========================================================================== */
+.ios-tabbar {
+  flex: none;
+  block-size: 83px;
+  padding: 6px 8px 28px;
+  background: rgba(249, 249, 249, 0.88);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-block-start: 0.5px solid rgba(60, 60, 67, 0.24);
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+.ios-tab {
+  position: relative;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: #8E8E93;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ios-tab[aria-selected="true"] {
+  color: var(--ios-tint);
+}
+
+.ios-tab-badge {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: calc(50% + 6px);
+  min-inline-size: 16px;
+  block-size: 16px;
+  padding-inline: 4px;
+  border-radius: 99px;
+  background: var(--ios-red);
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
+}
+
+.ios-tab-badge[hidden] {
+  display: none;
+}
+
+/* ==========================================================================
+   iOS Bottom Sheet (UISheetPresentationController всередині екрана iPhone)
+   ========================================================================== */
+.ios-sheet-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: rgba(0, 0, 0, 0);
+  transition: background-color 0.28s ease;
+}
+
+.ios-sheet-layer[hidden] {
+  display: none;
+}
+
+.ios-sheet-layer.open {
+  background: rgba(0, 0, 0, 0.36);
+}
+
+.ios-sheet {
+  inline-size: 100%;
+  max-block-size: 91%;
+  background: var(--ios-bg);
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ios-sheet-layer.open .ios-sheet {
+  transform: translateY(0);
+}
+
+.ios-sheet-grabber {
+  inline-size: 36px;
+  block-size: 5px;
+  border-radius: 99px;
+  background: #C7C7CC;
+  margin: 6px auto 0;
+  flex: none;
+}
+
+.ios-sheet-header {
+  min-block-size: 46px;
+  padding: 2px 12px 6px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  border-block-end: 0.5px solid var(--ios-separator);
+  flex: none;
+}
+
+.ios-sheet-header h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  text-align: center;
+}
+
+.ios-sheet-header .end-action {
+  justify-self: end;
+}
+
+.ios-sheet-header .start-action {
+  justify-self: start;
+}
+
+.ios-sheet-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 14px 36px;
+  scrollbar-width: none;
+}
+
+.ios-sheet-body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Горизонтальна iOS карусель 3-х фото у картці вівці */
+.ios-photo-carousel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 10px;
+  padding: 0 16px 14px;
+  scrollbar-width: none;
+}
+
+.ios-photo-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.ios-photo-slide {
+  flex: 0 0 86%;
+  scroll-snap-align: center;
+  background: var(--ios-card);
+  border-radius: 14px;
+  overflow: clip;
+}
+
+.ios-photo-slide img {
+  inline-size: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+.ios-photo-caption {
+  padding: 8px 12px;
+  font-size: 12.5px;
+  color: var(--ios-secondary);
+  display: flex;
+  justify-content: space-between;
+}
+
+.ios-empty {
+  padding: 48px 28px;
+  text-align: center;
+  color: var(--ios-secondary);
+  font-size: 15px;
+}
+
+/* Швидкі пресети сум інвестицій */
+.ios-amount-chips {
+  display: flex;
+  gap: 8px;
+  padding: 0 16px 14px;
+}
+
+.ios-chip {
+  flex: 1 1 0;
+  appearance: none;
+  border: 0;
+  min-block-size: 36px;
+  border-radius: 10px;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ios-chip.active {
+  background: var(--ios-tint);
+  color: #FFFFFF;
+}
+
+a.ios-nav-btn,
+button.ios-back-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   iOS Wizard (Повноекранна камера + пунктирний силует вуха з біркою)
+   ========================================================================== */
+.iphone-screen.is-camera-step .ios-time,
+.iphone-screen.is-camera-step .ios-status-icons {
+  color: #FFFFFF;
+}
+
+.iphone-screen.is-camera-step .home-indicator {
+  background: #FFFFFF;
+}
+
+.iphone-screen.is-camera-step .ios-app {
+  background: #0D0E11;
+}
+
+.iphone-screen.is-camera-step .ios-subpage-navbar {
+  position: relative;
+  z-index: 20;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-block-end: 0;
+}
+
+.iphone-screen.is-camera-step .ios-subpage-navbar h1,
+.iphone-screen.is-camera-step .ios-back-link,
+.iphone-screen.is-camera-step #wizard-cancel-btn {
+  color: #FFFFFF;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+.ios-wizard-progress {
+  position: relative;
+  z-index: 20;
+  list-style: none;
+  margin: 8px 16px 2px;
+  padding: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 6px;
+  flex: none;
+}
+
+.ios-wizard-bar {
+  block-size: 4px;
+  border-radius: 99px;
+  background: rgba(118, 118, 128, 0.22);
+  transition: background-color 0.2s ease;
+}
+
+.ios-wizard-bar.done,
+.ios-wizard-bar[aria-current="step"] {
+  background: var(--ios-tint);
+}
+
+.iphone-screen.is-camera-step .ios-wizard-bar {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.iphone-screen.is-camera-step .ios-wizard-bar.done,
+.iphone-screen.is-camera-step .ios-wizard-bar[aria-current="step"] {
+  background: #30D158;
+}
+
+.ios-wizard-form {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ios-wizard-step {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-block: 12px 16px;
+  scrollbar-width: none;
+}
+
+.ios-wizard-step::-webkit-scrollbar {
+  display: none;
+}
+
+/* На кроках 1–3 секція стає контейнером поверх повноекранного поля фото */
+.ios-wizard-step.ios-cam-step {
+  overflow: visible;
+  padding-block: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Поле фото на ВЕСЬ екран iPhone (від верхнього до нижнього краю 393×852) */
+.ios-cam-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(circle at 50% 44%, #252830 0%, #101115 76%);
+  overflow: clip;
+}
+
+.ios-cam-canvas::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 190px;
+  z-index: 2;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.68) 0%, rgba(0, 0, 0, 0.28) 65%, transparent 100%);
+  pointer-events: none;
+}
+
+.ios-cam-canvas::after {
+  content: "";
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
+  block-size: 270px;
+  z-index: 2;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.42) 64%, transparent 100%);
+  pointer-events: none;
+}
+
+.ios-viewfinder-img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* Верхній підпис поверх повноекранної камери */
+.ios-cam-head {
+  position: relative;
+  z-index: 10;
+  padding: 10px 22px 0;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.ios-cam-title {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+  outline: none;
+}
+
+.ios-cam-sub {
+  margin: 5px 0 0;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.84);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+}
+
+.ios-vf-status {
+  display: inline-block;
+  margin-block-start: 8px;
+  padding: 4px 11px;
+  border-radius: 99px;
+  background: rgba(48, 209, 88, 0.92);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Центральна зона з пунктирним силуетом */
+.ios-cam-guide {
+  position: relative;
+  z-index: 10;
+  flex: 1 1 auto;
+  min-block-size: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 24px;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
+}
+
+.ios-cam-guide svg {
+  inline-size: min(266px, 76%);
+  block-size: auto;
+  max-block-size: 100%;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.45));
+}
+
+.ios-cam-step.has-photo .ios-cam-guide {
+  opacity: 0.26;
+}
+
+/* Нижній блок керування камерою поверх повноекранного фото */
+.ios-cam-dock {
+  position: relative;
+  z-index: 15;
+  padding: 6px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ios-cam-controls-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.ios-vf-chip {
+  justify-self: start;
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  min-block-size: 38px;
+  padding: 6px 13px;
+  border-radius: 99px;
+  background: rgba(28, 28, 30, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ios-shutter-btn {
+  inline-size: 66px;
+  block-size: 66px;
+  border-radius: 99px;
+  border: 3.5px solid #FFFFFF;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.22);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.ios-shutter-btn::after {
+  content: "";
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: 99px;
+  background: #FFFFFF;
+  transition: transform 0.12s ease;
+}
+
+.ios-shutter-btn:active::after {
+  transform: scale(0.88);
+}
+
+input:focus-visible + .ios-shutter-btn,
+.ios-seg-radio:focus-visible + .ios-seg-btn {
+  outline: 2.5px solid #30D158;
+  outline-offset: 2px;
+}
+
+.ios-cam-manual-btn {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  inline-size: 100%;
+  min-block-size: 46px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 15.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ios-cam-manual-btn:active {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* Напівпрозора картка ручного вводу номера бірки поверх камери */
+.ios-cam-glass-card {
+  background: rgba(28, 28, 30, 0.84);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  padding: 4px 14px;
+}
+
+.ios-cam-glass-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-block-size: 44px;
+}
+
+.ios-cam-glass-row label {
+  flex: none;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.ios-cam-glass-row input {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  min-block-size: 36px;
+  font: inherit;
+  font-size: max(1rem, 16px);
+  font-weight: 600;
+  color: #FFFFFF;
+  text-align: end;
+  outline: none;
+}
+
+.ios-cam-glass-row input::placeholder {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.ios-cam-hint {
+  margin: 4px 6px 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.78);
+  text-align: center;
+}
+
+.ios-cam-error {
+  margin: 0;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: rgba(255, 59, 48, 0.9);
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Крок 4 (світла форма паспорта) */
+.ios-wizard-head {
+  padding: 2px 20px 14px;
+}
+
+.ios-wizard-title {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.18;
+  font-weight: 700;
+  letter-spacing: -0.45px;
+  outline: none;
+}
+
+.ios-wizard-sub {
+  margin: 5px 0 0;
+  font-size: 14px;
+  line-height: 1.38;
+  color: var(--ios-secondary);
+}
+
+.ios-field-error {
+  margin: -8px 24px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #D70015;
+}
+
+.ios-field-row input:user-invalid,
+.ios-field-row input[aria-invalid="true"] {
+  color: #D70015;
+}
+
+.ios-fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
+.ios-seg-radio:checked + .ios-seg-btn {
+  background: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12), 0 3px 1px rgba(0, 0, 0, 0.04);
+}
+
+.ios-seg-btn-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.ios-wizard-footer {
+  position: relative;
+  z-index: 20;
+  flex: none;
+  padding: 8px 0 26px;
+  background: rgba(242, 242, 247, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-block-start: 0.5px solid var(--ios-separator);
+}
+
+.iphone-screen.is-camera-step .ios-wizard-footer {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-block-start: 0;
+  padding-block-start: 2px;
+}
+
+.ios-wizard-footer .ios-primary-btn {
+  margin-block: 0;
+}
+
+/* ==========================================================================
+   iOS Launch / Splash Screen (Мінімалістичний за iOS HIG)
+   ========================================================================== */
+.ios-splash-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ios-bg);
+  color: var(--ios-label);
+  font: inherit;
+  cursor: pointer;
+  transition: opacity 0.22s ease-out;
+}
+
+.ios-splash-screen.is-dismissing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ios-splash-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ios-splash-logo {
+  inline-size: 112px;
+  block-size: 112px;
+  object-fit: contain;
+  display: block;
+}
+
+/* ==========================================================================
+   єВівця: плаваюча скляна панель вкладок (на всіх вкладках інвестора)
+   ========================================================================== */
+body.app-investor {
+  --glass-bg: rgba(255, 255, 255, 0.52);
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.08);
+  --glass-blur: blur(24px) saturate(190%);
+  --tabbar-bottom: 22px;
+  --tabbar-h: 62px;
+}
+
+body.app-investor .ios-tabbar {
+  position: absolute;
+  inset-inline: 18px;
+  inset-block-end: var(--tabbar-bottom);
+  z-index: 20;
+  block-size: var(--tabbar-h);
+  padding: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow), inset 0 0 0 0.5px var(--glass-border), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+body.app-investor .ios-tab {
+  border-radius: 999px;
+  color: rgba(0, 0, 0, 0.62);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+body.app-investor .ios-tab[aria-selected="true"] {
+  color: var(--ios-tint);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Контент інших вкладок прокручується під плаваючою панеллю */
+body.app-investor .ios-view:not(.hero-view) .ios-scroll {
+  padding-block-end: calc(var(--tabbar-h) + var(--tabbar-bottom) + 24px) !important;
+}
+
+body.app-investor #batch-cta-wrap {
+  inset-block-end: calc(var(--tabbar-h) + var(--tabbar-bottom) + 10px) !important;
+}
+
+.ios-app.hero-mode {
+  padding-block-start: 0;
+  background: #000000;
+}
+
+.iphone-screen .ios-time,
+.iphone-screen .ios-status-icons {
+  transition: color 0.3s ease;
+}
+
+.iphone-screen.status-light .ios-time,
+.iphone-screen.status-light .ios-status-icons {
+  color: #FFFFFF;
+}
+
+/* ==========================================================================
+   єВівця: головний екран — фото з галереї на весь екран + скляна картка заробітку
+   ========================================================================== */
+.hero-view {
+  --p: 0;
+  --peek: 260px;
+  overflow: clip;
+  isolation: isolate;
+}
+
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  background: #1C1C1E;
+  transform: scale(calc(1 + var(--p) * 0.06));
+  transform-origin: center 30%;
+}
+
+.hero-photo img {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  max-inline-size: none;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.08);
+  transition: opacity 1.4s ease, transform 9s cubic-bezier(0.2, 0.6, 0.3, 1);
+}
+
+.hero-photo img.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hero-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.42) 0, rgba(0, 0, 0, 0) 150px),
+    linear-gradient(to top, rgba(0, 0, 0, 0.35) 0, rgba(0, 0, 0, 0) 45%),
+    rgba(0, 0, 0, calc(var(--p) * 0.35));
+}
+
+.hero-topbar {
+  position: absolute;
+  inset-block-start: 58px;
+  inset-inline: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #FFFFFF;
+  z-index: 2;
+  opacity: calc(1 - var(--p) * 1.8);
+}
+
+.hero-brand {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.hero-glass-btn {
+  appearance: none;
+  inline-size: 38px;
+  block-size: 38px;
+  border-radius: 50%;
+  border: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.hero-glass-btn:focus-within {
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
+}
+
+.hero-dots {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: calc(var(--peek) + 14px);
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  z-index: 2;
+  opacity: calc(1 - var(--p) * 2);
+  pointer-events: none;
+}
+
+.hero-dot {
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.5);
+  transition: inline-size 0.4s ease, background-color 0.4s ease;
+}
+
+.hero-dot.active {
+  inline-size: 18px;
+  background: #FFFFFF;
+}
+
+/* Скляна картка заробітку — окремо від панелі, над нею */
+.earn-sheet {
+  position: absolute;
+  inset-inline: 12px;
+  inset-block-end: calc(var(--tabbar-h) + var(--tabbar-bottom) + 10px);
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  overflow: clip;
+  border-radius: 30px;
+  background: rgba(246, 246, 250, calc(0.5 + var(--p) * 0.38));
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  box-shadow: var(--glass-shadow), inset 0 0 0 0.5px var(--glass-border), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.earn-sheet.animating {
+  transition: block-size 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.earn-handle {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: var(--ios-label);
+  text-align: start;
+  padding: 8px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: none;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.earn-handle:active {
+  cursor: grabbing;
+}
+
+.earn-handle:focus-visible {
+  outline: 2px solid var(--ios-tint);
+  outline-offset: -4px;
+  border-radius: 28px;
+}
+
+.earn-grabber {
+  align-self: center;
+  inline-size: 36px;
+  block-size: 5px;
+  border-radius: 99px;
+  background: rgba(60, 60, 67, 0.3);
+  margin-block-end: 12px;
+}
+
+.earn-caption {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(60, 60, 67, 0.75);
+}
+
+.earn-amount {
+  margin-block: 2px 4px;
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  line-height: 1.05;
+  color: var(--ios-green-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.earn-sub {
+  display: flex;
+  gap: 6px;
+  font-size: 14px;
+  color: rgba(60, 60, 67, 0.75);
+}
+
+.earn-sub strong {
+  color: var(--ios-label);
+  font-weight: 600;
+}
+
+.earn-hint {
+  display: none;
+}
+
+.earn-body {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  opacity: var(--p);
+  touch-action: pan-y;
+  padding-block-end: 12px;
+}
+
+.earn-body .ios-group,
+.earn-stats {
+  margin-inline: 12px;
+}
+
+.earn-body .ios-section-header {
+  padding-inline: 28px;
+}
+
+.earn-stats {
+  margin-block: 0 20px;
+  background: var(--ios-card);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.earn-stat + .earn-stat {
+  border-inline-start: 0.5px solid var(--ios-separator);
+  padding-inline-start: 12px;
+}
+
+.earn-stat-val {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.earn-stat-val.green {
+  color: var(--ios-green-ink);
+}
+
+.earn-stat-lbl {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--ios-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-photo img,
+  .earn-sheet.animating {
+    transition-duration: 0.01s;
+  }
+}
+
+.iphone-screen.status-light .home-indicator {
+  background: #FFFFFF;
+}

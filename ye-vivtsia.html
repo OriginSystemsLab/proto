@@ -96,13 +96,12 @@
         </main>
 
         <!-- ВКЛАДКА 2: КАТАЛОГ ОВЕЦЬ -->
-        <section id="view-catalog" class="ios-view" hidden aria-labelledby="catalog-title">
+        <section id="view-catalog" class="ios-view" hidden aria-label="Інвестувати">
           <header class="ios-navbar">
             <div class="ios-navbar-top">
               <span class="ios-navbar-eyebrow">Верифіковане поголів'я</span>
               <button type="button" class="ios-nav-btn" id="toggle-select-mode-btn">Обрати</button>
             </div>
-            <h2 class="ios-large-title" id="catalog-title">Інвестувати</h2>
           </header>
 
           <div class="ios-scroll" style="padding-block-end: 76px;">
@@ -128,7 +127,42 @@
           </div>
         </section>
 
-        <!-- ВКЛАДКА 3: ПРОФІЛЬ ІНВЕСТОРА -->
+        <!-- ВКЛАДКА 3: МАРКЕТ ФЕРМЕРСЬКИХ ТОВАРІВ -->
+        <section id="view-market" class="ios-view" hidden aria-label="Маркет">
+          <header class="ios-navbar">
+            <div class="ios-navbar-top">
+              <span class="ios-navbar-eyebrow">Напряму від ферм</span>
+              <button type="button" class="ios-nav-btn" id="mkt-cart-nav-btn" aria-label="Кошик">Кошик</button>
+            </div>
+          </header>
+
+          <div class="ios-scroll" id="mkt-scroll">
+            <div class="mkt-sticky">
+              <search>
+                <form class="ios-search" id="mkt-search-form" action="#">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/>
+                  </svg>
+                  <label for="mkt-q" class="visually-hidden">Пошук товарів</label>
+                  <input type="search" id="mkt-q" name="q" placeholder="Сир, вовна, баранина…" autocorrect="off" autocapitalize="none" spellcheck="false">
+                </form>
+              </search>
+
+              <div class="mkt-chips" id="mkt-chips" role="tablist" aria-label="Категорії"></div>
+            </div>
+
+            <div class="mkt-grid" id="mkt-grid"></div>
+          </div>
+
+          <!-- Плаваюча кнопка кошика над панеллю вкладок -->
+          <button type="button" class="mkt-cart-fab" id="mkt-cart-fab" hidden>
+            <span class="mkt-cart-fab-count" id="mkt-fab-count">0</span>
+            <span class="mkt-cart-fab-label">Кошик</span>
+            <span class="mkt-cart-fab-total" id="mkt-fab-total">0 ₴</span>
+          </button>
+        </section>
+
+        <!-- ВКЛАДКА 4: ПРОФІЛЬ ІНВЕСТОРА -->
         <section id="view-account" class="ios-view" hidden aria-labelledby="account-title">
           <header class="ios-navbar">
             <div class="ios-navbar-top">
@@ -167,6 +201,11 @@
               </div>
             </form>
 
+            <div id="mkt-orders-wrap" hidden>
+              <div class="ios-section-header">Мої замовлення</div>
+              <div class="ios-group" id="mkt-orders"></div>
+            </div>
+
             <button type="button" class="ios-secondary-btn" id="reset-db-btn" style="color: var(--ios-red);">
               Скинути демо-дані
             </button>
@@ -189,6 +228,14 @@
             </svg>
             <span>Інвестувати</span>
           </button>
+          <button type="button" class="ios-tab" data-tab="market" aria-selected="false">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
+              <path d="M5 8h14l-1.2 10.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z" stroke-linejoin="round"/>
+              <path d="M9 10.5V7a3 3 0 0 1 6 0v3.5" stroke-linecap="round"/>
+            </svg>
+            <span>Маркет</span>
+            <span class="ios-tab-badge" id="mkt-tab-badge" hidden>0</span>
+          </button>
           <button type="button" class="ios-tab" data-tab="account" aria-selected="false">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
               <circle cx="12" cy="8.5" r="3.8"/><path d="M5 19.5c1.6-3 4.1-4.5 7-4.5s5.4 1.5 7 4.5" stroke-linecap="round"/>
@@ -208,6 +255,32 @@
             <button type="submit" form="batch-form" class="ios-nav-btn semibold end-action">Підтвердити</button>
           </div>
           <form id="batch-form" class="ios-sheet-body" action="#"></form>
+        </div>
+      </div>
+
+      <!-- iOS Sheet: Картка товару маркету -->
+      <div id="sheet-product" class="ios-sheet-layer" hidden role="dialog" aria-labelledby="product-sheet-title">
+        <div class="ios-sheet">
+          <div class="ios-sheet-grabber"></div>
+          <div class="ios-sheet-header">
+            <button type="button" class="ios-nav-btn start-action" data-close-sheet>Закрити</button>
+            <h2 id="product-sheet-title">Товар</h2>
+            <span></span>
+          </div>
+          <div class="ios-sheet-body" id="product-body"></div>
+        </div>
+      </div>
+
+      <!-- iOS Sheet: Кошик та оформлення замовлення -->
+      <div id="sheet-cart" class="ios-sheet-layer" hidden role="dialog" aria-labelledby="cart-sheet-title">
+        <div class="ios-sheet">
+          <div class="ios-sheet-grabber"></div>
+          <div class="ios-sheet-header">
+            <button type="button" class="ios-nav-btn start-action" data-close-sheet>Закрити</button>
+            <h2 id="cart-sheet-title">Кошик</h2>
+            <button type="button" class="ios-nav-btn end-action" id="cart-clear-btn" style="color:var(--ios-red);">Очистити</button>
+          </div>
+          <form class="ios-sheet-body" id="cart-form" action="#"></form>
         </div>
       </div>
 
@@ -243,6 +316,7 @@
       const views = {
         portfolio: document.getElementById('view-portfolio'),
         catalog: document.getElementById('view-catalog'),
+        market: document.getElementById('view-market'),
         account: document.getElementById('view-account')
       };
 
@@ -268,7 +342,7 @@
         });
       });
 
-      const initialTab = location.hash === '#catalog' ? 'catalog' : location.hash === '#account' ? 'account' : 'portfolio';
+      const initialTab = ['#catalog', '#market', '#account'].includes(location.hash) ? location.hash.slice(1) : 'portfolio';
 
       document.getElementById('cat-search-form').addEventListener('submit', (e) => e.preventDefault());
       catQ.addEventListener('input', renderAll);
@@ -703,8 +777,348 @@
         UI.showBanner('Демо-дані відновлено');
       });
 
-      Store.subscribe(renderAll);
+      // ==========================================================================
+      // МАРКЕТ: фермерські товари, кошик та оформлення замовлення
+      // ==========================================================================
+      const Market = (function () {
+        const KEY = 'evivtsia_market_v1';
+        const CATS = [
+          { id: 'all', label: 'Усі' },
+          { id: 'cheese', label: 'Сири' },
+          { id: 'dairy', label: 'Молочне' },
+          { id: 'meat', label: "М'ясо" },
+          { id: 'wool', label: 'Вовна' },
+          { id: 'other', label: 'Інше' }
+        ];
+        const PRODUCTS = [
+          { id: 'P01', name: 'Бринза овеча', cat: 'cheese', unit: 'кг', price: 420, farm: 'FRM-00001', emoji: '🧀', bg: '#FFF3D1', desc: 'Розсільний сир із молока карпатських овець. Витримка 30 днів, без консервантів.' },
+          { id: 'P02', name: 'Будз копчений', cat: 'cheese', unit: 'кг', price: 540, farm: 'FRM-00001', emoji: '🧀', bg: '#FCE7C8', desc: 'Овечий сир, копчений на буковій тирсі за гуцульським рецептом.' },
+          { id: 'P03', name: 'Вурда', cat: 'cheese', unit: '500 г', price: 180, farm: 'FRM-00001', emoji: '🥣', bg: '#F4F1EA', desc: 'Ніжний сир із сироватки, що лишається після бринзи. Чудовий для вареників.' },
+          { id: 'P04', name: 'Овече молоко', cat: 'dairy', unit: 'л', price: 95, farm: 'FRM-00002', emoji: '🥛', bg: '#EAF2FB', desc: 'Свіже пастеризоване молоко з ранкового доїння. Термін зберігання 5 днів.' },
+          { id: 'P05', name: 'Йогурт натуральний', cat: 'dairy', unit: '300 мл', price: 75, farm: 'FRM-00002', emoji: '🍶', bg: '#EEF0F8', desc: 'Густий йогурт з овечого молока на живих заквасках, без цукру.' },
+          { id: 'P06', name: 'Баранина, корейка', cat: 'meat', unit: 'кг', price: 560, farm: 'FRM-00002', emoji: '🍖', bg: '#FBE4E0', desc: 'Охолоджена корейка молодого ягняти з пасовищ Поділля. Вакуумна упаковка.' },
+          { id: 'P07', name: 'Ковбаса з баранини', cat: 'meat', unit: '400 г', price: 380, farm: 'FRM-00002', emoji: '🌭', bg: '#F8E3DA', desc: 'Сиров\'ялена ковбаса з баранини з часником і чебрецем.' },
+          { id: 'P08', name: 'Пряжа карпатська', cat: 'wool', unit: '100 г', price: 290, farm: 'FRM-00001', emoji: '🧶', bg: '#F3E6F4', desc: 'Пряжа ручного прядіння з вовни овець цьогорічного стригу, натуральні барвники.' },
+          { id: 'P09', name: 'Вовняні шкарпетки', cat: 'wool', unit: 'пара', price: 450, farm: 'FRM-00001', emoji: '🧦', bg: '#E8EEF6', desc: 'Теплі в\'язані шкарпетки з 100% овечої вовни. Розміри 36–45.' },
+          { id: 'P10', name: 'Ковдра з вовни', cat: 'wool', unit: 'шт', price: 3200, farm: 'FRM-00002', emoji: '🛏️', bg: '#EDEAE4', desc: 'Двоспальна ковдра 200 × 220 см, наповнювач — мита овеча вовна.' },
+          { id: 'P11', name: 'Гірський мед', cat: 'other', unit: '500 г', price: 260, farm: 'FRM-00001', emoji: '🍯', bg: '#FFF0CC', desc: 'Різнотрав\'я з полонин біля Криворівні. Пасіка поруч із пасовищем отари.' }
+        ];
+        const DELIVERY = {
+          np: { label: 'Нова Пошта, відділення', price: 70 },
+          courier: { label: "Кур'єр по місту", price: 120 },
+          pickup: { label: 'Самовивіз із ферми', price: 0 }
+        };
+
+        let state = load();
+        let cat = 'all';
+        let lastInvoker = null;
+        const sheetProduct = document.getElementById('sheet-product');
+        const sheetCart = document.getElementById('sheet-cart');
+        const q = document.getElementById('mkt-q');
+
+        function load() {
+          try {
+            const s = JSON.parse(localStorage.getItem(KEY));
+            if (s && typeof s.cart === 'object') return { cart: s.cart || {}, orders: s.orders || [] };
+          } catch (_) {}
+          return { cart: {}, orders: [] };
+        }
+        function save() {
+          try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (_) {}
+        }
+        const byId = (id) => PRODUCTS.find((p) => p.id === id);
+        function farmName(code) {
+          const f = Store.getFarmerByCode(code, Store.getState());
+          return f ? f.FarmName : '';
+        }
+        function farmPlace(code) {
+          const f = Store.getFarmerByCode(code, Store.getState());
+          return f ? f.FarmAddress : '';
+        }
+        function cartLines() {
+          return Object.entries(state.cart)
+            .map(([id, qty]) => ({ p: byId(id), qty }))
+            .filter((l) => l.p && l.qty > 0);
+        }
+        function cartTotals() {
+          const lines = cartLines();
+          return {
+            lines,
+            count: lines.reduce((a, l) => a + l.qty, 0),
+            sum: lines.reduce((a, l) => a + l.qty * l.p.price, 0)
+          };
+        }
+        function setQty(id, qty) {
+          if (qty > 0) state.cart[id] = Math.min(qty, 99);
+          else delete state.cart[id];
+          save();
+          render();
+        }
+
+        function render() {
+          const term = q.value.trim().toLowerCase();
+          document.getElementById('mkt-chips').innerHTML = CATS.map((c) => `
+            <button type="button" class="mkt-chip" role="tab" data-mkt-cat="${c.id}" aria-selected="${c.id === cat}">${esc(c.label)}</button>
+          `).join('');
+
+          const list = PRODUCTS.filter((p) => {
+            if (cat !== 'all' && p.cat !== cat) return false;
+            if (term && !`${p.name} ${farmName(p.farm)}`.toLowerCase().includes(term)) return false;
+            return true;
+          });
+          const grid = document.getElementById('mkt-grid');
+          grid.innerHTML = list.length ? list.map((p) => {
+            const inCart = state.cart[p.id] || 0;
+            return `
+              <article class="mkt-card">
+                <button type="button" class="mkt-card-open" data-mkt-open="${p.id}" aria-label="${esc(p.name)}, ${UI.formatMoney(p.price)} за ${esc(p.unit)}">
+                  <span class="mkt-card-img" style="background:${p.bg}" aria-hidden="true">${p.emoji}</span>
+                  <span class="mkt-card-name">${esc(p.name)}</span>
+                  <span class="mkt-card-farm">${esc(farmName(p.farm))}</span>
+                </button>
+                <div class="mkt-card-foot">
+                  <span class="mkt-card-price">${UI.formatMoney(p.price)}<small> / ${esc(p.unit)}</small></span>
+                  ${inCart
+                    ? `<span class="mkt-card-qty" aria-label="У кошику: ${inCart}">${inCart}</span>`
+                    : `<button type="button" class="mkt-add" data-mkt-add="${p.id}" aria-label="Додати ${esc(p.name)} в кошик"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>`}
+                </div>
+              </article>
+            `;
+          }).join('') : `<div class="ios-empty" style="grid-column:1/-1;">Нічого не знайдено</div>`;
+
+          const t = cartTotals();
+          const fab = document.getElementById('mkt-cart-fab');
+          fab.hidden = t.count === 0;
+          document.getElementById('view-market').classList.toggle('has-cart', t.count > 0);
+          document.getElementById('mkt-fab-count').textContent = String(t.count);
+          document.getElementById('mkt-fab-total').textContent = UI.formatMoney(t.sum);
+          const badge = document.getElementById('mkt-tab-badge');
+          badge.hidden = t.count === 0;
+          badge.textContent = String(t.count);
+          document.getElementById('mkt-cart-nav-btn').textContent = t.count ? `Кошик (${t.count})` : 'Кошик';
+
+          const ordersWrap = document.getElementById('mkt-orders-wrap');
+          ordersWrap.hidden = !state.orders.length;
+          document.getElementById('mkt-orders').innerHTML = state.orders.map((o) => `
+            <div class="ios-row">
+              <div class="ios-row-main">
+                <p class="ios-row-title" style="font-size:15px;">${esc(o.number)} <span class="ios-pill orange">Готується</span></p>
+                <p class="ios-row-sub">${esc(UI.formatDate(o.date))} • ${o.count} тов. • ${esc(DELIVERY[o.delivery] ? DELIVERY[o.delivery].label : '')}</p>
+              </div>
+              <span style="font-size:15px;font-weight:600;white-space:nowrap;">${UI.formatMoney(o.total)}</span>
+            </div>
+          `).join('');
+
+          if (!sheetCart.hidden) renderCart();
+        }
+
+        function stepper(id, qty, label) {
+          return `
+            <span class="mkt-stepper" role="group" aria-label="${esc(label)}">
+              <button type="button" data-mkt-step="${id}" data-d="-1" aria-label="Менше"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+              <output aria-live="polite">${qty}</output>
+              <button type="button" data-mkt-step="${id}" data-d="1" aria-label="Більше"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+            </span>
+          `;
+        }
+
+        function openProduct(id, invoker) {
+          const p = byId(id);
+          if (!p) return;
+          lastInvoker = invoker;
+          let qty = state.cart[p.id] || 1;
+          const body = document.getElementById('product-body');
+          const draw = () => {
+            body.innerHTML = `
+              <div class="mkt-hero" style="background:${p.bg}" aria-hidden="true">${p.emoji}</div>
+              <div class="mkt-detail">
+                <h3 class="mkt-detail-name">${esc(p.name)}</h3>
+                <p class="mkt-detail-price">${UI.formatMoney(p.price)} <small>за ${esc(p.unit)}</small></p>
+                <p class="mkt-detail-desc">${esc(p.desc)}</p>
+              </div>
+              <div class="ios-section-header">Виробник</div>
+              <div class="ios-group">
+                <div class="ios-row">
+                  <div class="ios-row-main">
+                    <p class="ios-row-title" style="font-size:16px;">${esc(farmName(p.farm))}</p>
+                    <p class="ios-row-sub">${esc(farmPlace(p.farm))}</p>
+                  </div>
+                  <span class="ios-pill green">Перевірена ферма</span>
+                </div>
+              </div>
+              <div class="ios-section-header">Кількість</div>
+              <div class="ios-group">
+                <div class="ios-row">
+                  <div class="ios-row-main"><p class="ios-row-title" style="font-size:16px;font-weight:400;">${esc(p.unit)}</p></div>
+                  <span class="mkt-stepper" role="group" aria-label="Кількість">
+                    <button type="button" id="pd-minus" aria-label="Менше" ${qty <= 1 ? 'disabled' : ''}><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 8h11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+                    <output aria-live="polite">${qty}</output>
+                    <button type="button" id="pd-plus" aria-label="Більше"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M2.5 8h11" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+                  </span>
+                </div>
+              </div>
+              <button type="button" class="ios-primary-btn" id="pd-add">
+                ${state.cart[p.id] ? 'Оновити кошик' : 'Додати в кошик'} · ${UI.formatMoney(qty * p.price)}
+              </button>
+            `;
+            body.querySelector('#pd-minus').onclick = () => { qty = Math.max(1, qty - 1); draw(); };
+            body.querySelector('#pd-plus').onclick = () => { qty = Math.min(99, qty + 1); draw(); };
+            body.querySelector('#pd-add').onclick = () => {
+              setQty(p.id, qty);
+              UI.closeSheet(sheetProduct, mainApp, lastInvoker);
+              UI.showBanner('Додано в кошик', `${p.name} × ${qty}`);
+            };
+          };
+          draw();
+          UI.openSheet(sheetProduct, mainApp);
+        }
+
+        function renderCart() {
+          const form = document.getElementById('cart-form');
+          const t = cartTotals();
+          document.getElementById('cart-clear-btn').hidden = !t.count;
+          if (!t.count) {
+            form.innerHTML = `<div class="ios-empty" style="padding:40px 24px;">Кошик порожній. Додайте товари з маркету.</div>`;
+            return;
+          }
+          const prev = {
+            delivery: form.querySelector('#co-delivery') ? form.querySelector('#co-delivery').value : 'np',
+            city: form.querySelector('#co-city') ? form.querySelector('#co-city').value : '',
+            phone: form.querySelector('#co-phone') ? form.querySelector('#co-phone').value : null
+          };
+          const inv = Store.getInvestorByCode(activeInvestorCode, Store.getState());
+          const phone = prev.phone ?? (inv ? inv.Phone : '');
+          const del = DELIVERY[prev.delivery] || DELIVERY.np;
+          const total = t.sum + del.price;
+          form.innerHTML = `
+            <div class="ios-section-header">Товари</div>
+            <div class="ios-group">
+              ${t.lines.map(({ p, qty }) => `
+                <div class="ios-row has-thumb">
+                  <span class="ios-thumb mkt-thumb" style="background:${p.bg}" aria-hidden="true">${p.emoji}</span>
+                  <div class="ios-row-main">
+                    <p class="ios-row-title" style="font-size:15px;">${esc(p.name)}</p>
+                    <p class="ios-row-sub">${UI.formatMoney(p.price * qty)} • ${esc(p.unit)}</p>
+                  </div>
+                  ${stepper(p.id, qty, p.name)}
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="ios-section-header">Доставка</div>
+            <div class="ios-group">
+              <div class="ios-field-row">
+                <label for="co-delivery">Спосіб</label>
+                <select id="co-delivery" name="delivery">
+                  ${Object.entries(DELIVERY).map(([k, d]) => `<option value="${k}" ${k === prev.delivery ? 'selected' : ''}>${esc(d.label)}</option>`).join('')}
+                </select>
+              </div>
+              ${prev.delivery === 'pickup' ? '' : `
+              <div class="ios-field-row">
+                <label for="co-city">${prev.delivery === 'np' ? 'Відділення' : 'Адреса'}</label>
+                <input type="text" id="co-city" name="city" value="${esc(prev.city)}" placeholder="${prev.delivery === 'np' ? 'Київ, №12' : 'вул. Хрещатик, 1'}" required>
+              </div>`}
+              <div class="ios-field-row">
+                <label for="co-phone">Телефон</label>
+                <input type="tel" id="co-phone" name="phone" value="${esc(phone)}" autocomplete="tel" required>
+              </div>
+            </div>
+
+            <div class="ios-group mkt-summary">
+              <div class="ios-row"><span class="ios-row-main">Товари (${t.count})</span><span>${UI.formatMoney(t.sum)}</span></div>
+              <div class="ios-row"><span class="ios-row-main">Доставка</span><span>${del.price ? UI.formatMoney(del.price) : 'Безкоштовно'}</span></div>
+              <div class="ios-row mkt-summary-total"><span class="ios-row-main">Разом</span><span>${UI.formatMoney(total)}</span></div>
+            </div>
+
+            <button type="submit" class="ios-primary-btn">Замовити · ${UI.formatMoney(total)}</button>
+            <p class="mkt-note">Оплата під час отримання. Фермер підтвердить замовлення протягом дня.</p>
+          `;
+        }
+
+        function openCart(invoker) {
+          lastInvoker = invoker;
+          renderCart();
+          UI.openSheet(sheetCart, mainApp);
+        }
+
+        // Події
+        document.getElementById('mkt-search-form').addEventListener('submit', (e) => e.preventDefault());
+        q.addEventListener('input', render);
+        document.getElementById('mkt-cart-fab').addEventListener('click', (e) => openCart(e.currentTarget));
+        document.getElementById('mkt-cart-nav-btn').addEventListener('click', (e) => openCart(e.currentTarget));
+
+        document.getElementById('view-market').addEventListener('click', (e) => {
+          const chip = e.target.closest('[data-mkt-cat]');
+          if (chip) { cat = chip.dataset.mktCat; render(); return; }
+          const add = e.target.closest('[data-mkt-add]');
+          if (add) {
+            const p = byId(add.dataset.mktAdd);
+            setQty(p.id, 1);
+            UI.showBanner('Додано в кошик', p.name);
+            return;
+          }
+          const open = e.target.closest('[data-mkt-open]');
+          if (open) openProduct(open.dataset.mktOpen, open);
+          const qtyBadge = e.target.closest('.mkt-card-qty');
+          if (qtyBadge) openCart(qtyBadge);
+        });
+
+        const cartForm = document.getElementById('cart-form');
+        cartForm.addEventListener('click', (e) => {
+          const st = e.target.closest('[data-mkt-step]');
+          if (!st) return;
+          const id = st.dataset.mktStep;
+          setQty(id, (state.cart[id] || 0) + Number(st.dataset.d));
+        });
+        cartForm.addEventListener('change', (e) => {
+          if (e.target.id === 'co-delivery') renderCart();
+        });
+        cartForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const t = cartTotals();
+          if (!t.count) return;
+          const delivery = cartForm.querySelector('#co-delivery').value;
+          const total = t.sum + (DELIVERY[delivery] ? DELIVERY[delivery].price : 0);
+          const number = 'ЗМ-' + String(state.orders.length + 1).padStart(4, '0');
+          state.orders.unshift({
+            number,
+            date: new Date().toISOString(),
+            investor: activeInvestorCode,
+            items: t.lines.map(({ p, qty }) => ({ id: p.id, qty, price: p.price })),
+            count: t.count,
+            delivery,
+            address: cartForm.querySelector('#co-city') ? cartForm.querySelector('#co-city').value.trim() : '',
+            phone: cartForm.querySelector('#co-phone').value.trim(),
+            total
+          });
+          state.cart = {};
+          save();
+          UI.closeSheet(sheetCart, mainApp, null);
+          render();
+          UI.showBanner(`Замовлення ${number} оформлено`, `${UI.formatMoney(total)} · фермер підтвердить протягом дня`);
+        });
+        document.getElementById('cart-clear-btn').addEventListener('click', () => {
+          state.cart = {};
+          save();
+          render();
+        });
+
+        [sheetProduct, sheetCart].forEach((sh) => {
+          sh.addEventListener('click', (e) => {
+            if (e.target === sh || e.target.closest('[data-close-sheet]')) UI.closeSheet(sh, mainApp, lastInvoker);
+          });
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key !== 'Escape') return;
+          [sheetProduct, sheetCart].forEach((sh) => { if (!sh.hidden) UI.closeSheet(sh, mainApp, lastInvoker); });
+        });
+
+        return { render };
+      })();
+
+      Store.subscribe(() => { renderAll(); Market.render(); });
       renderAll();
+      Market.render();
       switchTab(initialTab);
     })();
   </script>

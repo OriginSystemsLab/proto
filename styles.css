@@ -2047,3 +2047,339 @@ body.app-investor #batch-cta-wrap {
     inline-size: calc(100vw - 20px);
   }
 }
+
+/* ==========================================================================
+   єВівця: Маркет фермерських товарів
+   ========================================================================== */
+.mkt-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 16px 14px;
+  scrollbar-width: none;
+}
+
+.mkt-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.mkt-chip {
+  appearance: none;
+  flex: none;
+  border: 0;
+  min-block-size: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--ios-card);
+  color: var(--ios-label);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 0.5px var(--ios-separator);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mkt-chip[aria-selected="true"] {
+  background: var(--ios-label);
+  color: #FFFFFF;
+  box-shadow: none;
+}
+
+.mkt-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 16px 24px;
+}
+
+.mkt-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--ios-card);
+  border-radius: 18px;
+  overflow: clip;
+}
+
+.mkt-card-open {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.mkt-card-open:active {
+  opacity: 0.7;
+}
+
+.mkt-card-img {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  font-size: 52px;
+  line-height: 1;
+  margin-block-end: 10px;
+}
+
+.mkt-card-name {
+  padding-inline: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  line-height: 1.25;
+}
+
+.mkt-card-farm {
+  padding: 2px 12px 0;
+  font-size: 12px;
+  color: var(--ios-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mkt-card-foot {
+  margin-block-start: auto;
+  padding: 8px 8px 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.mkt-card-price {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mkt-card-price small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ios-secondary);
+}
+
+.mkt-add,
+.mkt-card-qty {
+  appearance: none;
+  flex: none;
+  inline-size: 32px;
+  block-size: 32px;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--ios-tint);
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.mkt-card-qty {
+  font-size: 14px;
+  font-weight: 700;
+  background: rgba(0, 122, 255, 0.12);
+  color: var(--ios-tint);
+}
+
+.mkt-add:active,
+.mkt-card-qty:active {
+  opacity: 0.7;
+}
+
+/* Плаваюча скляна кнопка кошика над панеллю вкладок */
+.mkt-cart-fab {
+  appearance: none;
+  position: absolute;
+  inset-inline: 18px;
+  inset-block-end: calc(var(--tabbar-h, 62px) + var(--tabbar-bottom, 22px) + 10px);
+  z-index: 15;
+  min-block-size: 54px;
+  padding: 0 20px 0 8px;
+  border: 0;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--ios-tint);
+  color: #FFFFFF;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(0, 122, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.mkt-cart-fab:active {
+  opacity: 0.85;
+}
+
+.mkt-cart-fab-count {
+  min-inline-size: 38px;
+  block-size: 38px;
+  padding-inline: 8px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.22);
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+
+.mkt-cart-fab-label {
+  flex: 1 1 auto;
+  text-align: start;
+}
+
+.mkt-cart-fab-total {
+  font-variant-numeric: tabular-nums;
+}
+
+body.app-investor #view-market.has-cart .ios-scroll {
+  padding-block-end: calc(var(--tabbar-h) + var(--tabbar-bottom) + 90px) !important;
+}
+
+/* Картка товару */
+.mkt-hero {
+  display: grid;
+  place-items: center;
+  block-size: 200px;
+  margin: 0 16px 16px;
+  border-radius: 20px;
+  font-size: 96px;
+  line-height: 1;
+}
+
+.mkt-detail {
+  padding: 0 20px 18px;
+}
+
+.mkt-detail-name {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+}
+
+.mkt-detail-price {
+  margin: 4px 0 10px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--ios-tint);
+  font-variant-numeric: tabular-nums;
+}
+
+.mkt-detail-price small {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--ios-secondary);
+}
+
+.mkt-detail-desc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: #3A3A3C;
+}
+
+.mkt-stepper {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--ios-fill);
+}
+
+.mkt-stepper button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  inline-size: 36px;
+  block-size: 34px;
+  font: inherit;
+  font-size: 20px;
+  color: var(--ios-tint);
+  cursor: pointer;
+}
+
+.mkt-stepper button:disabled {
+  color: var(--ios-tertiary);
+  cursor: default;
+}
+
+.mkt-stepper output {
+  min-inline-size: 22px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.mkt-thumb {
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+}
+
+.mkt-summary .ios-row {
+  min-block-size: 40px;
+  font-size: 15px;
+}
+
+.mkt-summary-total {
+  font-size: 17px !important;
+  font-weight: 700;
+}
+
+.mkt-note {
+  margin: 0 32px;
+  font-size: 13px;
+  text-align: center;
+  color: var(--ios-secondary);
+}
+
+/* Іконки плюс/мінус як SVG — точно по центру кнопок */
+.mkt-add svg,
+.mkt-stepper button svg {
+  display: block;
+}
+
+.mkt-stepper button {
+  display: grid;
+  place-items: center;
+}
+
+/* «Мої замовлення» у вкладці «Профіль» */
+#view-account #mkt-orders-wrap {
+  margin-block-start: 4px;
+}
+
+/* Маркет: пошук і категорії прилипають до верху під час прокрутки */
+.mkt-sticky {
+  position: sticky;
+  inset-block-start: -4px;
+  z-index: 6;
+  margin-block-start: -4px;
+  padding-block-start: 6px;
+  background: rgba(242, 242, 247, 0.86);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.mkt-sticky .mkt-chips {
+  padding-block-end: 10px;
+}
+
+.mkt-grid {
+  margin-block-start: 4px;
+}

@@ -163,43 +163,22 @@
         </section>
 
         <!-- ВКЛАДКА 4: ПРОФІЛЬ ІНВЕСТОРА -->
-        <section id="view-account" class="ios-view" hidden aria-labelledby="account-title">
+        <section id="view-account" class="ios-view" hidden aria-label="Профіль">
           <header class="ios-navbar">
             <div class="ios-navbar-top">
               <span class="ios-navbar-eyebrow">єВівця ID</span>
-              <button type="button" class="ios-nav-btn semibold" id="save-investor-btn">Зберегти</button>
             </div>
-            <h2 class="ios-large-title" id="account-title">Профіль</h2>
           </header>
 
           <div class="ios-scroll">
-            <div class="ios-section-header">Активний інвестор</div>
-            <div class="ios-group">
-              <div class="ios-field-row">
-                <label for="investor-switcher">Акаунт</label>
-                <select id="investor-switcher"></select>
-              </div>
-            </div>
-
             <div class="ios-section-header">Особисті дані та виплати</div>
-            <form id="investor-form" class="ios-group" action="#">
-              <div class="ios-field-row">
-                <label for="i-desc">ПІБ</label>
-                <input type="text" id="i-desc" name="Description" autocomplete="name">
-              </div>
-              <div class="ios-field-row">
-                <label for="i-phone">Телефон</label>
-                <input type="tel" id="i-phone" name="Phone" autocomplete="tel">
-              </div>
-              <div class="ios-field-row">
-                <label for="i-tax">ІПН</label>
-                <input type="text" id="i-tax" name="TaxId" inputmode="numeric">
-              </div>
-              <div class="ios-field-row">
-                <label for="i-iban">IBAN</label>
-                <input type="text" id="i-iban" name="PayoutDetails" autocorrect="off" autocapitalize="none" spellcheck="false">
-              </div>
-            </form>
+            <div class="ios-group">
+              <div class="ios-row profile-row"><span class="profile-lbl">ПІБ</span><span class="profile-val" id="pv-desc"></span></div>
+              <div class="ios-row profile-row"><span class="profile-lbl">Телефон</span><span class="profile-val" id="pv-phone"></span></div>
+              <div class="ios-row profile-row"><span class="profile-lbl">ІПН</span><span class="profile-val" id="pv-tax"></span></div>
+              <div class="ios-row profile-row"><span class="profile-lbl">IBAN</span><span class="profile-val" id="pv-iban"></span></div>
+            </div>
+            <button type="button" class="ios-secondary-btn profile-edit-btn" id="edit-investor-btn">Редагувати</button>
 
             <div id="mkt-orders-wrap" hidden>
               <div class="ios-section-header">Мої замовлення</div>
@@ -281,6 +260,52 @@
             <button type="button" class="ios-nav-btn end-action" id="cart-clear-btn" style="color:var(--ios-red);">Очистити</button>
           </div>
           <form class="ios-sheet-body" id="cart-form" action="#"></form>
+        </div>
+      </div>
+
+      <!-- iOS Sheet: Редагування профілю -->
+      <div id="sheet-profile" class="ios-sheet-layer" hidden role="dialog" aria-labelledby="profile-sheet-title">
+        <div class="ios-sheet">
+          <div class="ios-sheet-grabber"></div>
+          <div class="ios-sheet-header">
+            <button type="button" class="ios-nav-btn start-action" id="close-profile-sheet-btn">Скасувати</button>
+            <h2 id="profile-sheet-title">Редагування</h2>
+            <button type="submit" form="investor-form" class="ios-nav-btn semibold end-action">Готово</button>
+          </div>
+          <form id="investor-form" class="ios-sheet-body" action="#">
+            <div class="ios-section-header">Особисті дані та виплати</div>
+            <div class="ios-group">
+              <div class="ios-field-row">
+                <label for="i-desc">ПІБ</label>
+                <input type="text" id="i-desc" name="Description" autocomplete="name" required>
+              </div>
+              <div class="ios-field-row">
+                <label for="i-phone">Телефон</label>
+                <input type="tel" id="i-phone" name="Phone" autocomplete="tel">
+              </div>
+              <div class="ios-field-row">
+                <label for="i-tax">ІПН</label>
+                <input type="text" id="i-tax" name="TaxId" inputmode="numeric">
+              </div>
+              <div class="ios-field-row">
+                <label for="i-iban">IBAN</label>
+                <input type="text" id="i-iban" name="PayoutDetails" autocorrect="off" autocapitalize="none" spellcheck="false">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- iOS Sheet: Деталі замовлення -->
+      <div id="sheet-order" class="ios-sheet-layer" hidden role="dialog" aria-labelledby="order-sheet-title">
+        <div class="ios-sheet">
+          <div class="ios-sheet-grabber"></div>
+          <div class="ios-sheet-header">
+            <button type="button" class="ios-nav-btn start-action" data-close-sheet>Закрити</button>
+            <h2 id="order-sheet-title">Замовлення</h2>
+            <span></span>
+          </div>
+          <div class="ios-sheet-body" id="order-body"></div>
         </div>
       </div>
 
@@ -654,20 +679,16 @@
       renderHero();
 
       function renderAccount(db) {
-        const switcher = document.getElementById('investor-switcher');
         if (!db.Catalogs.Investors.some((i) => i.Code === activeInvestorCode) && db.Catalogs.Investors.length) {
           activeInvestorCode = db.Catalogs.Investors[0].Code;
         }
-        switcher.innerHTML = db.Catalogs.Investors
-          .map((i) => `<option value="${esc(i.Code)}" ${i.Code === activeInvestorCode ? 'selected' : ''}>${esc(i.Description)}</option>`)
-          .join('');
-
         const inv = Store.getInvestorByCode(activeInvestorCode, db);
         if (!inv) return;
-        document.getElementById('i-desc').value = inv.Description;
-        document.getElementById('i-phone').value = inv.Phone;
-        document.getElementById('i-tax').value = inv.TaxId;
-        document.getElementById('i-iban').value = inv.PayoutDetails;
+        const show = (id, v) => { document.getElementById(id).textContent = v || '—'; };
+        show('pv-desc', inv.Description);
+        show('pv-phone', inv.Phone);
+        show('pv-tax', inv.TaxId);
+        show('pv-iban', String(inv.PayoutDetails || '').replace(/\s+/g, '').replace(/(.{4})(?=.)/g, '$1 '));
       }
 
       function renderAll() {
@@ -754,22 +775,41 @@
         }
       });
 
-      // Профіль інвестора
-      document.getElementById('investor-switcher').addEventListener('change', (e) => {
-        activeInvestorCode = e.target.value;
-        localStorage.setItem('ios_investor_code', activeInvestorCode);
-        selectedCodes.clear();
-        renderAll();
+      // Профіль інвестора: перегляд + редагування у шторці
+      const sheetProfile = document.getElementById('sheet-profile');
+      let profileInvoker = null;
+
+      document.getElementById('edit-investor-btn').addEventListener('click', (e) => {
+        profileInvoker = e.currentTarget;
+        const inv = Store.getInvestorByCode(activeInvestorCode, Store.getState());
+        if (!inv) return;
+        document.getElementById('i-desc').value = inv.Description || '';
+        document.getElementById('i-phone').value = inv.Phone || '';
+        document.getElementById('i-tax').value = inv.TaxId || '';
+        document.getElementById('i-iban').value = inv.PayoutDetails || '';
+        UI.openSheet(sheetProfile, mainApp);
       });
 
-      document.getElementById('save-investor-btn').addEventListener('click', () => {
+      document.getElementById('investor-form').addEventListener('submit', (e) => {
+        e.preventDefault();
         Store.updateInvestorProfile(activeInvestorCode, {
           Description: document.getElementById('i-desc').value.trim(),
           Phone: document.getElementById('i-phone').value.trim(),
           TaxId: document.getElementById('i-tax').value.trim(),
           PayoutDetails: document.getElementById('i-iban').value.trim()
         });
+        UI.closeSheet(sheetProfile, mainApp, profileInvoker);
         UI.showBanner('Профіль оновлено');
+      });
+
+      document.getElementById('close-profile-sheet-btn').addEventListener('click', () => {
+        UI.closeSheet(sheetProfile, mainApp, profileInvoker);
+      });
+      sheetProfile.addEventListener('click', (e) => {
+        if (e.target === sheetProfile) UI.closeSheet(sheetProfile, mainApp, profileInvoker);
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !sheetProfile.hidden) UI.closeSheet(sheetProfile, mainApp, profileInvoker);
       });
 
       document.getElementById('reset-db-btn').addEventListener('click', () => {
@@ -814,6 +854,7 @@
         let lastInvoker = null;
         const sheetProduct = document.getElementById('sheet-product');
         const sheetCart = document.getElementById('sheet-cart');
+        const sheetOrder = document.getElementById('sheet-order');
         const q = document.getElementById('mkt-q');
 
         function load() {
@@ -900,13 +941,14 @@
           const ordersWrap = document.getElementById('mkt-orders-wrap');
           ordersWrap.hidden = !state.orders.length;
           document.getElementById('mkt-orders').innerHTML = state.orders.map((o) => `
-            <div class="ios-row">
+            <button type="button" class="ios-row" data-mkt-order="${esc(o.number)}">
               <div class="ios-row-main">
                 <p class="ios-row-title" style="font-size:15px;">${esc(o.number)} <span class="ios-pill orange">Готується</span></p>
                 <p class="ios-row-sub">${esc(UI.formatDate(o.date))} • ${o.count} тов. • ${esc(DELIVERY[o.delivery] ? DELIVERY[o.delivery].label : '')}</p>
               </div>
               <span style="font-size:15px;font-weight:600;white-space:nowrap;">${UI.formatMoney(o.total)}</span>
-            </div>
+              <span class="ios-chevron" aria-hidden="true">›</span>
+            </button>
           `).join('');
 
           if (!sheetCart.hidden) renderCart();
@@ -1035,6 +1077,55 @@
           `;
         }
 
+        function openOrder(number, invoker) {
+          const o = state.orders.find((x) => x.number === number);
+          if (!o) return;
+          lastInvoker = invoker;
+          const del = DELIVERY[o.delivery] || { label: '', price: 0 };
+          const goods = o.items.reduce((a, it) => a + it.qty * it.price, 0);
+          const when = new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(o.date));
+          document.getElementById('order-sheet-title').textContent = o.number;
+          document.getElementById('order-body').innerHTML = `
+            <div class="mkt-order-head">
+              <span class="ios-pill orange">Готується</span>
+              <p class="mkt-order-total">${UI.formatMoney(o.total)}</p>
+              <p class="mkt-order-date">Оформлено ${esc(when)}</p>
+            </div>
+
+            <div class="ios-section-header">Товари</div>
+            <div class="ios-group">
+              ${o.items.map((it) => {
+                const p = byId(it.id) || { name: it.id, emoji: '📦', bg: '#EFEFF4', unit: '', farm: '' };
+                return `
+                  <div class="ios-row has-thumb">
+                    <span class="ios-thumb mkt-thumb" style="background:${p.bg}" aria-hidden="true">${p.emoji}</span>
+                    <div class="ios-row-main">
+                      <p class="ios-row-title" style="font-size:15px;">${esc(p.name)}</p>
+                      <p class="ios-row-sub">${it.qty} × ${UI.formatMoney(it.price)} / ${esc(p.unit)} • ${esc(farmName(p.farm))}</p>
+                    </div>
+                    <span style="font-size:15px;font-weight:600;white-space:nowrap;">${UI.formatMoney(it.qty * it.price)}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <div class="ios-section-header">Доставка</div>
+            <div class="ios-group">
+              <div class="ios-row"><span class="ios-row-main">Спосіб</span><span class="mkt-order-val">${esc(del.label)}</span></div>
+              ${o.address ? `<div class="ios-row"><span class="ios-row-main">${o.delivery === 'np' ? 'Відділення' : 'Адреса'}</span><span class="mkt-order-val">${esc(o.address)}</span></div>` : ''}
+              <div class="ios-row"><span class="ios-row-main">Телефон</span><span class="mkt-order-val">${esc(o.phone)}</span></div>
+              <div class="ios-row"><span class="ios-row-main">Оплата</span><span class="mkt-order-val">Під час отримання</span></div>
+            </div>
+
+            <div class="ios-group mkt-summary">
+              <div class="ios-row"><span class="ios-row-main">Товари (${o.count})</span><span>${UI.formatMoney(goods)}</span></div>
+              <div class="ios-row"><span class="ios-row-main">Доставка</span><span>${del.price ? UI.formatMoney(o.total - goods) : 'Безкоштовно'}</span></div>
+              <div class="ios-row mkt-summary-total"><span class="ios-row-main">Разом</span><span>${UI.formatMoney(o.total)}</span></div>
+            </div>
+          `;
+          UI.openSheet(sheetOrder, mainApp);
+        }
+
         function openCart(invoker) {
           lastInvoker = invoker;
           renderCart();
@@ -1103,14 +1194,19 @@
           render();
         });
 
-        [sheetProduct, sheetCart].forEach((sh) => {
+        document.getElementById('mkt-orders').addEventListener('click', (e) => {
+          const row = e.target.closest('[data-mkt-order]');
+          if (row) openOrder(row.dataset.mktOrder, row);
+        });
+
+        [sheetProduct, sheetCart, sheetOrder].forEach((sh) => {
           sh.addEventListener('click', (e) => {
             if (e.target === sh || e.target.closest('[data-close-sheet]')) UI.closeSheet(sh, mainApp, lastInvoker);
           });
         });
         document.addEventListener('keydown', (e) => {
           if (e.key !== 'Escape') return;
-          [sheetProduct, sheetCart].forEach((sh) => { if (!sh.hidden) UI.closeSheet(sh, mainApp, lastInvoker); });
+          [sheetProduct, sheetCart, sheetOrder].forEach((sh) => { if (!sh.hidden) UI.closeSheet(sh, mainApp, lastInvoker); });
         });
 
         return { render };

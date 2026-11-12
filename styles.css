@@ -1505,7 +1505,6 @@ input:focus-visible + .ios-shutter-btn,
   background: var(--ios-bg);
   color: var(--ios-label);
   font: inherit;
-  cursor: pointer;
   transition: opacity 0.22s ease-out;
 }
 

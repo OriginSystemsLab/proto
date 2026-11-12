@@ -46,8 +46,8 @@
         <p class="ios-banner-sub"></p>
       </div>
 
-      <!-- Мінімалістичний iOS Launch Screen — показується, доки не клікнеш -->
-      <button type="button" id="splash-screen" class="ios-splash-screen" aria-label="МоєСтадо">
+      <!-- Мінімалістичний iOS Launch Screen — зникає автоматично через 3 секунди -->
+      <div id="splash-screen" class="ios-splash-screen" aria-label="Завантаження МоєСтадо">
         <div class="ios-splash-center">
           <img
             class="ios-splash-logo"
@@ -58,7 +58,7 @@
             fetchpriority="high"
           >
         </div>
-      </button>
+      </div>
 
       <!-- Головна оболонка додатку -->
       <div id="main-app" class="ios-app" inert>
@@ -490,13 +490,13 @@
       }
 
       if (flashRaw) {
-        // Якщо щойно додали вівцю з майстра — одразу показуємо стадо та пуш-банер
+        // Якщо щойно додали або видалили вівцю — одразу показуємо стадо та пуш-банер
         iphoneScreen.classList.remove('is-splash-active');
         mainApp.removeAttribute('inert');
         splashScreen.hidden = true;
         showPendingFlashBanner();
       } else {
-        splashScreen.addEventListener('click', dismissSplashScreen);
+        setTimeout(dismissSplashScreen, 3000);
       }
     })();
   </script>

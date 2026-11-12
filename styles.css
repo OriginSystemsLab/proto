@@ -1969,3 +1969,81 @@ body.app-investor #batch-cta-wrap {
 .iphone-screen.status-light .home-indicator {
   background: #FFFFFF;
 }
+
+/* ==========================================================================
+   Мобільний режим: на весь екран без корпусу iPhone та без перемикача
+   ========================================================================== */
+@media (max-width: 600px) {
+  html,
+  body {
+    background: var(--ios-bg);
+    block-size: 100dvh;
+    overflow: hidden;
+  }
+
+  body {
+    padding: 0;
+    gap: 0;
+    justify-content: stretch;
+    align-items: stretch;
+  }
+
+  /* Прибираємо перемикач, фізичний корпус телефону та штучні системні бари */
+  .studio-bar,
+  .iphone-device::before,
+  .iphone-device::after,
+  .ios-statusbar,
+  .home-indicator {
+    display: none;
+  }
+
+  .iphone-device {
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    inline-size: 100%;
+    block-size: 100dvh;
+  }
+
+  .iphone-screen {
+    inline-size: 100%;
+    block-size: 100dvh;
+    border-radius: 0;
+  }
+
+  .ios-app {
+    padding-block-start: max(8px, env(safe-area-inset-top, 8px));
+  }
+
+  .ios-app.hero-mode {
+    padding-block-start: 0;
+  }
+
+  .hero-topbar {
+    inset-block-start: max(14px, env(safe-area-inset-top, 14px));
+  }
+
+  .ios-banner {
+    inset-block-start: max(12px, env(safe-area-inset-top, 12px));
+  }
+
+  body.app-farmer .ios-tabbar {
+    block-size: auto;
+    min-block-size: 62px;
+    padding-block: 6px max(12px, env(safe-area-inset-bottom, 12px));
+  }
+
+  body.app-investor {
+    --tabbar-bottom: max(14px, env(safe-area-inset-bottom, 14px));
+  }
+
+  .ios-wizard-footer {
+    padding-block-end: max(16px, env(safe-area-inset-bottom, 16px));
+  }
+
+  .ios-action-sheet-dialog[open] {
+    inset-block-end: max(16px, env(safe-area-inset-bottom, 16px));
+    inline-size: calc(100vw - 20px);
+  }
+}

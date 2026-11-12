@@ -1,5 +1,5 @@
 /**
- * Спільне нормалізоване сховище даних для iOS-прототипів «МоєСтадо» та «єВівця»
+ * Спільне нормалізоване сховище даних для iOS-прототипів «МоєСтадо» та «CyberFarm»
  * - Усі власні атрибути вівці (Token, VerificationStatus, Purpose, 3 фото) — виключно у Catalogs.Sheep.
  * - Farmers.Herd та Investors.InvestorSheep зберігають лише посилання { Sheep: Code }.
  * - Суми інвестицій та доходу не зберігаються у довідниках, а обчислюються з облікових операцій.
@@ -201,7 +201,7 @@
       return n.toString(16);
     }).join('');
     const prefix = ((h1 >>> 0).toString(16).padStart(8, '0')) + ((h2 >>> 0).toString(16).padStart(8, '0'));
-    return 'tk_evivtsia_' + prefix + randPart;
+    return 'tk_cyberfarm_' + prefix + randPart;
   }
 
   function createInitialSeedData() {
@@ -243,7 +243,7 @@
         Code: 'INV-00001',
         Description: 'Савчук Олександр Михайлович',
         Phone: '+380 63 120 99 88',
-        Email: 'o.savchuk@evivtsia.ua',
+        Email: 'o.savchuk@cyberfarm.ua',
         TaxId: '3391048271',
         PayoutDetails: 'UA213223130000026007233566001',
         IsActive: true,
@@ -276,7 +276,7 @@
         EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-1.webp',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-2600418901', 'Зірка', 'ФГ «Карпатська Отара»', '2026-10-14'),
-        Token: 'tk_evivtsia_9f8a21c4e7b031d6a58290f41c8e',
+        Token: 'tk_cyberfarm_9f8a21c4e7b031d6a58290f41c8e',
         VerificationStatus: 'Verified',
         Purpose: 'ForBreeding',
         RegistrationDate: '2026-10-14T09:20:00+02:00',
@@ -291,7 +291,7 @@
         EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-3.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-2600418902', 'Буковель', 'ФГ «Карпатська Отара»', '2026-10-19'),
-        Token: 'tk_evivtsia_4d12e8b903a7f6c1e55928d0b4a6',
+        Token: 'tk_cyberfarm_4d12e8b903a7f6c1e55928d0b4a6',
         VerificationStatus: 'Verified',
         Purpose: 'ForMeat',
         RegistrationDate: '2026-10-19T11:45:00+02:00',
@@ -306,7 +306,7 @@
         EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-5.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-2600418903', 'Черемош', 'ФГ «Карпатська Отара»', '2026-11-11'),
-        Token: 'tk_evivtsia_7c31f0a8d5e249b6c17309e8a4f2',
+        Token: 'tk_cyberfarm_7c31f0a8d5e249b6c17309e8a4f2',
         VerificationStatus: 'PendingVerification',
         Purpose: 'ForBreeding',
         RegistrationDate: '2026-11-11T16:10:00+02:00',
@@ -321,7 +321,7 @@
         EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-2.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-2600418904', 'Марічка', 'ФГ «Карпатська Отара»', '2026-11-08', true),
-        Token: 'tk_evivtsia_2a95b7d4c1e863f0941275b8d3c6',
+        Token: 'tk_cyberfarm_2a95b7d4c1e863f0941275b8d3c6',
         VerificationStatus: 'Rejected',
         Purpose: 'ForBreeding',
         RegistrationDate: '2026-11-08T14:05:00+02:00',
@@ -336,7 +336,7 @@
         EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-4.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-6800192301', 'Квітка', 'ФГ «Подільські Луки»', '2026-10-22'),
-        Token: 'tk_evivtsia_8e40c2f7a1b953d6e28410c7b5a3',
+        Token: 'tk_cyberfarm_8e40c2f7a1b953d6e28410c7b5a3',
         VerificationStatus: 'Verified',
         Purpose: 'ForBreeding',
         RegistrationDate: '2026-10-22T10:30:00+02:00',
@@ -351,7 +351,7 @@
         EarTagPhoto: './images/ear-tag-demo.jpg',
         FullBodyPhoto: './images/sheep-5.jpg',
         StateCertificatePhoto: generateStateCertificatePhoto('UA-6800192302', 'Дністер', 'ФГ «Подільські Луки»', '2026-11-02'),
-        Token: 'tk_evivtsia_5b73d9e1c4a082f6b39104e7d2c8',
+        Token: 'tk_cyberfarm_5b73d9e1c4a082f6b39104e7d2c8',
         VerificationStatus: 'Verified',
         Purpose: 'ForMeat',
         RegistrationDate: '2026-11-02T13:15:00+02:00',
@@ -652,7 +652,7 @@
         EventId: nextCode('EVT', db.EventLog, 'EventId', 4),
         Timestamp: new Date().toISOString(),
         Title: `Верифікація «${sheep.Description}»: ${Enums.SheepVerificationStatuses[status].label}`,
-        Subtitle: sheep.VerificationComment || 'Доступна в каталозі «єВівця»'
+        Subtitle: sheep.VerificationComment || 'Доступна в каталозі «CyberFarm»'
       });
       saveDb(db, 'verification_changed');
       return sheep;
@@ -811,6 +811,19 @@
       }, 280);
     }
   };
+
+  // МоєСтадо: режим «Великий шрифт» (увімкнений за замовчуванням)
+  UI.BIG_UI_KEY = 'farmer_big_ui';
+  UI.isBigUi = function () {
+    try { return localStorage.getItem(UI.BIG_UI_KEY) !== '0'; } catch (_) { return true; }
+  };
+  UI.setBigUi = function (on) {
+    try { localStorage.setItem(UI.BIG_UI_KEY, on ? '1' : '0'); } catch (_) {}
+    if (document.body) document.body.classList.toggle('big-ui', !!on && document.body.classList.contains('app-farmer'));
+  };
+  if (global.document && document.body && document.body.classList.contains('app-farmer')) {
+    document.body.classList.toggle('big-ui', UI.isBigUi());
+  }
 
   global.SheepSystemStore = Store;
   global.SheepSystemUI = UI;

@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CyberFarm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,500;0,600;1,500&display=swap">
+  <link rel="stylesheet" href="./styles.css">
+  <style>
+    /* CyberFarm (iOS): доповнення до iOS-компонентів зі styles.css */
+    body.app-investor { --cf-green: #1E7E34; --cf-lime: #34C759; }
+    .cf-screen { display: flex; flex-direction: column; flex: 1 1 auto; min-block-size: 0; position: relative; }
+    .cf-p { margin: 0 32px 14px; font-size: 15px; line-height: 1.4; color: var(--ios-secondary); }
+    .cf-h { margin: 0 16px 6px; font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -0.4px; }
+    .cf-err { margin: -8px 32px 14px; font-size: 14px; color: var(--ios-red); font-weight: 500; }
+    .cf-hint { margin: -12px 32px 16px; font-size: 13px; color: var(--ios-secondary); }
+    .cf-center { text-align: center; }
+    .cf-link-btn { appearance: none; border: 0; background: none; font: inherit; color: var(--ios-tint); font-size: 16px; min-block-size: 44px; display: block; margin: 0 auto; cursor: pointer; text-decoration: none; text-align: center; }
+
+    /* Онбординг */
+    .cf-welcome-photo { margin: 6px 16px 18px; border-radius: 22px; overflow: clip; aspect-ratio: 1 / 1; background: #DDE5D6; }
+    .cf-welcome-photo img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+    .cf-brand { margin: 0 16px 4px; font-size: 13px; font-weight: 600; color: var(--ios-tint); letter-spacing: .2px; }
+    .cf-bul { list-style: none; margin: 0 16px 20px; padding: 0; display: grid; gap: 8px; font-size: 15px; }
+    .cf-bul li { display: flex; gap: 10px; align-items: center; }
+    .cf-bul li::before { content: '✓'; inline-size: 22px; block-size: 22px; border-radius: 99px; background: rgba(52,199,89,.16); color: var(--cf-green); display: grid; place-items: center; font-size: 13px; font-weight: 700; flex: none; }
+    .cf-progress { display: flex; gap: 5px; margin: 6px 16px 14px; }
+    .cf-progress span { flex: 1; block-size: 4px; border-radius: 99px; background: var(--ios-fill); }
+    .cf-progress span.done { background: var(--ios-tint); }
+    .cf-progress span.now { background: rgba(0,122,255,.45); }
+    .cf-step-lbl { margin: 8px 16px 0; font-size: 13px; color: var(--ios-secondary); font-weight: 500; }
+    .cf-otp { display: flex; justify-content: center; gap: 10px; margin: 10px 0 16px; }
+    .cf-otp input { inline-size: 54px; block-size: 62px; border: 0; border-radius: 12px; background: var(--ios-card); text-align: center; font: inherit; font-size: 26px; font-weight: 600; outline: none; }
+    .cf-otp input:focus { box-shadow: 0 0 0 2px var(--ios-tint); }
+    .cf-check { inline-size: 22px; block-size: 22px; flex: none; accent-color: var(--ios-tint); }
+    .cf-tick { color: var(--ios-tint); font-size: 18px; font-weight: 600; }
+    .cf-ico { inline-size: 30px; block-size: 30px; border-radius: 7px; display: grid; place-items: center; flex: none; } .cf-ico svg { display: block; }
+    .cf-big-ok { inline-size: 84px; block-size: 84px; border-radius: 99px; margin: 30px auto 16px; display: flex; align-items: center; justify-content: center; line-height: 0; background: rgba(52,199,89,.16); color: var(--cf-green); font-size: 40px; font-weight: 700; }
+    .cf-big-ok.wait { background: rgba(255,149,0,.15); color: #B25000; }
+    .cf-stepper { display: flex; align-items: center; justify-content: center; gap: 26px; margin: 6px 0 18px; }
+    .cf-stepper button { inline-size: 50px; block-size: 50px; border-radius: 99px; border: 0; background: var(--ios-card); color: var(--ios-tint); font-size: 26px; cursor: pointer; }
+    .cf-stepper button:disabled { color: var(--ios-tertiary); }
+    .cf-stepper output { font-size: 54px; font-weight: 700; min-inline-size: 64px; text-align: center; font-variant-numeric: tabular-nums; }
+    .cf-doc { margin: 0 16px 16px; background: var(--ios-card); border-radius: 12px; padding: 16px; font-size: 15px; line-height: 1.42; }
+    .cf-doc h3 { margin: 0 0 2px; font-size: 17px; }
+    .cf-doc ol { margin: 10px 0 0; padding-inline-start: 20px; display: grid; gap: 8px; }
+
+    /* Картки овець (кабінет) */
+    .cf-card { display: block; margin: 0 16px 16px; background: var(--ios-card); border-radius: 18px; overflow: clip; color: var(--ios-label); text-decoration: none; }
+    .cf-card-photo { position: relative; aspect-ratio: 16 / 10; background: #E8EDE3; overflow: clip; display: block; }
+    .cf-card-photo img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+    .cf-card-photo .ios-pill { position: absolute; inset-block-start: 10px; inset-inline-start: 10px; background: rgba(255,255,255,.9); backdrop-filter: blur(8px); }
+    .cf-card-body { padding: 12px 16px 14px; }
+    .cf-tag { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--ios-secondary); }
+    .cf-name { margin: 2px 0 2px; font-size: 24px; font-weight: 700; letter-spacing: -0.4px; }
+    .cf-name.unnamed { color: var(--ios-secondary); font-weight: 600; font-size: 20px; }
+    .cf-meta { margin: 0 0 12px; font-size: 14px; color: var(--ios-secondary); }
+    .cf-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+    .cf-bar-h { display: flex; justify-content: space-between; font-size: 13px; color: var(--ios-secondary); margin-bottom: 5px; }
+    .cf-track { block-size: 6px; border-radius: 99px; background: var(--ios-fill); overflow: clip; }
+    .cf-fill { block-size: 100%; border-radius: 99px; background: var(--ios-green); }
+    .cf-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-block-start: 10px; border-block-start: 0.5px solid var(--ios-separator); }
+    .cf-card-foot .cf-open { color: var(--ios-tint); font-size: 15px; font-weight: 600; }
+    .cf-mini-btn { appearance: none; border: 0; background: var(--ios-tint); color: #fff; font: inherit; font-size: 14px; font-weight: 600; border-radius: 99px; padding: 7px 14px; cursor: pointer; }
+
+    .cf-await-photo { display: grid; place-items: center; background: linear-gradient(160deg, #EEF4E8, #DCE8D2); }
+    .cf-await-photo svg { inline-size: 46%; }
+    .cf-await-photo .pulse { animation: cfPulse 2.2s ease-in-out infinite; }
+    @keyframes cfPulse { 0%,100% { opacity: .3; } 50% { opacity: 1; } }
+    .cf-tl { list-style: none; margin: 4px 0 12px; padding: 0; display: grid; gap: 10px; }
+    .cf-tl li { display: flex; gap: 10px; font-size: 14px; color: var(--ios-secondary); }
+    .cf-tl li b { display: block; color: var(--ios-label); font-weight: 600; font-size: 15px; }
+    .cf-tl .dot { inline-size: 22px; block-size: 22px; border-radius: 99px; flex: none; display: grid; place-items: center; border: 1.5px solid var(--ios-tertiary); font-size: 12px; color: #fff; margin-top: 1px; }
+    .cf-tl .done .dot { background: var(--ios-green); border-color: var(--ios-green); }
+    .cf-tl .now .dot { border-color: var(--ios-orange); }
+    .cf-tl .now .dot::after { content: ''; inline-size: 8px; block-size: 8px; border-radius: 99px; background: var(--ios-orange); }
+    .cf-demo { appearance: none; border: 1px dashed var(--ios-tertiary); background: transparent; color: var(--ios-secondary); font: inherit; font-size: 13px; border-radius: 10px; padding: 8px 12px; cursor: pointer; }
+    .cf-add { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 16px 16px; min-block-size: 56px; border-radius: 18px; border: 1.5px dashed var(--ios-tertiary); color: var(--ios-tint); font-size: 16px; font-weight: 600; text-decoration: none; }
+
+    /* Моя вівця */
+    .cf-hero-photo { margin: 0 16px 14px; border-radius: 18px; overflow: clip; aspect-ratio: 4 / 3; background: #E8EDE3; }
+    .cf-hero-photo img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+    .cf-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin: 0 16px 16px; }
+    .cf-title-row h2 { margin: 0; font-size: 32px; line-height: 1.1; font-weight: 700; letter-spacing: -0.5px; word-break: break-word; }
+    .cf-title-row p { margin: 4px 0 0; font-size: 15px; color: var(--ios-secondary); }
+    .cf-health-ico { inline-size: 36px; block-size: 36px; border-radius: 10px; display: grid; place-items: center; background: rgba(52,199,89,.16); color: var(--cf-green); flex: none; }
+    .cf-health-ico.check { background: rgba(255,149,0,.15); color: #B25000; }
+    .cf-val { color: var(--ios-secondary); font-size: 16px; text-align: end; }
+    .cf-map { position: relative; aspect-ratio: 16 / 9; background: #DCE8D2; }
+    .cf-map svg { inline-size: 100%; block-size: 100%; display: block; }
+    .cf-pin { position: absolute; inline-size: 16px; block-size: 16px; margin: -8px 0 0 -8px; border-radius: 99px; background: var(--ios-tint); border: 3px solid #fff; box-shadow: 0 0 0 8px rgba(0,122,255,.18); }
+    .cf-map-lbl { position: absolute; inset-inline: 10px; inset-block-end: 8px; display: flex; justify-content: space-between; font-size: 12px; color: #1F3B1A; font-weight: 500; }
+    .cf-cert { margin: 0 16px 20px; border-radius: 16px; padding: 16px; background: linear-gradient(145deg, #FFFFFF, #EEF5EA); }
+    .cf-cert-h { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+    .cf-seal { inline-size: 44px; block-size: 44px; border-radius: 99px; background: var(--cf-green); color: #fff; display: grid; place-items: center; flex: none; }
+    .cf-mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 13px; color: var(--ios-secondary); }
+    .cf-cert p { margin: 0 0 12px; font-size: 15px; line-height: 1.4; }
+    .cf-cert .ios-primary-btn, .cf-cert .ios-secondary-btn { inline-size: 100%; margin: 0 0 8px; }
+    .cf-cert details { font-size: 13px; color: var(--ios-secondary); margin-top: 4px; }
+    .cf-cert summary { cursor: pointer; min-block-size: 36px; display: flex; align-items: center; color: var(--ios-tint); font-size: 14px; }
+    .cf-cert code { display: block; word-break: break-all; font-size: 12px; background: rgba(0,0,0,.04); border-radius: 8px; padding: 8px; margin-top: 6px; }
+
+    /* Мій внесок */
+    .cf-notice { margin: 0 16px 18px; padding: 18px; border-radius: 18px; background: #0E2C10; color: #F4F1E6; }
+    .cf-notice-ico { inline-size: 34px; block-size: 34px; border-radius: 99px; background: rgba(255,255,255,.12); display: grid; place-items: center; margin-bottom: 10px; font-weight: 700; }
+    .cf-notice p { margin: 0; font-size: 21px; line-height: 1.25; font-weight: 700; letter-spacing: -0.3px; }
+    .cf-notice small { display: block; margin-top: 10px; font-size: 14px; color: #B7C4B0; line-height: 1.35; }
+    .cf-notice b { color: #B8E35E; }
+    .cf-period { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ios-secondary); margin-top: 6px; }
+    .cf-pay { display: block; padding: 12px 16px; position: relative; }
+    .cf-pay + .cf-pay::before { content: ''; position: absolute; inset-block-start: 0; inset-inline: 16px 0; border-block-start: 0.5px solid var(--ios-separator); }
+    .cf-pay-h { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; margin-bottom: 8px; }
+    .cf-pay-h b { font-size: 16px; }
+    .cf-pay-h strong { font-size: 16px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .cf-soon-card { margin: 0 16px 16px; border-radius: 18px; padding: 16px; background: var(--ios-card); font-size: 15px; color: var(--ios-secondary); line-height: 1.4; }
+    .cf-soon-card b { color: var(--ios-label); display: block; margin-bottom: 4px; font-size: 16px; }
+
+    /* Профіль */
+    .cf-id { margin: 0 16px 20px; background: var(--ios-card); border-radius: 16px; padding: 18px 16px; text-align: center; }
+    .cf-avatar { inline-size: 72px; block-size: 72px; border-radius: 99px; margin: 0 auto 10px; display: grid; place-items: center; background: linear-gradient(135deg, #34C759, #1E7E34); color: #fff; font-size: 26px; font-weight: 600; }
+    .cf-id h2 { margin: 0; font-size: 20px; }
+    .cf-id p { margin: 2px 0 10px; }
+
+    /* Сертифікат у шторці */
+    .cf-certificate { margin: 0 16px 16px; background: #FBF8EE; border: 1px solid #E2D9BE; border-radius: 16px; padding: 22px 18px; text-align: center; }
+    .cf-certificate h3 { margin: 10px 0 2px; font-size: 22px; }
+    .cf-certificate .who { font-size: 20px; font-weight: 700; margin: 4px 0; }
+    .cf-certificate dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; text-align: start; font-size: 14px; margin: 16px 0 0; }
+    .cf-certificate dt { color: var(--ios-secondary); }
+    .cf-certificate dd { margin: 0; font-weight: 600; }
+    .cf-suggest { display: flex; flex-wrap: wrap; gap: 8px; margin: -6px 16px 18px; }
+    .cf-suggest button { appearance: none; border: 0; background: var(--ios-card); color: var(--ios-label); font: inherit; font-size: 15px; border-radius: 99px; padding: 8px 14px; cursor: pointer; }
+
+    .ios-tab { position: relative; }
+    .cf-soon-badge { position: absolute; inset-block-start: 2px; inset-inline-end: 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .2px; background: #FF9500; color: #fff; border-radius: 99px; padding: 1px 5px; }
+    .ios-tab[aria-disabled="true"] { opacity: .55; }
+    @media (prefers-reduced-motion: reduce) { .cf-await-photo .pulse { animation: none; } }
+
+    /* ===== Бренд CyberFarm: кремовий фон, темно-зелені картки, лайм, Lora + IBM Plex Sans ===== */
+    body.cf-brand {
+      --cf-bg: #F6F4EC; --cf-forest: #0E2C10; --cf-forest-2: #183D18; --cf-cream: #F4F1E6; --cf-muted-d: #A9B5A2;
+      --cf-lime: #B8E35E; --cf-sage: #C8D3B8; --cf-ink: #10260F; --cf-muted: #66705F; --cf-line: #E4E0D2;
+      --ios-tint: #0E2C10; --ios-green: #7DBA2F; --ios-green-ink: #3E6B10;
+    }
+    .cf-brand .iphone-screen, .cf-brand .ios-app { --ios-bg: #F6F4EC; --ios-label: #10260F; --ios-secondary: #66705F; --ios-separator: rgba(16,38,15,.12); --ios-fill: rgba(16,38,15,.07); }
+    .cf-brand .ios-app, .cf-brand .ios-navbar, .cf-brand .ios-sheet { background: var(--cf-bg); }
+    .cf-brand .ios-subpage-navbar { background: rgba(246,244,236,.9); }
+    .cf-brand .ios-app, .cf-brand .ios-app button, .cf-brand .ios-app input, .cf-brand .ios-sheet { font-family: 'IBM Plex Sans', -apple-system, system-ui, sans-serif; }
+    .cf-brand .ios-large-title, .cf-brand .cf-h, .cf-brand .cf-name, .cf-brand .cf-title-row h2, .cf-brand .cf-notice p, .cf-brand .cf-certificate h3, .cf-brand .cf-certificate .who, .cf-brand .ios-stat-val, .cf-brand .cf-stepper output, .cf-brand .cf-id h2 { font-family: 'Lora', Georgia, serif; font-weight: 500; letter-spacing: -0.3px; }
+    .cf-brand .ios-large-title { font-size: 36px; }
+    .cf-brand .ios-navbar-eyebrow { display: inline-block; background: var(--cf-sage); color: var(--cf-forest); font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; padding: 4px 10px; border-radius: 99px; }
+    .cf-brand .ios-section-header { color: var(--cf-muted); font-weight: 600; letter-spacing: .6px; font-size: 12px; }
+    .cf-brand .ios-group, .cf-brand .cf-doc, .cf-brand .cf-soon-card, .cf-brand .cf-id, .cf-brand .ios-stats-card { border: 1px solid var(--cf-line); }
+    .cf-brand .ios-primary-btn { background: var(--cf-forest); color: var(--cf-cream); border-radius: 99px; font-weight: 700; }
+    .cf-brand .ios-secondary-btn { background: transparent; color: var(--cf-forest); border: 1px solid var(--cf-line); border-radius: 99px; font-weight: 700; }
+    .cf-brand .ios-nav-btn, .cf-brand .ios-back-link, .cf-brand .cf-link-btn, .cf-brand .cf-tick, .cf-brand .cf-card-foot .cf-open { color: #2F5A12; }
+    .cf-brand .ios-switch:checked { background: var(--cf-forest); }
+    .cf-brand .cf-progress span.done { background: var(--cf-forest); }
+    .cf-brand .cf-progress span.now { background: var(--cf-lime); }
+    .cf-brand .cf-otp input:focus { box-shadow: 0 0 0 2px var(--cf-forest); }
+    .cf-brand .cf-big-ok { background: var(--cf-lime); color: var(--cf-forest); }
+    .cf-brand .cf-stepper button { color: var(--cf-forest); border: 1px solid var(--cf-line); }
+    body.app-investor.cf-brand .ios-tab { color: rgba(16,38,15,.6); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+    body.app-investor.cf-brand .ios-tab[aria-selected="true"] { color: var(--cf-forest); background: var(--cf-lime); box-shadow: none; }
+    .cf-tab-svg { display: block; flex: none; }
+    .cf-cert .cf-disclosure { margin-top: 6px; background: #fff; border: 1px solid var(--cf-line); border-radius: 12px; overflow: clip; }
+    .cf-cert .cf-disclosure summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-block-size: 48px; padding: 0 14px; color: var(--cf-forest); font-size: 15px; font-weight: 600; cursor: pointer; }
+    .cf-cert .cf-disclosure summary::-webkit-details-marker { display: none; }
+    .cf-cert .cf-disclosure summary:active { background: rgba(0,0,0,.04); }
+    .cf-chev { color: var(--cf-muted); flex: none; transition: transform .2s ease; }
+    .cf-disclosure[open] .cf-chev { transform: rotate(90deg); }
+    .cf-disc-body { padding: 0 14px 14px; font-size: 13px; color: var(--cf-muted); line-height: 1.4; }
+    #sheet-end { justify-self: end; display: flex; justify-content: flex-end; }
+    .ios-sheet-header h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cf-kyc { margin: 0 16px 16px; display: flex; gap: 12px; align-items: flex-start; background: #FFF4D6; border: 1px solid #F2DFA6; border-radius: 18px; padding: 14px; color: #3D2B00; }
+    .cf-kyc-ico { inline-size: 36px; block-size: 36px; border-radius: 99px; background: #F2C14E; color: #3D2B00; display: flex; align-items: center; justify-content: center; flex: none; }
+    .cf-kyc-ico svg { display: block; }
+    .cf-kyc b { display: block; font-size: 16px; margin-bottom: 2px; }
+    .cf-kyc > div > span { display: block; font-size: 14px; line-height: 1.38; color: #6B5310; }
+    .cf-kyc .cf-demo { margin-top: 10px; border-color: #D9C27A; color: #6B5310; }
+    .cf-round-add { inline-size: 36px; block-size: 36px; border-radius: 99px; background: var(--cf-forest); color: var(--cf-lime); display: flex; align-items: center; justify-content: center; flex: none; }
+    .cf-round-add svg { display: block; }
+    .cf-brand .cf-card .ios-primary-btn { background: var(--cf-lime); color: var(--cf-forest); }
+    .cf-brand .cf-card .cf-big-ok { background: rgba(184,227,94,.18); color: var(--cf-lime); }
+    .cf-brand .cf-soon-badge { background: #F2C14E; color: #3D2B00; }
+    .cf-brand .cf-avatar { background: var(--cf-forest); color: var(--cf-lime); }
+    .cf-brand .cf-seal { background: var(--cf-forest); color: var(--cf-lime); }
+    .cf-brand .ios-pill.green { background: rgba(184,227,94,.35); color: #2F4A0B; }
+    .cf-brand .cf-notice-ico { background: var(--cf-lime); color: var(--cf-forest); }
+    .cf-brand .cf-mini-btn { background: var(--cf-lime); color: var(--cf-forest); }
+    .cf-brand .cf-add { color: var(--cf-forest); border-color: #CFC9B5; }
+    .cf-brand .cf-pin { background: var(--cf-forest); box-shadow: 0 0 0 8px rgba(184,227,94,.45); }
+
+    /* Картки овець — як у кабінеті: фото + темно-зелений блок */
+    .cf-brand .cf-card { background: var(--cf-forest); color: var(--cf-cream); border-radius: 22px; }
+    .cf-brand .cf-card .cf-tag { color: var(--cf-lime); letter-spacing: 1.6px; }
+    .cf-brand .cf-card .cf-name { font-size: 30px; color: var(--cf-cream); }
+    .cf-brand .cf-card .cf-name.unnamed { color: var(--cf-muted-d); font-style: italic; font-size: 24px; }
+    .cf-brand .cf-card .cf-meta, .cf-brand .cf-card .cf-bar-h { color: var(--cf-muted-d); }
+    .cf-brand .cf-card .cf-track { background: rgba(255,255,255,.12); }
+    .cf-brand .cf-card .cf-fill { background: var(--cf-lime); }
+    .cf-brand .cf-card .cf-card-foot { border-block-start-color: rgba(255,255,255,.1); }
+    .cf-brand .cf-card .cf-card-foot .cf-open { color: var(--cf-lime); }
+    .cf-brand .cf-card .ios-pill { background: rgba(255,255,255,.1); color: var(--cf-cream); }
+    .cf-brand .cf-card .cf-card-photo .ios-pill { background: rgba(14,44,16,.75); color: var(--cf-lime); }
+    .cf-brand .cf-card .cf-tl li { color: var(--cf-muted-d); }
+    .cf-brand .cf-card .cf-tl li b { color: var(--cf-cream); }
+    .cf-brand .cf-card .cf-tl .dot { border-color: rgba(255,255,255,.3); }
+    .cf-brand .cf-card .cf-tl .done .dot { background: var(--cf-lime); border-color: var(--cf-lime); color: var(--cf-forest); }
+    .cf-brand .cf-card .cf-demo { color: var(--cf-muted-d); border-color: rgba(255,255,255,.3); }
+    .cf-brand .cf-await-photo { background: radial-gradient(120% 90% at 50% 100%, #24502A 0%, var(--cf-forest-2) 55%, var(--cf-forest) 100%); }
+    .cf-brand .cf-await-photo svg g { stroke: var(--cf-lime); opacity: .9; }
+    .cf-brand .cf-await-photo .ios-pill.orange { background: #F2C14E; color: #3D2B00; }
+    .cf-brand .cf-card:not(.light) .cf-card-body > .ios-pill { color: var(--cf-cream); }
+
+    /* Перший екран */
+    .cf-brand .cf-title-row { background: var(--cf-forest); color: var(--cf-cream); border-radius: 0 0 22px 22px; padding: 18px 18px 16px; position: relative; }
+    .cf-brand .cf-title-row .cf-tag { color: var(--cf-lime); letter-spacing: 1.6px; }
+    .cf-brand .cf-title-row h2 { font-size: 36px; color: var(--cf-cream); }
+    .cf-brand .cf-title-row p { color: var(--cf-muted-d); }
+    .cf-brand .cf-title-row .ios-nav-btn { flex: none; white-space: nowrap; color: var(--cf-forest); background: var(--cf-lime); border-radius: 99px; min-block-size: 36px; padding: 6px 14px; font-size: 15px; font-weight: 600; }
+    .cf-brand .cf-hero-photo { border-radius: 22px 22px 0 0; margin-bottom: 0; }
+    .cf-wel { position: absolute; inset: 0; background: var(--cf-forest); color: var(--cf-cream); display: flex; flex-direction: column; overflow-y: auto; scrollbar-width: none; }
+    .cf-wel-photo { position: relative; flex: none; block-size: 50%; min-block-size: 330px; }
+    .cf-wel-photo img { inline-size: 100%; block-size: 100%; object-fit: cover; object-position: 50% 35%; display: block; }
+    .cf-wel-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(14,44,16,.55) 0%, rgba(14,44,16,0) 28%, rgba(14,44,16,0) 55%, #0E2C10 100%); }
+    .cf-wel-logo { position: absolute; z-index: 1; inset-block-start: 60px; inset-inline-start: 20px; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: var(--cf-cream); }
+    .cf-wel-logo span { inline-size: 34px; block-size: 34px; border-radius: 10px; background: var(--cf-lime); color: var(--cf-forest); display: grid; place-items: center; }
+    .cf-wel-body { padding: 0 22px 44px; margin-block-start: -36px; position: relative; z-index: 1; display: flex; flex-direction: column; flex: 1; }
+    .cf-wel-eyebrow { align-self: flex-start; background: var(--cf-sage); color: var(--cf-forest); font-size: 11px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; padding: 5px 12px; border-radius: 99px; }
+    .cf-wel h1 { font-family: 'Lora', Georgia, serif; font-weight: 500; font-size: 38px; line-height: 1.06; letter-spacing: -0.5px; margin: 14px 0 10px; }
+    .cf-wel p { margin: 0 0 16px; font-size: 16px; line-height: 1.45; color: var(--cf-muted-d); }
+    .cf-wel ul { list-style: none; margin: 0 0 24px; padding: 0; display: grid; gap: 9px; font-size: 15px; }
+    .cf-wel li { display: flex; gap: 10px; align-items: center; }
+    .cf-wel li::before { content: '✓'; inline-size: 22px; block-size: 22px; flex: none; border-radius: 99px; background: var(--cf-lime); color: var(--cf-forest); display: grid; place-items: center; font-size: 12px; font-weight: 800; }
+    .cf-wel-cta { margin-block-start: auto; display: grid; gap: 10px; }
+    .cf-wel-cta a { min-block-size: 54px; border-radius: 99px; display: grid; place-items: center; font-weight: 700; font-size: 17px; text-decoration: none; }
+    .cf-wel-cta .lime { background: var(--cf-lime); color: var(--cf-forest); }
+    .cf-wel-cta .ghost { color: var(--cf-cream); border: 1px solid rgba(255,255,255,.22); }
+  </style>
+</head>
+<body class="app-investor cf-brand">
+  <div id="sr-live" class="visually-hidden" aria-live="polite"></div>
+
+  <nav class="studio-bar" aria-label="Перемикання прототипів">
+    <a class="studio-link" href="./moe-stado.html">МоєСтадо</a>
+    <a class="studio-link active" href="./cyberfarm.html">CyberFarm</a>
+    <a class="studio-link" href="./cyberfarm-web.html">CyberFarm Web</a>
+  </nav>
+
+  <div class="iphone-device">
+    <div class="iphone-screen">
+      <div class="ios-statusbar" aria-hidden="true">
+        <span class="ios-time">9:41</span>
+        <div class="dynamic-island"></div>
+        <div class="ios-status-icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+          <svg width="15" height="11" viewBox="0 0 15 11" fill="currentColor"><path d="M7.5 10.8a1.3 1.3 0 1 0 0-2.6 1.3 1.3 0 0 0 0 2.6Zm-3.3-3a4.7 4.7 0 0 1 6.6 0l1.2-1.2a6.4 6.4 0 0 0-9 0l1.2 1.2Zm-2.6-2.6a8.3 8.3 0 0 1 11.8 0L14.6 4A10 10 0 0 0 .4 4l1.2 1.2Z"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="currentColor" stroke-opacity="0.35"/><rect x="2" y="2" width="18" height="8" rx="2" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4Z" fill="currentColor" fill-opacity="0.4"/></svg>
+        </div>
+      </div>
+
+      <div id="ios-banner" class="ios-banner" role="status">
+        <p class="ios-banner-title"></p>
+        <p class="ios-banner-sub"></p>
+      </div>
+
+      <div id="main-app" class="ios-app"></div>
+
+      <div id="sheet" class="ios-sheet-layer" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+        <div class="ios-sheet">
+          <div class="ios-sheet-grabber"></div>
+          <div class="ios-sheet-header">
+            <button type="button" class="ios-nav-btn start-action" data-close>Закрити</button>
+            <h2 id="sheet-title"></h2>
+            <span id="sheet-end"></span>
+          </div>
+          <div class="ios-sheet-body" id="sheet-body"></div>
+        </div>
+      </div>
+
+      <div class="home-indicator" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <script src="./shared-data.js"></script>
+  <script src="./cyberfarm-data.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    const CF = window.CyberFarm;
+    const Store = window.SheepSystemStore;
+    const UI = window.SheepSystemUI;
+    const mainApp = document.getElementById('main-app');
+    const sheet = document.getElementById('sheet');
+
+    // ---------- Утиліти ----------
+    const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const money = (n) => new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 0 }).format(n) + ' ₴';
+    const dLong = (iso) => new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso)).replace(/\s*р\.$/, '');
+    const dShort = (iso) => new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long' }).format(new Date(iso));
+    function plural(n, a, b, c) { const m10 = n % 10, m100 = n % 100; if (m10 === 1 && m100 !== 11) return a; if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return b; return c; }
+    const days = (n) => `${n} ${plural(n, 'день', 'дні', 'днів')}`;
+    function age(birth) {
+      const b = new Date(birth), now = new Date();
+      let m = (now.getFullYear() - b.getFullYear()) * 12 + now.getMonth() - b.getMonth();
+      if (now.getDate() < b.getDate()) m--;
+      const y = Math.floor(m / 12); m %= 12;
+      return [y ? `${y} ${plural(y, 'рік', 'роки', 'років')}` : '', m ? `${m} міс.` : ''].filter(Boolean).join(' ') || 'до місяця';
+    }
+    const go = (h) => { location.hash = h; };
+    const banner = (t, s) => UI.showBanner(t, s || '');
+    const initials = (n) => String(n || '').split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase();
+    const BACK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="m15 19-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const SEAL = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>';
+    const HEART = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>';
+    const AWAIT_ART = `<svg viewBox="0 0 200 150" aria-hidden="true"><g fill="none" stroke="#1E7E34" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 8" opacity=".7"><path d="M62 66c2-14 15-22 28-18 6-10 22-13 31-4 11-4 24 3 25 15 11 3 15 16 9 25 4 11-4 22-15 21-5 9-18 11-26 4-9 6-21 3-26-6-12 0-20-10-17-20"/><ellipse cx="46" cy="76" rx="15" ry="18" transform="rotate(-15 46 76)"/><path d="M94 116v20M128 116v20"/></g><circle class="pulse" cx="100" cy="82" r="7" fill="#FF9500"/></svg>`;
+
+    // ---------- Каркас екранів ----------
+    const TABS = [
+      { id: 'home', label: 'Мої вівці', svg: '<path d="M8.4 8.6a2.8 2.8 0 0 1 4.9-1.7 2.8 2.8 0 0 1 4.8.5 2.8 2.8 0 0 1 2.5 4.5 2.8 2.8 0 0 1-2.3 4.5 2.8 2.8 0 0 1-4.6.5 2.8 2.8 0 0 1-4.4-1.5" stroke-linejoin="round"/><ellipse cx="5.7" cy="11.3" rx="2.8" ry="3.3" transform="rotate(-15 5.7 11.3)"/><path d="M3.3 9 1.9 8.1M10.6 17v3.4M16.4 17v3.4" stroke-linecap="round"/>' },
+      { id: 'contribution', label: 'Мій внесок', svg: '<rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2" stroke-linecap="round"/><path d="M6 6V5a2 2 0 0 1 2-2h8" stroke-linecap="round"/>' },
+      { id: 'market', label: 'Маркет', soon: true, svg: '<path d="M5 8h14l-1.2 10.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z" stroke-linejoin="round"/><path d="M9 10.5V7a3 3 0 0 1 6 0v3.5" stroke-linecap="round"/>' },
+      { id: 'profile', label: 'Профіль', svg: '<circle cx="12" cy="8.5" r="3.8"/><path d="M5 19.5c1.6-3 4.1-4.5 7-4.5s5.4 1.5 7 4.5" stroke-linecap="round"/>' }
+    ];
+    function tabbar(current) {
+      return `<nav class="ios-tabbar" aria-label="Головна навігація">${TABS.map((t) => `
+        <a class="ios-tab" href="#/${t.id}" aria-selected="${t.id === current}" style="text-decoration:none;">
+          <svg class="cf-tab-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">${t.svg}</svg>
+          <span>${t.label}</span>${t.soon ? '<span class="cf-soon-badge">Скоро</span>' : ''}
+        </a>`).join('')}</nav>`;
+    }
+    // Вкладка: великий заголовок + скрол + таббар
+    function tabScreen(current, eyebrow, title, body, endBtn) {
+      mainApp.innerHTML = `
+        <section class="cf-screen">
+          <header class="ios-navbar">
+            <div class="ios-navbar-top"><span class="ios-navbar-eyebrow">${eyebrow}</span>${endBtn || ''}</div>
+            <h1 class="ios-large-title">${title}</h1>
+          </header>
+          <div class="ios-scroll" style="padding-block:10px calc(var(--tabbar-h) + var(--tabbar-bottom) + 28px);">${body}</div>
+        </section>${tabbar(current)}`;
+    }
+    // Підсторінка: UINavigationBar з «Назад»
+    function subScreen(back, backLabel, title, body, end) {
+      mainApp.innerHTML = `
+        <section class="cf-screen">
+          <header class="ios-subpage-navbar">
+            ${back ? `<a class="ios-back-link" href="${back}">${BACK}<span>${backLabel}</span></a>` : '<span></span>'}
+            <h1>${title}</h1>
+            <div class="ios-subpage-end">${end || ''}</div>
+          </header>
+          <main class="ios-scroll" style="padding-block-start:14px;">${body}</main>
+        </section>`;
+    }
+    const progress = (total, now) => `<div class="cf-progress" aria-hidden="true">${Array.from({ length: total }, (_, i) => `<span class="${i < now ? 'done' : i === now ? 'now' : ''}"></span>`).join('')}</div>`;
+
+    // ---------- Шторка ----------
+    let sheetInvoker = null;
+    function openSheet(title, body, end, invoker) {
+      sheetInvoker = invoker || document.activeElement;
+      document.getElementById('sheet-title').textContent = title;
+      document.getElementById('sheet-end').innerHTML = end || '';
+      document.getElementById('sheet-body').innerHTML = body;
+      document.getElementById('sheet-body').scrollTop = 0;
+      UI.openSheet(sheet, mainApp);
+    }
+    function closeSheet() { if (!sheet.hidden) UI.closeSheet(sheet, mainApp, sheetInvoker); }
+    sheet.addEventListener('click', (e) => { if (e.target === sheet || e.target.closest('[data-close]')) closeSheet(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+
+    function otpHtml(id) { return `<div class="cf-otp" id="${id}">${[1, 2, 3, 4].map((i) => `<input inputmode="numeric" maxlength="1" aria-label="Цифра ${i}" autocomplete="one-time-code">`).join('')}</div>`; }
+    function wireOtp(id, onDone) {
+      const ins = Array.from(document.querySelectorAll(`#${id} input`));
+      ins.forEach((inp, i) => {
+        inp.addEventListener('input', () => {
+          inp.value = inp.value.replace(/\D/g, '').slice(-1);
+          if (inp.value && ins[i + 1]) ins[i + 1].focus();
+          const code = ins.map((x) => x.value).join('');
+          if (code.length === 4) onDone(code, () => { ins.forEach((x) => { x.value = ''; }); ins[0].focus(); });
+        });
+        inp.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !inp.value && ins[i - 1]) ins[i - 1].focus(); });
+      });
+      setTimeout(() => ins[0] && ins[0].focus(), 350);
+    }
+
+    // ---------- Маршрутизація ----------
+    const PUBLIC = ['welcome', 'signup', 'login'];
+    const V = {};
+    function route() {
+      const raw = location.hash.replace(/^#\/?/, '');
+      const [name, param] = raw.split('/');
+      const me = CF.me();
+      let r = name || (me ? 'home' : 'welcome');
+      if (!me && !PUBLIC.includes(r)) r = 'welcome';
+      if (me && PUBLIC.includes(r)) r = 'home';
+      if (me && !me.phoneVerified) r = 'otp';
+      else if (me && (!me.kyc || me.kyc === 'none')) r = 'kyc';
+      if (r !== name) history.replaceState(null, '', '#/' + r);
+      if (!sheet.hidden) { sheet.classList.remove('open'); sheet.hidden = true; mainApp.removeAttribute('inert'); mainApp.classList.remove('scaled-back'); }
+      document.querySelector('.iphone-screen').classList.toggle('status-light', r === 'welcome');
+      (V[r] || V.home)(param);
+      document.title = 'CyberFarm';
+    }
+    window.addEventListener('hashchange', route);
+
+    // ================= ГІСТЬ =================
+    V.welcome = function () {
+      mainApp.innerHTML = `
+        <section class="cf-wel">
+          <div class="cf-wel-photo">
+            <img src="./images/sheep-2.jpg" alt="Вівця на карпатському пасовищі">
+            <div class="cf-wel-logo"><span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 8.6a2.8 2.8 0 0 1 4.9-1.7 2.8 2.8 0 0 1 4.8.5 2.8 2.8 0 0 1 2.5 4.5 2.8 2.8 0 0 1-2.3 4.5 2.8 2.8 0 0 1-4.6.5 2.8 2.8 0 0 1-4.4-1.5"/><ellipse cx="5.7" cy="11.3" rx="2.8" ry="3.3" transform="rotate(-15 5.7 11.3)"/><path d="M10.6 17v3.4M16.4 17v3.4"/></svg></span>CyberFarm</div>
+          </div>
+          <div class="cf-wel-body">
+            <span class="cf-wel-eyebrow">Карпати · ферми-партнери</span>
+            <h1>Ваша вівця на справжній фермі</h1>
+            <p>Ви робите внесок, ферма закріплює за вами живу вівцю, а ви стежите за нею в застосунку.</p>
+            <ul>
+              <li>Ім'я вівці даєте ви самі</li>
+              <li>Час володіння — з дня оплати</li>
+              <li>Договір і сертифікат у застосунку</li>
+            </ul>
+            <div class="cf-wel-cta">
+              <a class="lime" href="#/signup">Створити CyberFarm ID</a>
+              <a class="ghost" href="#/login">Увійти</a>
+            </div>
+          </div>
+        </section>`;
+    };
+
+    V.signup = function () {
+      subScreen('#/welcome', 'Назад', 'Реєстрація', `
+        <p class="cf-step-lbl">Крок 1 з 3 · Акаунт</p>
+        ${progress(3, 0)}
+        <form id="f" novalidate>
+          <div class="ios-section-header">CyberFarm ID</div>
+          <div class="ios-group">
+            <div class="ios-field-row"><label for="s-name">ПІБ</label><input id="s-name" autocomplete="name" placeholder="Як у паспорті"></div>
+            <div class="ios-field-row"><label for="s-email">Пошта</label><input id="s-email" type="email" autocomplete="email" placeholder="name@mail.com" autocapitalize="none"></div>
+            <div class="ios-field-row"><label for="s-phone">Телефон</label><input id="s-phone" type="tel" autocomplete="tel" value="+380 "></div>
+            <div class="ios-field-row"><label for="s-pass">Пароль</label><input id="s-pass" type="password" autocomplete="new-password" placeholder="від 8 символів"></div>
+          </div>
+          <div class="ios-group">
+            <label class="ios-row" style="cursor:pointer;"><span class="ios-row-main" style="font-size:15px;">Погоджуюсь з умовами користування та обробкою персональних даних</span><input type="checkbox" class="ios-switch" id="s-agree"></label>
+          </div>
+          <p class="cf-err" id="err" hidden></p>
+          <button class="ios-primary-btn" type="submit">Продовжити</button>
+        </form>`);
+      document.getElementById('f').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const v = (id) => document.getElementById(id).value.trim();
+        const err = document.getElementById('err');
+        const fail = (m) => { err.textContent = m; err.hidden = false; };
+        if (v('s-name').split(/\s+/).length < 2) return fail("Вкажіть прізвище та ім'я.");
+        if (!/^\S+@\S+\.\S+$/.test(v('s-email'))) return fail('Перевірте адресу пошти.');
+        if (v('s-phone').replace(/\D/g, '').length < 12) return fail('Номер у форматі +380 XX XXX XX XX.');
+        if (v('s-pass').length < 8) return fail('Пароль — щонайменше 8 символів.');
+        if (!document.getElementById('s-agree').checked) return fail('Потрібна згода з умовами.');
+        const res = CF.signup({ fullName: v('s-name'), email: v('s-email'), phone: v('s-phone'), password: v('s-pass') });
+        if (res.error) return fail(res.error);
+        go('#/otp');
+      });
+    };
+
+    V.otp = function () {
+      const me = CF.me();
+      subScreen('', '', 'Підтвердження', `
+        <p class="cf-step-lbl">Крок 2 з 3 · Телефон</p>
+        ${progress(3, 1)}
+        <h2 class="cf-h" style="font-size:24px;">Код із SMS</h2>
+        <p class="cf-p" style="margin-inline:16px;">Надіслали на ${esc(me.phone)}</p>
+        ${otpHtml('otp')}
+        <p class="cf-err cf-center" id="err" hidden style="margin-top:0;"></p>
+        <p class="cf-hint cf-center" style="margin-top:0;">Демо-код: <b>1234</b></p>
+        <button type="button" class="cf-link-btn" id="resend">Надіслати ще раз</button>`);
+      wireOtp('otp', (code, clear) => {
+        if (code !== '1234') { const e = document.getElementById('err'); e.textContent = 'Невірний код'; e.hidden = false; clear(); return; }
+        CF.updateMe({ phoneVerified: true });
+        go('#/kyc');
+      });
+      document.getElementById('resend').onclick = () => banner('Код надіслано ще раз');
+    };
+
+    V.kyc = function () {
+      const me = CF.me();
+      let method = 'BankID';
+      const draw = (phase) => {
+        if (phase === 'checking') {
+          subScreen('', '', 'Верифікація', `<div class="cf-big-ok wait">…</div><h2 class="cf-h cf-center" style="font-size:24px;">Перевіряємо дані</h2><p class="cf-p cf-center">Зазвичай це займає до хвилини.</p>`);
+          return;
+        }
+        if (phase === 'done') {
+          subScreen('', '', 'Верифікація', `
+            <div class="cf-big-ok"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.5 12.5 4.2 4.2 8.8-9.4"/></svg></div>
+            <h2 class="cf-h cf-center" style="font-size:24px;">Особу підтверджено</h2>
+            <p class="cf-p cf-center">CyberFarm ID готовий. Можна укласти договір і придбати першу вівцю.</p>
+            <a class="ios-primary-btn" href="#/buy" style="display:grid;place-items:center;text-decoration:none;">Придбати вівцю</a>
+            <a class="ios-secondary-btn" href="#/home" style="display:grid;place-items:center;text-decoration:none;">Перейти в кабінет</a>`);
+          return;
+        }
+        subScreen('', '', 'Верифікація', `
+          <p class="cf-step-lbl">Крок 3 з 3 · Особа</p>
+          ${progress(3, 2)}
+          <h2 class="cf-h" style="font-size:24px;">Підтвердіть особу</h2>
+          <p class="cf-p" style="margin-inline:16px;">Потрібно, щоб укласти договір на ваше ім'я і закріпити за вами тварин.</p>
+          <div class="ios-section-header">Спосіб</div>
+          <div class="ios-group">
+            <button type="button" class="ios-row" data-m="BankID"><span class="cf-ico" style="background:#0E2C10;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5 12 4l9 5.5M5 10v8M9.7 10v8M14.3 10v8M19 10v8M3 20.5h18"/></svg></span><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">BankID</p><p class="ios-row-sub">Через ваш банк, за 1 хвилину</p></span>${method === 'BankID' ? '<span class="cf-tick">✓</span>' : ''}</button>
+            <button type="button" class="ios-row" data-m="Документ"><span class="cf-ico" style="background:#5F7A4A;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.8" cy="11" r="2.2"/><path d="M5.6 16.2c.7-1.3 1.8-2 3.2-2s2.5.7 3.2 2M14.5 10h3.5M14.5 13.5h3.5"/></svg></span><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Фото документа і селфі</p><p class="ios-row-sub">ID-картка або паспорт, до 24 годин</p></span>${method === 'Документ' ? '<span class="cf-tick">✓</span>' : ''}</button>
+          </div>
+          <div class="ios-group">
+            <div class="ios-field-row"><label for="k-tax">РНОКПП</label><input id="k-tax" inputmode="numeric" maxlength="10" placeholder="10 цифр" value="${esc(me.taxId)}"></div>
+          </div>
+          <p class="cf-err" id="err" hidden></p>
+          <button class="ios-primary-btn" type="button" id="go">Підтвердити</button>
+          <button class="cf-link-btn" type="button" id="out" style="color:var(--ios-secondary);">Вийти з акаунта</button>`);
+        mainApp.querySelectorAll('[data-m]').forEach((b) => { b.onclick = () => { method = b.dataset.m; const t = document.getElementById('k-tax').value; draw(); document.getElementById('k-tax').value = t; }; });
+        document.getElementById('out').onclick = () => { CF.logout(); go('#/welcome'); };
+        document.getElementById('go').onclick = () => {
+          const tax = document.getElementById('k-tax').value.replace(/\D/g, '');
+          if (tax.length !== 10) { const e = document.getElementById('err'); e.textContent = 'РНОКПП має містити 10 цифр.'; e.hidden = false; return; }
+          CF.updateMe({ taxId: tax, kyc: 'pending', kycMethod: method });
+          go('#/home');
+          banner('Документи надіслано', 'Перевірка триває, кабінет уже доступний');
+        };
+      };
+      draw();
+    };
+
+    V.login = function () {
+      subScreen('#/welcome', 'Назад', 'Вхід', `
+        <h2 class="cf-h" style="font-size:26px;">Вхід до CyberFarm ID</h2>
+        <p class="cf-p" style="margin-inline:16px;">Пошта або телефон, які ви вказали під час реєстрації.</p>
+        <form id="f" novalidate>
+          <div class="ios-group">
+            <div class="ios-field-row"><label for="l-login">Логін</label><input id="l-login" autocomplete="username" autocapitalize="none" placeholder="Пошта або телефон"></div>
+            <div class="ios-field-row"><label for="l-pass">Пароль</label><input id="l-pass" type="password" autocomplete="current-password" placeholder="Обов'язково"></div>
+          </div>
+          <p class="cf-err" id="err" hidden></p>
+          <button class="ios-primary-btn" type="submit">Увійти</button>
+        </form>
+        <button class="cf-link-btn" type="button" id="forgot">Забули пароль?</button>
+        <div class="ios-section-header" style="margin-top:14px;">Демо</div>
+        <div class="ios-group">
+          <button class="ios-row" type="button" id="demo"><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Демо-інвестор</p><p class="ios-row-sub">2 вівці + 1 оплачена, очікує призначення</p></span><span class="ios-chevron">›</span></button>
+        </div>
+        <p class="cf-p cf-center">Ще немає акаунта? <a href="#/signup" style="color:var(--ios-tint);text-decoration:none;">Зареєструватися</a></p>`);
+      const submit = () => {
+        if (!CF.login(document.getElementById('l-login').value, document.getElementById('l-pass').value)) {
+          const e = document.getElementById('err'); e.textContent = 'Невірний логін або пароль.'; e.hidden = false; return;
+        }
+        go('#/home');
+      };
+      document.getElementById('f').addEventListener('submit', (e) => { e.preventDefault(); submit(); });
+      document.getElementById('demo').onclick = () => { document.getElementById('l-login').value = 'demo@cyberfarm.ua'; document.getElementById('l-pass').value = 'demo1234'; submit(); };
+      document.getElementById('forgot').onclick = () => banner('Посилання надіслано', 'Перевірте пошту');
+    };
+
+    // ================= ПОКУПКА =================
+    const BUY = 'cyberfarm_buy_count';
+    const buyN = () => Math.max(1, Math.min(10, parseInt(sessionStorage.getItem(BUY) || '1', 10) || 1));
+
+    V.buy = function () {
+      let n = buyN();
+      const hasC = !!CF.contract();
+      const total = hasC ? 2 : 3;
+      const draw = () => {
+        subScreen('#/home', 'Мої вівці', 'Нова вівця', `
+          <p class="cf-step-lbl">Крок 1 з ${total} · Кількість</p>
+          ${progress(total, 0)}
+          <h2 class="cf-h cf-center" style="font-size:24px;">Скільки овець?</h2>
+          <div class="cf-stepper">
+            <button type="button" id="minus" aria-label="Менше" ${n <= 1 ? 'disabled' : ''}>−</button>
+            <output aria-live="polite">${n}</output>
+            <button type="button" id="plus" aria-label="Більше" ${n >= 10 ? 'disabled' : ''}>+</button>
+          </div>
+          <div class="ios-group">
+            <div class="ios-row"><span class="ios-row-main">Внесок за вівцю</span><span class="cf-val">${money(CF.PRICE_PER_SHEEP)}</span></div>
+            <div class="ios-row"><span class="ios-row-main">Інвестиційний період</span><span class="cf-val">${CF.PERIOD_YEARS} роки</span></div>
+            <div class="ios-row"><span class="ios-row-main" style="font-weight:600;">Разом</span><span style="font-weight:700;font-size:17px;">${money(CF.PRICE_PER_SHEEP * n)}</span></div>
+          </div>
+          <div class="ios-section-header">Як це працює</div>
+          <div class="ios-group" style="padding:14px 16px 4px;">
+            <ul class="cf-tl">
+              <li class="done"><span class="dot">✓</span><span><b>Ви оплачуєте внесок</b>З цього дня рахується час володіння</span></li>
+              <li class="now"><span class="dot"></span><span><b>Ферма закріплює вівцю</b>Здорову, з биркою і GPS — до ${CF.ASSIGN_DAYS} днів</span></li>
+              <li><span class="dot"></span><span><b>Ви даєте їй ім'я</b>І отримуєте сертифікат власності</span></li>
+            </ul>
+          </div>
+          <a class="ios-primary-btn" href="#/${hasC ? 'pay' : 'contract'}" style="display:grid;place-items:center;text-decoration:none;">${hasC ? 'До оплати' : 'Далі: договір'}</a>`);
+        document.getElementById('minus').onclick = () => { n = Math.max(1, n - 1); sessionStorage.setItem(BUY, n); draw(); };
+        document.getElementById('plus').onclick = () => { n = Math.min(10, n + 1); sessionStorage.setItem(BUY, n); draw(); };
+      };
+      sessionStorage.setItem(BUY, n);
+      draw();
+    };
+
+    function contractHtml(me, c) {
+      return `
+        <div class="cf-doc">
+          <h3>Договір ${c ? '№ ' + esc(c.number) : '(проєкт)'}</h3>
+          <p class="cf-mono" style="margin:0;">${c ? 'Підписано ' + dLong(c.signedAt) : esc(me.fullName) + ' · ферма-партнер CyberFarm'}</p>
+          <ol>
+            <li><b>Предмет.</b> Ви робите внесок в утримання овець на фермі-партнері. За кожен внесок ферма закріплює за вами одну вівцю.</li>
+            <li><b>Призначення вівці.</b> Конкретну тварину ферма призначає після оплати, орієнтовно протягом ${CF.ASSIGN_DAYS} днів.</li>
+            <li><b>Час володіння</b> рахується з дня оплати, а не з дня призначення.</li>
+            <li><b>Ім'я</b> вівці обираєте ви. Воно вказується в сертифікаті.</li>
+            <li><b>Інвестиційний період — ${CF.PERIOD_YEARS} роки.</b> Виведення коштів можливе після його завершення.</li>
+            <li><b>Результати.</b> Порядок розрахунку виплат визначається окремою методикою, яку буде погоджено й додано до договору. Дохідність не гарантується.</li>
+            <li><b>Сертифікат.</b> На кожну вівцю видається цифровий сертифікат власності із записом у реєстрі.</li>
+          </ol>
+        </div>`;
+    }
+
+    V.contract = function () {
+      if (CF.contract()) { go('#/pay'); return; }
+      const me = CF.me();
+      subScreen('#/buy', 'Назад', 'Договір', `
+        <p class="cf-step-lbl">Крок 2 з 3 · Договір</p>
+        ${progress(3, 1)}
+        <p class="cf-p" style="margin-inline:16px;">Договір укладається один раз. Наступні вівці додаються до нього.${me.kyc === 'pending' ? ' Документи ще перевіряються: договір набуде чинності одразу після перевірки.' : ''}</p>
+        ${contractHtml(me, null)}
+        <div class="ios-group">
+          <label class="ios-row" style="cursor:pointer;"><span class="ios-row-main" style="font-size:15px;">Я ознайомився(-лась) і погоджуюсь, зокрема що виведення коштів можливе лише після ${CF.PERIOD_YEARS} років</span><input type="checkbox" class="ios-switch" id="agree"></label>
+        </div>
+        <button class="ios-primary-btn" type="button" id="sign" disabled style="opacity:.4;">Підписати кодом з SMS</button>`);
+      const agree = document.getElementById('agree'), sign = document.getElementById('sign');
+      agree.onchange = () => { sign.disabled = !agree.checked; sign.style.opacity = agree.checked ? '' : '.4'; };
+      sign.onclick = () => {
+        openSheet('Підпис договору', `
+          <p class="cf-p cf-center">Код надіслано на ${esc(me.phone)}</p>
+          ${otpHtml('sig')}
+          <p class="cf-err cf-center" id="sig-err" hidden style="margin-top:0;"></p>
+          <p class="cf-hint cf-center" style="margin-top:0;">Демо-код: <b>1234</b></p>`, '', sign);
+        wireOtp('sig', (code, clear) => {
+          if (code !== '1234') { const e = document.getElementById('sig-err'); e.textContent = 'Невірний код'; e.hidden = false; clear(); return; }
+          const c = CF.signContract();
+          banner('Договір підписано', '№ ' + c.number);
+          go('#/pay');
+        });
+      };
+    };
+
+    V.pay = function () {
+      const c = CF.contract();
+      if (!c) { go('#/contract'); return; }
+      const n = buyN();
+      let method = 'card';
+      const draw = () => {
+        subScreen('#/buy', 'Назад', 'Оплата', `
+          <p class="cf-step-lbl">Останній крок · Оплата</p>
+          ${progress(3, 2)}
+          <div class="ios-group">
+            <div class="ios-row"><span class="ios-row-main">Овець</span><span class="cf-val">${n}</span></div>
+            <div class="ios-row"><span class="ios-row-main">Договір</span><span class="cf-val">№ ${esc(c.number)}</span></div>
+            <div class="ios-row"><span class="ios-row-main">Володіння від</span><span class="cf-val">сьогодні, ${dShort(new Date().toISOString())}</span></div>
+            <div class="ios-row"><span class="ios-row-main" style="font-weight:600;">До сплати</span><span style="font-weight:700;font-size:17px;">${money(CF.PRICE_PER_SHEEP * n)}</span></div>
+          </div>
+          <div class="ios-section-header">Спосіб оплати</div>
+          <div class="ios-group">
+            <button type="button" class="ios-row" data-m="card"><span class="cf-ico" style="background:#0E2C10;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/></svg></span><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Apple Pay або картка</p><p class="ios-row-sub">Visa, Mastercard</p></span>${method === 'card' ? '<span class="cf-tick">✓</span>' : ''}</button>
+            <button type="button" class="ios-row" data-m="iban"><span class="cf-ico" style="background:#5F7A4A;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg></span><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Переказ за реквізитами</p><p class="ios-row-sub">Рахунок надійде на пошту</p></span>${method === 'iban' ? '<span class="cf-tick">✓</span>' : ''}</button>
+          </div>
+          <button class="ios-primary-btn" type="button" id="go">Оплатити ${money(CF.PRICE_PER_SHEEP * n)}</button>
+          <p class="cf-hint cf-center" style="margin-top:0;">Демо: справжнього списання немає</p>`);
+        mainApp.querySelectorAll('[data-m]').forEach((b) => { b.onclick = () => { method = b.dataset.m; draw(); }; });
+        document.getElementById('go').onclick = (e) => {
+          e.currentTarget.disabled = true; e.currentTarget.textContent = 'Обробляємо платіж…';
+          setTimeout(() => { CF.pay(n); sessionStorage.removeItem(BUY); sessionStorage.setItem('cyberfarm_paid_n', n); go('#/paid'); }, 1100);
+        };
+      };
+      draw();
+    };
+
+    V.paid = function () {
+      const n = parseInt(sessionStorage.getItem('cyberfarm_paid_n') || '1', 10);
+      subScreen('', '', 'Оплачено', `
+        <div class="cf-big-ok"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.5 12.5 4.2 4.2 8.8-9.4"/></svg></div>
+        <h2 class="cf-h cf-center" style="font-size:26px;">Оплату отримано</h2>
+        <p class="cf-p cf-center">Час володіння ${n > 1 ? 'вашими вівцями' : 'вашою вівцею'} вже йде — з сьогодні, ${dLong(new Date().toISOString())}.</p>
+        <div class="ios-group" style="padding:14px 16px;">
+          <p style="margin:0 0 4px;font-weight:600;">Що далі</p>
+          <p style="margin:0;font-size:15px;color:var(--ios-secondary);line-height:1.4;">Ферма закріпить за вами ${n > 1 ? n + ' ' + plural(n, 'вівцю', 'вівці', 'овець') : 'вівцю'} протягом ${CF.ASSIGN_DAYS} днів. Ми надішлемо сповіщення, і ви дасте ${n > 1 ? 'їм імена' : "їй ім'я"}.</p>
+        </div>
+        <a class="ios-primary-btn" href="#/home" style="display:grid;place-items:center;text-decoration:none;">До кабінету</a>`);
+    };
+
+    // Плашка «Триває перевірка документів» — не блокує користувача
+    function kycNote() {
+      const me = CF.me();
+      if (!me || me.kyc !== 'pending') return '';
+      return `
+        <div class="cf-kyc">
+          <span class="cf-kyc-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <div>
+            <b>Триває перевірка документів</b>
+            <span>Зазвичай до 24 годин. Кабінетом можна користуватися вже зараз, а договір набуде чинності після перевірки.</span>
+            <button type="button" class="cf-demo" data-kyc-done>Демо: перевірку завершено</button>
+          </div>
+        </div>`;
+    }
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-kyc-done]')) return;
+      CF.updateMe({ kyc: 'verified' });
+      route();
+      banner('Особу підтверджено', 'Договір набуває чинності');
+    });
+
+    // ================= МОЇ ВІВЦІ =================
+    const bar = (l, v) => `<div><div class="cf-bar-h"><span>${l}</span><span>${v}%</span></div><div class="cf-track"><div class="cf-fill" style="width:${v}%"></div></div></div>`;
+
+    function awaitingCard(h, link) {
+      const d = CF.daysSince(h.paidAt);
+      const due = new Date(new Date(h.paidAt).getTime() + CF.ASSIGN_DAYS * 864e5).toISOString();
+      return `
+        <article class="cf-card">
+          <div class="cf-card-photo cf-await-photo">${AWAIT_ART}<span class="ios-pill orange">Очікує призначення</span></div>
+          <div class="cf-card-body">
+            <p class="cf-name unnamed">Ферма підбирає вашу вівцю</p>
+            <p class="cf-meta">Оплачено ${dLong(h.paidAt)} · ${d ? 'володієте вже ' + days(d) : 'володіння почалося сьогодні'}</p>
+            <ul class="cf-tl">
+              <li class="done"><span class="dot">✓</span><span><b>Оплачено</b>${dShort(h.paidAt)}</span></li>
+              <li class="now"><span class="dot"></span><span><b>Призначення вівці фермою</b>Орієнтовно до ${dShort(due)}</span></li>
+              <li><span class="dot"></span><span><b>Ім'я і сертифікат</b>Після призначення</span></li>
+            </ul>
+            <div class="cf-card-foot">
+              ${link ? `<a class="cf-open" href="#/sheep/${h.id}" style="text-decoration:none;">Деталі ›</a>` : '<span></span>'}
+              <button type="button" class="cf-demo" data-assign="${h.id}">Демо: ферма призначила</button>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    function sheepCard(h) {
+      const { sheep, farmer, info } = CF.animal(h.sheep);
+      const d = CF.daysSince(h.paidAt);
+      return `
+        <article class="cf-card">
+          <a class="cf-card-photo" href="#/sheep/${h.id}" tabindex="-1" aria-hidden="true"><img src="${esc(sheep ? sheep.FullBodyPhoto : '')}" alt="" loading="lazy">
+            <span class="ios-pill green">${info.health === 'healthy' ? 'Здорова' : 'Під наглядом'}</span></a>
+          <div class="cf-card-body">
+            <p class="cf-tag">Бирка ${esc(sheep ? sheep.EarTagNumber : '')}</p>
+            ${h.name ? `<p class="cf-name">${esc(h.name)}</p>` : `<p class="cf-name unnamed">Ще без імені</p>`}
+            <p class="cf-meta">${esc(info.pasture)} · ${info.alt.toLocaleString('uk-UA')} м · ${esc(farmer ? farmer.FarmName : '')}</p>
+            <div class="cf-bars">${bar('Настрій', info.mood)}${bar('Ситість', info.fed)}</div>
+            <div class="cf-card-foot">
+              <span class="ios-pill">Ваша ${days(d)}</span>
+              ${h.name ? `<a class="cf-open" href="#/sheep/${h.id}" style="text-decoration:none;">Паспорт ›</a>` : `<button type="button" class="cf-mini-btn" data-name="${h.id}">Дати ім'я</button>`}
+            </div>
+          </div>
+        </article>`;
+    }
+
+    V.home = function () {
+      const me = CF.me();
+      const hs = CF.holdings();
+      const add = '<a class="cf-round-add" href="#/buy" aria-label="Додати вівцю"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>';
+      if (!hs.length) {
+        tabScreen('home', 'Мій кабінет', 'Мої вівці', `<p class="cf-p" style="margin:-6px 16px 14px;">${esc(me.email)}</p>${kycNote()}
+          <div class="cf-card" style="padding:24px 18px;text-align:center;">
+            <div class="cf-big-ok" style="margin-top:0;"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5.5v13M5.5 12h13"/></svg></div>
+            <p class="cf-name" style="font-size:20px;">У вас ще немає овець</p>
+            <p class="cf-meta" style="margin-bottom:16px;">Після оплати ферма закріпить за вами живу вівцю. Ви дасте їй ім'я, отримаєте сертифікат і бачитимете її стан тут.</p>
+            <a class="ios-primary-btn" href="#/buy" style="display:grid;place-items:center;text-decoration:none;inline-size:100%;margin:0;">Придбати першу вівцю</a>
+          </div>`, add);
+        return;
+      }
+      tabScreen('home', 'Мій кабінет', 'Мої вівці',
+        `<p class="cf-p" style="margin:-6px 16px 14px;">${esc(me.email)}</p>` + kycNote() + hs.map((h) => (h.status === 'assigned' ? sheepCard(h) : awaitingCard(h, true))).join('') +
+        `<a class="cf-add" href="#/buy"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Додати вівцю</a>`, add);
+    };
+
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-assign]');
+      if (a) {
+        const h = CF.assign(a.dataset.assign);
+        route();
+        banner('Ферма закріпила за вами вівцю', 'Дайте їй ім\'я');
+        setTimeout(() => nameSheet(h.id, null, true), 350);
+        return;
+      }
+      const n = e.target.closest('[data-name]');
+      if (n) nameSheet(n.dataset.name, n);
+    });
+
+    function nameSheet(id, invoker, fresh) {
+      const h = CF.holding(id);
+      if (!h) return;
+      const { sheep } = CF.animal(h.sheep);
+      const ideas = ['Білка', 'Хмаринка', 'Ґаздиня', 'Трембіта', 'Сніжка', 'Зоря', 'Пушинка', 'Ватра'];
+      openSheet(fresh ? 'Вашу вівцю призначено' : "Ім'я вівці", `
+        ${fresh && sheep ? `<div class="cf-hero-photo" style="aspect-ratio:16/10;"><img src="${esc(sheep.FullBodyPhoto)}" alt=""></div>` : ''}
+        <p class="cf-p">${fresh ? 'Тепер це ваша вівця. Як її назвемо? ' : ''}Ім'я буде в сертифікаті та в застосунку.</p>
+        <form id="fn">
+          <div class="ios-group"><div class="ios-field-row"><label for="nv">Ім'я</label><input id="nv" maxlength="24" value="${esc(h.name)}" placeholder="Наприклад, Хмаринка"></div></div>
+          <div class="cf-suggest">${ideas.map((x) => `<button type="button" data-idea="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+        </form>`, '<button type="submit" form="fn" class="ios-nav-btn semibold end-action">Готово</button>', invoker);
+      const input = document.getElementById('nv');
+      document.querySelectorAll('[data-idea]').forEach((b) => { b.onclick = () => { input.value = b.dataset.idea; }; });
+      document.getElementById('fn').addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const v = input.value.trim();
+        if (!v) { input.focus(); return; }
+        CF.rename(id, v);
+        closeSheet();
+        setTimeout(() => { route(); banner(`Тепер її звати «${v}»`); }, 300);
+      });
+    }
+
+    // ================= МОЯ ВІВЦЯ =================
+    function mapHtml(info) {
+      return `
+        <div class="cf-map" role="img" aria-label="Локація: ${esc(info.pasture)}">
+          <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="320" height="180" fill="#DCE8D2"/>
+            <path d="M0 120 C60 90 90 110 140 80 S230 40 320 70 V180 H0Z" fill="#CFE0C2"/>
+            <path d="M0 150 C70 125 120 140 180 118 S270 100 320 112 V180 H0Z" fill="#C1D7B1"/>
+            <g fill="none" stroke="rgba(30,60,25,.14)"><path d="M-10 100 C50 70 100 92 150 60 S240 20 330 50"/><path d="M-10 80 C60 50 110 70 160 40 S250 0 330 30"/><path d="M-10 135 C60 108 120 122 180 100 S270 82 330 94"/></g>
+            <path d="M40 175 C90 150 120 160 150 140 S220 120 260 130" fill="none" stroke="#fff" stroke-width="2.5" opacity=".8"/>
+          </svg>
+          <span class="cf-pin" style="left:${info.x * 100}%;top:${info.y * 100}%"></span>
+          <div class="cf-map-lbl"><span>${esc(info.pasture)} · ${info.alt.toLocaleString('uk-UA')} м</span><span>12 хв тому</span></div>
+        </div>`;
+    }
+
+    V.sheep = function (id) {
+      const h = CF.holding(id);
+      if (!h) { go('#/home'); return; }
+      if (h.status !== 'assigned') {
+        subScreen('#/home', 'Мої вівці', 'Моя вівця', awaitingCard(h, false) + `
+          <div class="ios-section-header">Чому вівцю ще не видно</div>
+          <div class="ios-group" style="padding:12px 16px;font-size:15px;line-height:1.4;color:var(--ios-secondary);">Ферма обирає для вас здорову тварину, ставить бирку і GPS-маячок та проходить верифікацію. Це до ${CF.ASSIGN_DAYS} днів. Час володіння при цьому рахується з дня оплати — ${dLong(h.paidAt)}.</div>
+          <div class="ios-group"><a class="ios-row" href="#/contribution"><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Мій внесок</p><p class="ios-row-sub">Оплата, договір і строки</p></span><span class="ios-chevron">›</span></a></div>`);
+        return;
+      }
+      const { sheep, farmer, info } = CF.animal(h.sheep);
+      const me = CF.me();
+      const d = CF.daysSince(h.paidAt);
+      const ok = info.health === 'healthy';
+      const row = (l, v) => `<div class="ios-row"><span class="ios-row-main">${l}</span><span class="cf-val">${v}</span></div>`;
+      subScreen('#/home', 'Мої вівці', 'Моя вівця', `
+        <div class="cf-hero-photo"><img src="${esc(sheep ? sheep.FullBodyPhoto : '')}" alt="${esc(h.name || 'Моя вівця')}"></div>
+        <div class="cf-title-row">
+          <div>
+            <p class="cf-tag">Бирка ${esc(sheep ? sheep.EarTagNumber : '')}</p>
+            <h2>${h.name ? esc(h.name) : '<span style="color:var(--ios-secondary);font-size:26px;">Ще без імені</span>'}</h2>
+            <p>Ваша з ${dLong(h.paidAt)} · ${days(d)}</p>
+          </div>
+          <button type="button" class="ios-nav-btn" data-name="${h.id}">${h.name ? 'Змінити' : "Дати ім'я"}</button>
+        </div>
+
+        <div class="ios-section-header">Стан</div>
+        <div class="ios-group">
+          <div class="ios-row"><span class="cf-health-ico ${ok ? '' : 'check'}">${HEART}</span><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">${ok ? 'Здорова' : 'Під наглядом ветеринара'}</p><p class="ios-row-sub">Останній огляд ${dShort(info.check)}</p></span></div>
+          <div class="ios-row" style="display:block;"><div class="cf-bars" style="margin:2px 0;">${bar('Настрій', info.mood)}${bar('Ситість', info.fed)}</div></div>
+        </div>
+
+        <div class="ios-section-header">Дані тварини</div>
+        <div class="ios-group">
+          ${row('Номер бирки', esc(sheep ? sheep.EarTagNumber : '—'))}
+          ${row('Порода', esc(info.breed))}
+          ${row('Дата народження', dLong(info.birth))}
+          ${row('Вік', age(info.birth))}
+          ${row('Вага', info.weight.toLocaleString('uk-UA') + ' кг')}
+          ${row('Господарство', esc(farmer ? farmer.FarmName : '—'))}
+        </div>
+
+        <div class="ios-section-header">Де зараз · GPS</div>
+        <div class="ios-group">
+          ${mapHtml(info)}
+          ${row('GPS-маячок', esc(sheep && sheep.GpsTrackerId ? sheep.GpsTrackerId : 'Не підключено'))}
+          ${row('Регіон', esc(farmer ? farmer.FarmAddress.split(',')[0] : '—'))}
+        </div>
+
+        <div class="ios-section-header">Сертифікат власності</div>
+        <div class="cf-cert">
+          <div class="cf-cert-h"><span class="cf-seal">${SEAL}</span><span><b>Цифровий сертифікат</b><br><span class="cf-mono">№ ${esc(h.cert)}</span></span></div>
+          <p>Підтверджує, що саме ця вівця закріплена за вами. Запис внесено в електронний реєстр: його неможливо підробити чи непомітно змінити заднім числом, а перевірити може будь-хто за номером сертифіката.</p>
+          <button type="button" class="ios-primary-btn" id="cert">Переглянути сертифікат</button>
+          <button type="button" class="ios-secondary-btn" id="share">Поділитися</button>
+          <details class="cf-disclosure"><summary><span>Технічний запис у реєстрі</span><svg class="cf-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></summary><div class="cf-disc-body">Унікальний ідентифікатор (токен) цієї вівці. Потрібен лише для перевірки й нічого не дає зробити з твариною без вас.<code>${esc(sheep ? sheep.Token : '')}</code></div></details>
+        </div>
+
+        <div class="ios-group">
+          <a class="ios-row" href="#/contribution"><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Мій внесок</p><p class="ios-row-sub">Оплата, договір, дата виведення коштів</p></span><span class="ios-chevron">›</span></a>
+        </div>`);
+      document.getElementById('cert').onclick = (e) => certSheet(h, e.currentTarget);
+      document.getElementById('share').onclick = async () => {
+        const text = `Моя вівця ${h.name ? '«' + h.name + '» ' : ''}на CyberFarm · сертифікат № ${h.cert}`;
+        try { if (navigator.share) { await navigator.share({ title: 'CyberFarm', text }); return; } } catch (_) { return; }
+        try { await navigator.clipboard.writeText(text); banner('Скопійовано'); } catch (_) { banner('Поділитися', text); }
+      };
+    };
+
+    function certSheet(h, invoker) {
+      const { sheep, farmer } = CF.animal(h.sheep);
+      const me = CF.me();
+      openSheet('Сертифікат', `
+        <div class="cf-certificate">
+          <span class="cf-seal" style="margin:0 auto;">${SEAL}</span>
+          <h3>Сертифікат власності</h3>
+          <p class="cf-mono" style="margin:0;">№ ${esc(h.cert)}</p>
+          <p style="margin:16px 0 0;color:var(--ios-secondary);">Цим підтверджується, що</p>
+          <p class="who">${esc(me.fullName)}</p>
+          <p style="margin:0;color:var(--ios-secondary);">є власником вівці</p>
+          <p class="who">${h.name ? '«' + esc(h.name) + '»' : 'без імені'}</p>
+          <dl>
+            <dt>Бирка</dt><dd>${esc(sheep ? sheep.EarTagNumber : '')}</dd>
+            <dt>Господарство</dt><dd>${esc(farmer ? farmer.FarmName : '')}</dd>
+            <dt>Володіння з</dt><dd>${dLong(h.paidAt)}</dd>
+            <dt>Договір</dt><dd>№ ${esc(h.contract || '')}</dd>
+            <dt>CyberFarm ID</dt><dd>${esc(me.id)}</dd>
+          </dl>
+        </div>`, '<button type="button" class="ios-nav-btn semibold end-action" data-close>Готово</button>', invoker);
+    }
+
+    // ================= МІЙ ВНЕСОК =================
+    V.contribution = function () {
+      const hs = CF.holdings();
+      const c = CF.contract();
+      const me = CF.me();
+      const notice = `
+        <section class="cf-notice" aria-label="Умови виведення коштів">
+          <div class="cf-notice-ico">i</div>
+          <p>Виведення коштів можливе після завершення інвестиційного періоду (${CF.PERIOD_YEARS} роки), згідно з договором.</p>
+          ${hs.length ? `<small>Найближча дата: <b>${dLong(CF.periodEnd(hs[0].paidAt).toISOString())}</b>. Для кожного внеску період рахується від дня його оплати.</small>` : ''}
+        </section>`;
+      if (!hs.length) {
+        tabScreen('contribution', 'Фінанси', 'Мій внесок', kycNote() + notice + `<p class="cf-p cf-center">Внесків ще немає</p><a class="ios-primary-btn" href="#/buy" style="display:grid;place-items:center;text-decoration:none;">Придбати вівцю</a>`);
+        return;
+      }
+      const sum = hs.reduce((a, h) => a + h.amount, 0);
+      tabScreen('contribution', 'Фінанси', 'Мій внесок', kycNote() + notice + `
+        <div class="ios-stats-card" style="grid-template-columns:1.3fr 1fr;">
+          <div class="ios-stat-cell"><p class="ios-stat-val">${money(sum)}</p><p class="ios-stat-lbl">Внесено всього</p></div>
+          <div class="ios-stat-cell"><p class="ios-stat-val">${hs.length}</p><p class="ios-stat-lbl">${plural(hs.length, 'вівця', 'вівці', 'овець')} за договором</p></div>
+        </div>
+        <div class="ios-group">
+          <button class="ios-row" type="button" id="contract"><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Договір № ${esc(c ? c.number : '—')}</p><p class="ios-row-sub">${c ? 'Підписано ' + dLong(c.signedAt) : ''}</p></span><span class="ios-chevron">›</span></button>
+        </div>
+
+        <div class="ios-section-header">Внески</div>
+        <div class="ios-group">
+          ${hs.map((h) => {
+            const end = CF.periodEnd(h.paidAt);
+            const pct = Math.min(100, Math.max(1.5, ((Date.now() - new Date(h.paidAt)) / (end - new Date(h.paidAt))) * 100));
+            const label = h.status === 'assigned' ? (h.name ? `Вівця «${esc(h.name)}»` : 'Вівця без імені') : 'Вівцю ще призначають';
+            return `
+              <div class="cf-pay">
+                <div class="cf-pay-h"><span><b>${label}</b>${h.status !== 'assigned' ? ' <span class="ios-pill orange">Очікує</span>' : ''}<br><span class="ios-row-sub">Оплачено ${dLong(h.paidAt)}</span></span><strong>${money(h.amount)}</strong></div>
+                <div class="cf-track"><div class="cf-fill" style="width:${pct}%;background:var(--ios-tint);"></div></div>
+                <div class="cf-period"><span>з ${dShort(h.paidAt)}</span><span>Виведення з ${dLong(end.toISOString())}</span></div>
+              </div>`;
+          }).join('')}
+        </div>
+
+        <div class="ios-section-header">Результати</div>
+        <div class="cf-soon-card"><b>Звіт з'явиться тут пізніше</b>Порядок розрахунку виплат зараз погоджується. Щойно методику затвердять і додадуть до договору, тут буде звіт, а ви отримаєте сповіщення.</div>
+        <p class="cf-hint" style="margin-top:0;">Реквізити для майбутніх виплат: ${me.iban ? 'IBAN •••• ' + esc(me.iban.slice(-4)) : '<a href="#/profile" style="color:var(--ios-tint);">додати в профілі</a>'}</p>`);
+      document.getElementById('contract').onclick = (e) => contractSheet(e.currentTarget);
+    };
+
+    function contractSheet(invoker) {
+      openSheet('Договір', contractHtml(CF.me(), CF.contract()) + `<button class="ios-secondary-btn" type="button" id="pdf">Завантажити PDF</button>`, '', invoker);
+      document.getElementById('pdf').onclick = () => banner('PDF надіслано на пошту');
+    }
+
+    // ================= МАРКЕТ — СКОРО =================
+    V.market = function () {
+      const me = CF.me();
+      tabScreen('market', 'Напряму від ферм', 'Маркет', `
+        <div class="cf-card">
+          <div class="cf-card-photo"><img src="./images/sheep-3.jpg" alt=""><span class="ios-pill orange">Скоро</span></div>
+          <div class="cf-card-body">
+            <p class="cf-name" style="font-size:22px;">Продукти з ферм, де пасуться ваші вівці</p>
+            <p class="cf-meta">Бринза, вовна, вироби майстрів. Запустимо, коли ферми-партнери будуть готові до доставки по всій Україні.</p>
+          </div>
+        </div>
+        <div class="ios-group">
+          <label class="ios-row" style="cursor:pointer;"><span class="ios-row-main">Повідомити про запуск</span><input type="checkbox" class="ios-switch" id="notify" ${me.notifyMarket ? 'checked' : ''}></label>
+        </div>`);
+      document.getElementById('notify').onchange = (e) => {
+        CF.updateMe({ notifyMarket: e.target.checked });
+        banner(e.target.checked ? 'Повідомимо про запуск маркету' : 'Сповіщення вимкнено');
+      };
+    };
+
+    // ================= ПРОФІЛЬ =================
+    V.profile = function () {
+      const me = CF.me();
+      const c = CF.contract();
+      const certs = CF.holdings().filter((h) => h.cert).length;
+      const iban = me.iban ? me.iban.replace(/(.{4})(?=.)/g, '$1 ') : 'Не вказано';
+      const row = (l, v) => `<div class="ios-row profile-row"><span class="profile-lbl">${l}</span><span class="profile-val">${v}</span></div>`;
+      tabScreen('profile', 'Профіль', 'CyberFarm ID', `
+        <div class="cf-id">
+          <div class="cf-avatar" aria-hidden="true">${esc(initials(me.fullName))}</div>
+          <h2>${esc(me.fullName)}</h2>
+          <p class="cf-mono">ID ${esc(me.id)}</p>
+          ${me.kyc === 'verified' ? `<span class="ios-pill green">✓ Особу підтверджено${me.kycMethod ? ' · ' + esc(me.kycMethod) : ''}</span>` : '<span class="ios-pill orange">Триває перевірка документів</span>'}
+        </div>
+        ${kycNote()}
+        <div class="ios-section-header">Контакти</div>
+        <div class="ios-group">${row('Пошта', esc(me.email))}${row('Телефон', esc(me.phone) + (me.phoneVerified ? ' ✓' : ''))}</div>
+        <div class="ios-section-header">Документи</div>
+        <div class="ios-group">
+          ${c ? `<button class="ios-row" type="button" id="p-contract"><span class="ios-row-main">Договір</span><span class="ios-row-Side">№ ${esc(c.number)}</span><span class="ios-chevron">›</span></button>` : `<a class="ios-row" href="#/buy"><span class="ios-row-main">Договір</span><span class="ios-row-Side">Не підписано</span><span class="ios-chevron">›</span></a>`}
+          <a class="ios-row" href="#/home"><span class="ios-row-main">Сертифікати власності</span><span class="ios-row-Side">${certs}</span><span class="ios-chevron">›</span></a>
+        </div>
+        <div class="ios-section-header">Реквізити для виплат</div>
+        <div class="ios-group">${row('IBAN', esc(iban))}${row('РНОКПП', esc(me.taxId || '—'))}</div>
+        <button type="button" class="ios-secondary-btn profile-edit-btn" id="p-edit">Змінити реквізити</button>
+        <button type="button" class="ios-secondary-btn" id="p-out">Вийти</button>`);
+      if (c) document.getElementById('p-contract').onclick = (e) => contractSheet(e.currentTarget);
+      document.getElementById('p-out').onclick = () => { CF.logout(); go('#/welcome'); };
+      document.getElementById('p-edit').onclick = (e) => {
+        openSheet('Реквізити', `
+          <div class="ios-section-header">Рахунок на ваше ім'я</div>
+          <form id="fi"><div class="ios-group"><div class="ios-field-row"><label for="ib">IBAN</label><input id="ib" value="${esc(me.iban)}" placeholder="UA…" autocapitalize="characters" spellcheck="false"></div></div></form>
+          <p class="cf-err" id="ib-err" hidden></p>`, '<button type="submit" form="fi" class="ios-nav-btn semibold end-action">Готово</button>', e.currentTarget);
+        document.getElementById('fi').addEventListener('submit', (ev) => {
+          ev.preventDefault();
+          const v = document.getElementById('ib').value.replace(/\s+/g, '').toUpperCase();
+          if (!/^UA\d{27}$/.test(v)) { const er = document.getElementById('ib-err'); er.textContent = 'IBAN: UA і 27 цифр'; er.hidden = false; return; }
+          CF.updateMe({ iban: v });
+          closeSheet();
+          setTimeout(() => { V.profile(); banner('Реквізити збережено'); }, 300);
+        });
+      };
+    };
+
+    route();
+  })();
+  </script>
+</body>
+</html>

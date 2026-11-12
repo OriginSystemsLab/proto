@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F6F4EC">
+  <title>CyberFarm Web</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Lora:ital,wght@0,500;1,500&display=swap">
+  <link rel="stylesheet" href="./cyberfarm.css">
+</head>
+<body>
+  <header class="cf-header" id="cf-header">
+    <a class="cf-logo" href="#/home" aria-label="CyberFarm — на головну">
+      <span class="cf-logo-mark" aria-hidden="true">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.4 8.6a2.8 2.8 0 0 1 4.9-1.7 2.8 2.8 0 0 1 4.8.5 2.8 2.8 0 0 1 2.5 4.5 2.8 2.8 0 0 1-2.3 4.5 2.8 2.8 0 0 1-4.6.5 2.8 2.8 0 0 1-4.4-1.5"/><ellipse cx="5.7" cy="11.3" rx="2.8" ry="3.3" transform="rotate(-15 5.7 11.3)"/><path d="M10.6 17v3.4M16.4 17v3.4"/></svg>
+      </span>
+      CyberFarm
+    </a>
+    <nav class="cf-topnav" id="cf-topnav" aria-label="Розділи" hidden></nav>
+    <div class="cf-header-end" id="cf-header-end"></div>
+  </header>
+
+  <main class="cf-main" id="app" tabindex="-1"></main>
+
+  <nav class="cf-tabbar" id="cf-tabbar" aria-label="Розділи" hidden></nav>
+
+  <div class="cf-modal" id="cf-modal" hidden role="dialog" aria-modal="true" aria-labelledby="cf-modal-title">
+    <div class="cf-modal-box" id="cf-modal-box"></div>
+  </div>
+  <div class="cf-toast" id="cf-toast" role="status" aria-live="polite"></div>
+
+  <script src="./shared-data.js"></script>
+  <script src="./cyberfarm-data.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    const CF = window.CyberFarm;
+    const Store = window.SheepSystemStore;
+    const app = document.getElementById('app');
+
+    // ---------------- Утиліти ----------------
+    const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const money = (n) => new Intl.NumberFormat('uk-UA', { maximumFractionDigits: 0 }).format(n) + ' ₴';
+    const dLong = (iso) => new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso)).replace(/\s*р\.$/, '');
+    const dShort = (iso) => new Intl.DateTimeFormat('uk-UA', { day: 'numeric', month: 'long' }).format(new Date(iso));
+    function plural(n, one, few, many) {
+      const m10 = n % 10, m100 = n % 100;
+      if (m10 === 1 && m100 !== 11) return one;
+      if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return few;
+      return many;
+    }
+    const days = (n) => `${n} ${plural(n, 'день', 'дні', 'днів')}`;
+    const sheepWord = (n) => `${n} ${plural(n, 'вівця', 'вівці', 'овець')}`;
+    function age(birth) {
+      const b = new Date(birth), now = new Date();
+      let m = (now.getFullYear() - b.getFullYear()) * 12 + now.getMonth() - b.getMonth();
+      if (now.getDate() < b.getDate()) m--;
+      const y = Math.floor(m / 12); m = m % 12;
+      return [y ? `${y} ${plural(y, 'рік', 'роки', 'років')}` : '', m ? `${m} міс.` : ''].filter(Boolean).join(' ') || 'до місяця';
+    }
+    function toast(msg) {
+      const t = document.getElementById('cf-toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(t._t);
+      t._t = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+    const go = (hash) => { location.hash = hash; };
+    const initials = (name) => String(name || '').split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase();
+
+    const I = {
+      sheep: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.4 8.6a2.8 2.8 0 0 1 4.9-1.7 2.8 2.8 0 0 1 4.8.5 2.8 2.8 0 0 1 2.5 4.5 2.8 2.8 0 0 1-2.3 4.5 2.8 2.8 0 0 1-4.6.5 2.8 2.8 0 0 1-4.4-1.5"/><ellipse cx="5.7" cy="11.3" rx="2.8" ry="3.3" transform="rotate(-15 5.7 11.3)"/><path d="M3.3 9 1.9 8.1M10.6 17v3.4M16.4 17v3.4"/></svg>',
+      wallet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/><path d="M6 6V5a2 2 0 0 1 2-2h8"/></svg>',
+      bag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 10.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 10.5V7a3 3 0 0 1 6 0v3.5"/></svg>',
+      user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M5 19.5c1.6-3 4.1-4.5 7-4.5s5.4 1.5 7 4.5"/></svg>',
+      check: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0E2C10" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>',
+      pencil: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/><path d="m13.5 6.5 4 4"/></svg>',
+      seal: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6l-8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>',
+      heart: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/></svg>',
+      back: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 19-7-7 7-7"/></svg>'
+    };
+
+    const AWAIT_ART = `
+      <svg class="cf-await-art" viewBox="0 0 200 150" aria-hidden="true">
+        <g fill="none" stroke="#B8E35E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="7 8">
+          <path d="M62 66c2-14 15-22 28-18 6-10 22-13 31-4 11-4 24 3 25 15 11 3 15 16 9 25 4 11-4 22-15 21-5 9-18 11-26 4-9 6-21 3-26-6-12 0-20-10-17-20"/>
+          <ellipse cx="46" cy="76" rx="15" ry="18" transform="rotate(-15 46 76)"/>
+          <path d="M94 116v20M128 116v20"/>
+        </g>
+        <circle class="pulse" cx="100" cy="82" r="7" fill="#F2C14E"/>
+      </svg>`;
+
+    // ---------------- Каркас: навігація ----------------
+    const TABS = [
+      { id: 'home', label: 'Мої вівці', icon: I.sheep },
+      { id: 'contribution', label: 'Мій внесок', icon: I.wallet },
+      { id: 'market', label: 'Маркет', icon: I.bag, soon: true },
+      { id: 'profile', label: 'Профіль', icon: I.user }
+    ];
+    function chrome(mode, current) {
+      const top = document.getElementById('cf-topnav');
+      const bar = document.getElementById('cf-tabbar');
+      const end = document.getElementById('cf-header-end');
+      const proto = '<nav class="cf-studio" aria-label="Перемикання прототипів"><a href="./moe-stado.html">МоєСтадо</a><a href="./cyberfarm.html">CyberFarm</a><a href="./cyberfarm-web.html" aria-current="page">CyberFarm Web</a></nav>';
+      if (mode === 'app') {
+        top.hidden = false;
+        bar.hidden = false;
+        top.innerHTML = TABS.map((t) => `<a href="#/${t.id}" ${t.id === current ? 'aria-current="page"' : ''}>${esc(t.label)}${t.soon ? ' <span class="cf-soon">Скоро</span>' : ''}</a>`).join('');
+        bar.innerHTML = TABS.map((t) => `
+          <a class="cf-tab" href="#/${t.id}" ${t.id === current ? 'aria-current="page"' : ''}>
+            <span class="cf-tab-ico">${t.icon}</span>${esc(t.label)}${t.soon ? '<span class="cf-soon">Скоро</span>' : ''}
+          </a>`).join('');
+        end.innerHTML = proto;
+        app.classList.remove('narrow');
+      } else {
+        top.hidden = true;
+        bar.hidden = true;
+        end.innerHTML = proto;
+        app.classList.add('narrow');
+      }
+    }
+
+    // ---------------- Маршрути ----------------
+    const PUBLIC = ['welcome', 'signup', 'login'];
+    function route() {
+      const raw = location.hash.replace(/^#\/?/, '');
+      const [name, param] = raw.split('/');
+      const me = CF.me();
+      let r = name || (me ? 'home' : 'welcome');
+
+      if (!me && !PUBLIC.includes(r)) r = 'welcome';
+      if (me && PUBLIC.includes(r)) r = 'home';
+      if (me && !me.phoneVerified && r !== 'otp') r = 'otp';
+      if (me && me.phoneVerified && me.kyc !== 'verified' && r !== 'kyc') r = 'kyc';
+      if (('#/' + r + (param ? '/' + param : '')) !== location.hash && r !== name) {
+        history.replaceState(null, '', '#/' + r);
+      }
+
+      closeModal();
+      const view = VIEWS[r] || VIEWS.home;
+      document.title = (TITLES[r] ? TITLES[r] + ' — ' : '') + 'CyberFarm';
+      view(param);
+      window.scrollTo(0, 0);
+      app.focus({ preventScroll: true });
+    }
+    const TITLES = { welcome: '', signup: 'Реєстрація', login: 'Вхід', otp: 'Підтвердження телефону', kyc: 'Верифікація', home: 'Мої вівці', buy: 'Придбати вівцю', contract: 'Договір', pay: 'Оплата', paid: 'Оплачено', sheep: 'Моя вівця', contribution: 'Мій внесок', market: 'Маркет', profile: 'CyberFarm ID' };
+
+    function steps(total, now) {
+      return `<div class="cf-steps" aria-hidden="true">${Array.from({ length: total }, (_, i) => `<span class="${i < now ? 'done' : i === now ? 'now' : ''}"></span>`).join('')}</div>`;
+    }
+
+    // ================= ГОСТЬОВІ ЕКРАНИ =================
+    const VIEWS = {};
+
+    VIEWS.welcome = function () {
+      chrome('guest-login');
+      app.innerHTML = `
+        <section class="cf-welcome">
+          <div class="cf-welcome-photo"><img src="./images/sheep-2.jpg" alt="Вівці на карпатській полонині"></div>
+          <span class="cf-eyebrow" style="justify-self:start;">Карпати · ферми-партнери</span>
+          <h1 class="cf-h1">Ваша вівця на справжній фермі</h1>
+          <p class="cf-sub" style="font-size:17px;">Ви робите внесок, ферма закріплює за вами живу вівцю, а ви стежите за нею в кабінеті: фото, стан, локація і сертифікат власності.</p>
+          <ul class="cf-bullets">
+            <li>Ім'я вівці даєте ви самі</li>
+            <li>Час володіння рахується з дня оплати</li>
+            <li>Договір і сертифікат — у кабінеті</li>
+          </ul>
+          <div class="cf-welcome-actions">
+            <a class="cf-btn primary block" href="#/signup">Створити CyberFarm ID</a>
+            <a class="cf-btn ghost block" href="#/login">У мене вже є акаунт</a>
+          </div>
+        </section>`;
+    };
+
+    VIEWS.signup = function () {
+      chrome('guest-login');
+      app.innerHTML = `
+        <a class="cf-back" href="#/welcome">${I.back} Назад</a>
+        <p class="cf-steplabel">Крок 1 з 3 · Акаунт</p>
+        ${steps(3, 0)}
+        <h1 class="cf-h2">Створіть CyberFarm ID</h1>
+        <p class="cf-sub" style="margin-bottom:20px;">Один акаунт для договору, оплат і кабінету з вашими вівцями.</p>
+        <form id="f-signup" novalidate>
+          <p class="cf-error" id="err" hidden></p>
+          <div class="cf-field"><label for="s-name">Прізвище, ім'я, по батькові</label><input id="s-name" autocomplete="name" required placeholder="Як у паспорті"></div>
+          <div class="cf-field"><label for="s-email">Електронна пошта</label><input id="s-email" type="email" autocomplete="email" required placeholder="name@mail.com"></div>
+          <div class="cf-field"><label for="s-phone">Телефон</label><input id="s-phone" type="tel" autocomplete="tel" required value="+380 "></div>
+          <div class="cf-field"><label for="s-pass">Пароль</label><input id="s-pass" type="password" autocomplete="new-password" required minlength="8"><span class="cf-hint">Щонайменше 8 символів</span></div>
+          <label class="cf-check"><input type="checkbox" id="s-agree"> <span>Погоджуюсь з умовами користування та обробкою персональних даних</span></label>
+          <button class="cf-btn primary block" type="submit">Продовжити</button>
+        </form>`;
+      document.getElementById('f-signup').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const v = (id) => document.getElementById(id).value.trim();
+        const err = document.getElementById('err');
+        const fail = (m) => { err.textContent = m; err.hidden = false; };
+        if (v('s-name').split(/\s+/).length < 2) return fail('Вкажіть прізвище та ім\'я.');
+        if (!/^\S+@\S+\.\S+$/.test(v('s-email'))) return fail('Перевірте адресу пошти.');
+        if (v('s-phone').replace(/\D/g, '').length < 12) return fail('Вкажіть номер у форматі +380 XX XXX XX XX.');
+        if (v('s-pass').length < 8) return fail('Пароль має містити щонайменше 8 символів.');
+        if (!document.getElementById('s-agree').checked) return fail('Потрібна згода з умовами.');
+        const res = CF.signup({ fullName: v('s-name'), email: v('s-email'), phone: v('s-phone'), password: v('s-pass') });
+        if (res.error) return fail(res.error);
+        go('#/otp');
+      });
+    };
+
+    function otpBlock(id) {
+      return `<div class="cf-otp" id="${id}">${[0, 1, 2, 3].map((i) => `<input inputmode="numeric" maxlength="1" aria-label="Цифра ${i + 1}" autocomplete="one-time-code">`).join('')}</div>`;
+    }
+    function wireOtp(id, onDone) {
+      const inputs = Array.from(document.querySelectorAll(`#${id} input`));
+      inputs.forEach((inp, i) => {
+        inp.addEventListener('input', () => {
+          inp.value = inp.value.replace(/\D/g, '').slice(-1);
+          if (inp.value && inputs[i + 1]) inputs[i + 1].focus();
+          const code = inputs.map((x) => x.value).join('');
+          if (code.length === 4) onDone(code);
+        });
+        inp.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !inp.value && inputs[i - 1]) inputs[i - 1].focus(); });
+      });
+      setTimeout(() => inputs[0].focus(), 50);
+      return inputs;
+    }
+
+    VIEWS.otp = function () {
+      chrome('guest');
+      const me = CF.me();
+      app.innerHTML = `
+        <p class="cf-steplabel" style="margin-top:16px;">Крок 2 з 3 · Телефон</p>
+        ${steps(3, 1)}
+        <h1 class="cf-h2">Введіть код із SMS</h1>
+        <p class="cf-sub">Ми надіслали код на ${esc(me.phone)}.</p>
+        ${otpBlock('otp')}
+        <p class="cf-error" id="err" hidden style="text-align:center;"></p>
+        <p class="cf-hint" style="text-align:center;">Демо-код: <b>1234</b></p>
+        <button class="cf-link" type="button" id="resend" style="margin:0 auto;display:flex;">Надіслати код ще раз</button>`;
+      const inputs = wireOtp('otp', (code) => {
+        if (code !== '1234') {
+          const err = document.getElementById('err');
+          err.textContent = 'Невірний код. Спробуйте ще раз.'; err.hidden = false;
+          inputs.forEach((x) => { x.value = ''; }); inputs[0].focus();
+          return;
+        }
+        CF.updateMe({ phoneVerified: true });
+        go('#/kyc');
+      });
+      document.getElementById('resend').addEventListener('click', () => toast('Код надіслано ще раз'));
+    };
+
+    VIEWS.kyc = function () {
+      chrome('guest');
+      const me = CF.me();
+      let method = 'BankID';
+      const draw = (phase) => {
+        if (phase === 'checking') {
+          app.innerHTML = `
+            <div class="cf-success">
+              <div class="cf-success-ico" style="background:var(--amber-bg);"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#7A5600" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9" stroke-dasharray="4 3"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="3s" repeatCount="indefinite"/></circle></svg></div>
+              <h1 class="cf-h2">Перевіряємо дані…</h1>
+              <p class="cf-sub">Зазвичай це займає до хвилини.</p>
+            </div>`;
+          return;
+        }
+        if (phase === 'done') {
+          app.innerHTML = `
+            <div class="cf-success">
+              <div class="cf-success-ico">${I.check.replace('width="14" height="14"', 'width="40" height="40"')}</div>
+              <h1 class="cf-h2">Особу підтверджено</h1>
+              <p class="cf-sub" style="margin-bottom:24px;">Ваш CyberFarm ID готовий. Тепер можна укласти договір і придбати першу вівцю.</p>
+              <a class="cf-btn primary block" href="#/buy">Придбати вівцю</a>
+              <a class="cf-btn ghost block" href="#/home" style="margin-top:10px;">Перейти в кабінет</a>
+            </div>`;
+          return;
+        }
+        app.innerHTML = `
+          <p class="cf-steplabel" style="margin-top:16px;">Крок 3 з 3 · Верифікація</p>
+          ${steps(3, 2)}
+          <h1 class="cf-h2">Підтвердіть особу</h1>
+          <p class="cf-sub" style="margin-bottom:18px;">Це потрібно, щоб укласти договір на ваше ім'я і закріпити за вами тварин.</p>
+          <button type="button" class="cf-option" data-method="BankID" aria-pressed="${method === 'BankID'}">
+            <span class="cf-option-ico">ID</span>
+            <span><strong>BankID</strong><small>Через ваш банк, за 1 хвилину</small></span>
+          </button>
+          <button type="button" class="cf-option" data-method="Документ" aria-pressed="${method === 'Документ'}">
+            <span class="cf-option-ico">📄</span>
+            <span><strong>Фото документа і селфі</strong><small>ID-картка або паспорт, перевірка до 24 годин</small></span>
+          </button>
+          <div class="cf-field" style="margin-top:8px;"><label for="k-tax">РНОКПП (ІПН)</label><input id="k-tax" inputmode="numeric" maxlength="10" value="${esc(me.taxId)}" placeholder="10 цифр"></div>
+          <p class="cf-error" id="err" hidden></p>
+          <button class="cf-btn primary block" type="button" id="k-go">Підтвердити</button>
+          <button class="cf-link" type="button" id="k-out" style="margin:8px auto 0;display:flex;color:var(--muted);">Вийти з акаунта</button>`;
+        app.querySelectorAll('[data-method]').forEach((b) => b.addEventListener('click', () => { method = b.dataset.method; draw(); }));
+        document.getElementById('k-out').addEventListener('click', () => { CF.logout(); go('#/welcome'); });
+        document.getElementById('k-go').addEventListener('click', () => {
+          const tax = document.getElementById('k-tax').value.replace(/\D/g, '');
+          if (tax.length !== 10) { const e = document.getElementById('err'); e.textContent = 'РНОКПП має містити 10 цифр.'; e.hidden = false; return; }
+          CF.updateMe({ taxId: tax, kyc: 'pending', kycMethod: method });
+          draw('checking');
+          setTimeout(() => { CF.updateMe({ kyc: 'verified' }); draw('done'); }, 1600);
+        });
+      };
+      draw();
+    };
+
+    VIEWS.login = function () {
+      chrome('guest');
+      app.innerHTML = `
+        <a class="cf-back" href="#/welcome">${I.back} Назад</a>
+        <h1 class="cf-h2">Вхід до CyberFarm ID</h1>
+        <p class="cf-sub" style="margin-bottom:20px;">Пошта або телефон, які ви вказали під час реєстрації.</p>
+        <form id="f-login" novalidate>
+          <p class="cf-error" id="err" hidden></p>
+          <div class="cf-field"><label for="l-login">Пошта або телефон</label><input id="l-login" autocomplete="username" required></div>
+          <div class="cf-field"><label for="l-pass">Пароль</label><input id="l-pass" type="password" autocomplete="current-password" required></div>
+          <button class="cf-btn primary block" type="submit">Увійти</button>
+        </form>
+        <button class="cf-link" type="button" id="forgot" style="margin:6px auto 0;display:flex;color:var(--muted);">Забули пароль?</button>
+        <div class="cf-panel" style="margin-top:22px;">
+          <p class="cf-h3">Демо-інвестор</p>
+          <p class="cf-sub" style="margin-bottom:12px;">demo@cyberfarm.ua · пароль demo1234. Дві вівці вже призначено, одна оплачена й очікує призначення.</p>
+          <button class="cf-btn ghost block" type="button" id="demo">Заповнити демо-дані</button>
+        </div>
+        <p class="cf-sub" style="text-align:center;margin-top:18px;">Ще немає акаунта? <a class="cf-link" href="#/signup">Зареєструватися</a></p>`;
+      document.getElementById('demo').addEventListener('click', () => {
+        document.getElementById('l-login').value = 'demo@cyberfarm.ua';
+        document.getElementById('l-pass').value = 'demo1234';
+      });
+      document.getElementById('forgot').addEventListener('click', () => toast('Посилання для відновлення надіслано на пошту'));
+      document.getElementById('f-login').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const acc = CF.login(document.getElementById('l-login').value, document.getElementById('l-pass').value);
+        if (!acc) { const er = document.getElementById('err'); er.textContent = 'Невірна пошта/телефон або пароль.'; er.hidden = false; return; }
+        go('#/home');
+      });
+    };
+
+    // ================= ПОКУПКА: кількість → договір → оплата =================
+    const BUY_KEY = 'cyberfarm_buy_count';
+    const buyCount = () => Math.max(1, Math.min(10, parseInt(sessionStorage.getItem(BUY_KEY) || '1', 10) || 1));
+
+    VIEWS.buy = function () {
+      chrome('app', 'home');
+      let n = buyCount();
+      const hasContract = !!CF.contract();
+      const total = hasContract ? 2 : 3;
+      const draw = () => {
+        app.innerHTML = `
+          <a class="cf-back" href="#/home">${I.back} Мої вівці</a>
+          <div style="max-width:560px;">
+            <p class="cf-steplabel">Крок 1 з ${total} · Кількість</p>
+            ${steps(total, 0)}
+            <h1 class="cf-h2">Скільки овець бажаєте?</h1>
+            <div class="cf-stepper">
+              <button type="button" id="minus" aria-label="Менше" ${n <= 1 ? 'disabled' : ''}>−</button>
+              <output aria-live="polite">${n}</output>
+              <button type="button" id="plus" aria-label="Більше" ${n >= 10 ? 'disabled' : ''}>+</button>
+            </div>
+            <div class="cf-panel">
+              <div class="cf-sumrow"><span>Внесок за одну вівцю</span><strong>${money(CF.PRICE_PER_SHEEP)}</strong></div>
+              <div class="cf-sumrow"><span>Разом</span><strong style="font-size:20px;">${money(CF.PRICE_PER_SHEEP * n)}</strong></div>
+              <div class="cf-sumrow"><span>Інвестиційний період</span><strong>${CF.PERIOD_YEARS} роки</strong></div>
+            </div>
+            <div class="cf-panel dark">
+              <p class="cf-h3">Як це працює</p>
+              <ul class="cf-timeline" style="margin:10px 0 0;">
+                <li class="done"><span class="ico">${I.check}</span><span><b>Ви оплачуєте внесок</b>З цього дня рахується час володіння</span></li>
+                <li class="now"><span class="ico"></span><span><b>Ферма закріплює за вами вівцю</b>Здорову, верифіковану, з биркою і GPS — зазвичай до ${CF.ASSIGN_DAYS} днів</span></li>
+                <li><span class="ico"></span><span><b>Ви даєте їй ім'я</b>І отримуєте сертифікат власності</span></li>
+              </ul>
+            </div>
+            <a class="cf-btn primary block" href="#/${hasContract ? 'pay' : 'contract'}">${hasContract ? 'До оплати' : 'Далі: договір'}</a>
+          </div>`;
+        document.getElementById('minus').onclick = () => { n = Math.max(1, n - 1); sessionStorage.setItem(BUY_KEY, n); draw(); };
+        document.getElementById('plus').onclick = () => { n = Math.min(10, n + 1); sessionStorage.setItem(BUY_KEY, n); draw(); };
+      };
+      sessionStorage.setItem(BUY_KEY, n);
+      draw();
+    };
+
+    function contractText(me, c) {
+      return `
+        <h3>Договір ${c ? '№ ' + esc(c.number) : '(проєкт)'}</h3>
+        <p class="cf-hint" style="margin:0;">${c ? 'Підписано ' + dLong(c.signedAt) : 'Сторони: ' + esc(me.fullName) + ' та ферма-партнер CyberFarm'}</p>
+        <p style="margin:14px 0 0;font-weight:700;">Ключові умови простими словами</p>
+        <ol>
+          <li><b>Предмет.</b> Ви робите внесок в утримання овець на фермі-партнері. За кожен внесок ферма закріплює за вами одну вівцю.</li>
+          <li><b>Призначення вівці.</b> Конкретну тварину ферма призначає після оплати, орієнтовно протягом ${CF.ASSIGN_DAYS} днів. Ви бачите її в кабінеті.</li>
+          <li><b>Час володіння</b> рахується з дня оплати, а не з дня призначення.</li>
+          <li><b>Ім'я</b> вівці обираєте ви. Воно вказується в сертифікаті.</li>
+          <li><b>Інвестиційний період — ${CF.PERIOD_YEARS} роки.</b> Виведення коштів можливе після завершення періоду.</li>
+          <li><b>Результати.</b> Порядок розрахунку виплат визначається окремою методикою, яку буде погоджено й додано до договору. Дохідність не гарантується.</li>
+          <li><b>Сертифікат.</b> На кожну вівцю видається цифровий сертифікат власності із записом у реєстрі.</li>
+        </ol>`;
+    }
+
+    VIEWS.contract = function () {
+      chrome('app', 'home');
+      const me = CF.me();
+      if (CF.contract()) { go('#/pay'); return; }
+      app.innerHTML = `
+        <a class="cf-back" href="#/buy">${I.back} Кількість</a>
+        <div style="max-width:620px;">
+          <p class="cf-steplabel">Крок 2 з 3 · Договір</p>
+          ${steps(3, 1)}
+          <h1 class="cf-h2">Ознайомтеся з договором</h1>
+          <p class="cf-sub" style="margin-bottom:14px;">Договір укладається один раз. Наступні вівці додаються до нього.</p>
+          <div class="cf-doc">${contractText(me, null)}</div>
+          <label class="cf-check" style="margin-top:16px;"><input type="checkbox" id="c-agree"> <span>Я прочитав(-ла) договір і погоджуюсь з умовами, зокрема що виведення коштів можливе лише після завершення ${CF.PERIOD_YEARS}-річного періоду</span></label>
+          <button class="cf-btn primary block" type="button" id="c-sign" disabled>Підписати кодом з SMS</button>
+        </div>`;
+      const agree = document.getElementById('c-agree');
+      const sign = document.getElementById('c-sign');
+      agree.addEventListener('change', () => { sign.disabled = !agree.checked; });
+      sign.addEventListener('click', () => {
+        openModal(`
+          <div class="cf-modal-head"><h2 class="cf-h2" id="cf-modal-title" style="margin:0;">Підпис договору</h2><button class="cf-close" data-close aria-label="Закрити">×</button></div>
+          <p class="cf-sub">Код надіслано на ${esc(me.phone)}.</p>
+          ${otpBlock('sig')}
+          <p class="cf-error" id="sig-err" hidden style="text-align:center;"></p>
+          <p class="cf-hint" style="text-align:center;">Демо-код: <b>1234</b></p>`, sign);
+        const inputs = wireOtp('sig', (code) => {
+          if (code !== '1234') { const e = document.getElementById('sig-err'); e.textContent = 'Невірний код.'; e.hidden = false; inputs.forEach((x) => { x.value = ''; }); inputs[0].focus(); return; }
+          const c = CF.signContract();
+          toast(`Договір ${c.number} підписано`);
+          go('#/pay');
+        });
+      });
+    };
+
+    VIEWS.pay = function () {
+      chrome('app', 'home');
+      const n = buyCount();
+      const c = CF.contract();
+      if (!c) { go('#/contract'); return; }
+      const total = sessionStorage.getItem('cyberfarm_first_contract') === '1' ? 3 : 3;
+      let method = 'card';
+      const draw = () => {
+        app.innerHTML = `
+          <a class="cf-back" href="#/buy">${I.back} Кількість</a>
+          <div style="max-width:560px;">
+            <p class="cf-steplabel">Останній крок · Оплата</p>
+            ${steps(total, total - 1)}
+            <h1 class="cf-h2">Оплата внеску</h1>
+            <div class="cf-panel">
+              <div class="cf-sumrow"><span>Овець</span><strong>${n}</strong></div>
+              <div class="cf-sumrow"><span>Договір</span><strong>№ ${esc(c.number)}</strong></div>
+              <div class="cf-sumrow"><span>Час володіння від</span><strong>сьогодні, ${dShort(new Date().toISOString())}</strong></div>
+              <div class="cf-sumrow"><span>До сплати</span><strong style="font-size:22px;">${money(CF.PRICE_PER_SHEEP * n)}</strong></div>
+            </div>
+            <button type="button" class="cf-option" data-m="card" aria-pressed="${method === 'card'}"><span class="cf-option-ico">💳</span><span><strong>Банківська картка</strong><small>Visa, Mastercard, Apple Pay, Google Pay</small></span></button>
+            <button type="button" class="cf-option" data-m="iban" aria-pressed="${method === 'iban'}"><span class="cf-option-ico">🏦</span><span><strong>Переказ за реквізитами</strong><small>Рахунок на оплату надійде на пошту</small></span></button>
+            <button class="cf-btn primary block" type="button" id="p-go" style="margin-top:6px;">Оплатити ${money(CF.PRICE_PER_SHEEP * n)}</button>
+            <p class="cf-hint" style="text-align:center;margin-top:10px;">Демо: справжнього списання коштів немає.</p>
+          </div>`;
+        app.querySelectorAll('[data-m]').forEach((b) => b.addEventListener('click', () => { method = b.dataset.m; draw(); }));
+        document.getElementById('p-go').addEventListener('click', (e) => {
+          e.currentTarget.disabled = true;
+          e.currentTarget.textContent = 'Обробляємо платіж…';
+          setTimeout(() => { CF.pay(n); sessionStorage.removeItem(BUY_KEY); sessionStorage.setItem('cyberfarm_paid_n', n); go('#/paid'); }, 1100);
+        });
+      };
+      draw();
+    };
+
+    VIEWS.paid = function () {
+      chrome('app', 'home');
+      const n = parseInt(sessionStorage.getItem('cyberfarm_paid_n') || '1', 10);
+      app.innerHTML = `
+        <div class="cf-success" style="max-width:520px;margin:0 auto;">
+          <div class="cf-success-ico">${I.check.replace('width="14" height="14"', 'width="40" height="40"')}</div>
+          <h1 class="cf-h2">Оплату отримано</h1>
+          <p class="cf-sub" style="font-size:17px;">Час володіння ${n > 1 ? 'вашими вівцями' : 'вашою вівцею'} вже йде — з сьогодні, ${dLong(new Date().toISOString())}.</p>
+          <div class="cf-panel" style="text-align:left;margin-top:20px;">
+            <p class="cf-h3">Що далі</p>
+            <p class="cf-sub">Ферма закріпить за вами ${n > 1 ? sheepWord(n) : 'вівцю'} протягом ${CF.ASSIGN_DAYS} днів. Ми надішлемо сповіщення, і ви зможете дати ${n > 1 ? 'їм імена' : 'їй ім\'я'} та отримати сертифікат.</p>
+          </div>
+          <a class="cf-btn primary block" href="#/home">До кабінету</a>
+        </div>`;
+    };
+
+    // ================= КАБІНЕТ: МОЇ ВІВЦІ =================
+    function bar(label, val) {
+      return `<div class="cf-bar"><div class="cf-bar-head"><span>${label}</span><span>${val}%</span></div><div class="cf-bar-track"><div class="cf-bar-fill" style="width:${val}%"></div></div></div>`;
+    }
+    function displayName(h) { return h.name ? esc(h.name) : ''; }
+
+    function awaitingCard(h, compact) {
+      const d = CF.daysSince(h.paidAt);
+      return `
+        <article class="cf-card awaiting">
+          <div class="cf-card-photo">${AWAIT_ART}</div>
+          <div class="cf-card-body">
+            <p class="cf-card-tag"><span class="cf-dot amber"></span> Очікує призначення</p>
+            <h2 class="cf-card-name unnamed">Ферма підбирає вашу вівцю</h2>
+            <p class="cf-card-meta">Оплачено ${dLong(h.paidAt)}, ${d ? 'час володіння йде вже ' + days(d) : 'час володіння почався сьогодні'}.</p>
+            <ul class="cf-timeline">
+              <li class="done"><span class="ico">${I.check}</span><span><b>Оплачено</b>${dShort(h.paidAt)}</span></li>
+              <li class="now"><span class="ico"></span><span><b>Призначення вівці фермою</b>Орієнтовно до ${dShort(new Date(new Date(h.paidAt).getTime() + CF.ASSIGN_DAYS * 864e5).toISOString())}</span></li>
+              <li><span class="ico"></span><span><b>Ім'я і сертифікат</b>Після призначення</span></li>
+            </ul>
+            <div class="cf-card-foot">
+              ${compact ? `<a class="cf-link on-dark" href="#/sheep/${h.id}">Деталі →</a>` : ''}
+              <button type="button" class="cf-demo-btn" data-assign="${h.id}">Демо: ферма призначила вівцю</button>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    function sheepCard(h) {
+      const { sheep, farmer, info } = CF.animal(h.sheep);
+      const d = CF.daysSince(h.paidAt);
+      return `
+        <article class="cf-card">
+          <a class="cf-card-photo" href="#/sheep/${h.id}" tabindex="-1" aria-hidden="true"><img src="${esc(sheep ? sheep.FullBodyPhoto : './images/sheep-1.webp')}" alt="" loading="lazy"></a>
+          <div class="cf-card-body">
+            <p class="cf-card-tag">Бирка ${esc(sheep ? sheep.EarTagNumber : '')}</p>
+            ${h.name
+              ? `<h2 class="cf-card-name">${displayName(h)}</h2>`
+              : `<h2 class="cf-card-name unnamed">Ще без імені</h2>`}
+            <p class="cf-card-meta">${esc(info.pasture)} · ${info.alt.toLocaleString('uk-UA')} м<br>${esc(farmer ? farmer.FarmName : '')}</p>
+            ${bar('Настрій', info.mood)}
+            ${bar('Ситість', info.fed)}
+            <div class="cf-card-foot">
+              ${h.name
+                ? `<a class="cf-link on-dark" href="#/sheep/${h.id}">Відкрити паспорт →</a>`
+                : `<button type="button" class="cf-btn lime small" data-name="${h.id}">Дати ім'я</button><a class="cf-link on-dark" href="#/sheep/${h.id}">Паспорт →</a>`}
+              <span class="cf-chip" title="Час володіння від дня оплати">Ваша ${days(d)}</span>
+            </div>
+          </div>
+        </article>`;
+    }
+
+    VIEWS.home = function () {
+      chrome('app', 'home');
+      const me = CF.me();
+      const hs = CF.holdings();
+      const head = `
+        <div class="cf-pagehead">
+          <div>
+            <span class="cf-eyebrow">Мій кабінет</span>
+            <h1 class="cf-h1">Мої вівці</h1>
+            <p class="cf-sub">${esc(me.email)}</p>
+          </div>
+          ${hs.length ? `<a class="cf-btn primary" href="#/buy">+ Додати вівцю</a>` : ''}
+        </div>`;
+      if (!hs.length) {
+        app.innerHTML = head + `
+          <div class="cf-panel cf-empty">
+            <div class="cf-addcard-plus" aria-hidden="true">+</div>
+            <h2 class="cf-h2">У вас ще немає овець</h2>
+            <p class="cf-sub" style="max-width:420px;margin:0 auto 20px;">Після оплати ферма закріпить за вами живу вівцю. Ви дасте їй ім'я, отримаєте сертифікат і бачитимете її стан тут.</p>
+            <a class="cf-btn primary" href="#/buy">Придбати першу вівцю</a>
+          </div>`;
+        return;
+      }
+      app.innerHTML = head + `
+        <div class="cf-grid">
+          ${hs.map((h) => (h.status === 'assigned' ? sheepCard(h) : awaitingCard(h, true))).join('')}
+          <a class="cf-addcard" href="#/buy"><span><span class="cf-addcard-plus" aria-hidden="true">+</span><b style="display:block;color:var(--ink);font-size:17px;">Додати вівцю</b>Ще одна вівця за тим самим договором</span></a>
+        </div>`;
+    };
+
+    // Делеговані дії: призначити (демо), дати ім'я
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('[data-assign]');
+      if (a) {
+        const h = CF.assign(a.dataset.assign);
+        toast('Ферма закріпила за вами вівцю');
+        route();
+        setTimeout(() => openNameModal(h.id, null, true), 250);
+        return;
+      }
+      const n = e.target.closest('[data-name]');
+      if (n) { openNameModal(n.dataset.name, n); return; }
+      if (e.target.closest('[data-close]') || e.target.id === 'cf-modal') closeModal();
+    });
+
+    function openNameModal(holdingId, invoker, fresh) {
+      const h = CF.holding(holdingId);
+      if (!h) return;
+      const { sheep } = CF.animal(h.sheep);
+      const ideas = ['Білка', 'Хмаринка', 'Ґаздиня', 'Трембіта', 'Сніжка', 'Зоря', 'Пушинка', 'Ватра'];
+      openModal(`
+        <div class="cf-modal-head"><h2 class="cf-h2" id="cf-modal-title" style="margin:0;">${fresh ? 'Вашу вівцю призначено!' : 'Ім\'я вівці'}</h2><button class="cf-close" data-close aria-label="Закрити">×</button></div>
+        ${fresh && sheep ? `<div class="cf-detail-photo" style="margin-bottom:14px;"><img src="${esc(sheep.FullBodyPhoto)}" alt=""></div>` : ''}
+        <p class="cf-sub" style="margin-bottom:14px;">${fresh ? 'Тепер це ваша вівця. Як її назвемо? ' : ''}Ім'я буде вказане в сертифікаті та в кабінеті.</p>
+        <form id="f-name">
+          <div class="cf-field"><label for="n-val">Ім'я</label><input id="n-val" maxlength="24" value="${esc(h.name)}" placeholder="Наприклад, Хмаринка" required></div>
+          <div class="cf-suggest">${ideas.map((x) => `<button type="button" data-idea="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+          <button class="cf-btn primary block" type="submit">Зберегти ім'я</button>
+          ${fresh ? `<button class="cf-btn ghost block" type="button" data-close style="margin-top:10px;">Пізніше</button>` : ''}
+        </form>`, invoker);
+      const input = document.getElementById('n-val');
+      document.querySelectorAll('[data-idea]').forEach((b) => b.addEventListener('click', () => { input.value = b.dataset.idea; input.focus(); }));
+      document.getElementById('f-name').addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const v = input.value.trim();
+        if (!v) { input.focus(); return; }
+        CF.rename(holdingId, v);
+        closeModal();
+        toast(`Чудово! Тепер її звати «${v}»`);
+        route();
+      });
+    }
+
+    // ================= МОЯ ВІВЦЯ (екран A) =================
+    function mapSvg(info) {
+      return `
+        <div class="cf-map" role="img" aria-label="Локація: ${esc(info.pasture)}">
+          <svg viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="320" height="180" fill="#21461F"/>
+            <path d="M0 120 C60 90 90 110 140 80 S230 40 320 70 V180 H0Z" fill="#2A5527"/>
+            <path d="M0 150 C70 125 120 140 180 118 S270 100 320 112 V180 H0Z" fill="#336230"/>
+            <g fill="none" stroke="rgba(244,241,230,.16)" stroke-width="1">
+              <path d="M-10 100 C50 70 100 92 150 60 S240 20 330 50"/><path d="M-10 80 C60 50 110 70 160 40 S250 0 330 30"/>
+              <path d="M-10 135 C60 108 120 122 180 100 S270 82 330 94"/><path d="M-10 165 C70 140 130 154 190 132 S280 116 330 126"/>
+            </g>
+            <path d="M40 175 C90 150 120 160 150 140 S220 120 260 130" fill="none" stroke="rgba(184,227,94,.35)" stroke-width="2" stroke-dasharray="4 5"/>
+          </svg>
+          <span class="cf-map-pin" style="left:${info.x * 100}%;top:${info.y * 100}%"></span>
+          <div class="cf-map-label"><span>${esc(info.pasture)} · ${info.alt.toLocaleString('uk-UA')} м</span><span>оновлено 12 хв тому</span></div>
+        </div>`;
+    }
+
+    VIEWS.sheep = function (id) {
+      chrome('app', 'home');
+      const h = CF.holding(id);
+      if (!h) { go('#/home'); return; }
+      const back = `<a class="cf-back" href="#/home">${I.back} Мої вівці</a>`;
+      if (h.status !== 'assigned') {
+        app.innerHTML = back + `
+          <div style="max-width:560px;">
+            ${awaitingCard(h, false)}
+            <div class="cf-panel" style="margin-top:16px;">
+              <p class="cf-h3">Чому вівцю ще не видно?</p>
+              <p class="cf-sub">Ферма обирає для вас здорову тварину, ставить бирку і GPS-маячок та проходить верифікацію. Це займає до ${CF.ASSIGN_DAYS} днів. Час володіння при цьому рахується з дня оплати — ${dLong(h.paidAt)}.</p>
+            </div>
+            <a class="cf-tile-link" href="#/contribution"><span><b>Мій внесок</b><small>Оплата, договір і строки</small></span><span aria-hidden="true">→</span></a>
+          </div>`;
+        return;
+      }
+      const { sheep, farmer, info } = CF.animal(h.sheep);
+      const me = CF.me();
+      const d = CF.daysSince(h.paidAt);
+      const healthy = info.health === 'healthy';
+      document.title = (h.name || 'Моя вівця') + ' — CyberFarm';
+      app.innerHTML = back + `
+        <div class="cf-detail">
+          <div class="cf-detail-photo"><img src="${esc(sheep ? sheep.FullBodyPhoto : '')}" alt="${esc(h.name || 'Моя вівця')}"></div>
+          <div>
+            <section class="cf-passport on-forest" aria-labelledby="pname">
+              <p class="cf-card-tag" style="margin:0;">Паспорт вівці · бирка ${esc(sheep ? sheep.EarTagNumber : '')}</p>
+              <div class="cf-passport-head">
+                <h1 class="cf-passport-name" id="pname">${h.name ? esc(h.name) : '<span style="font-style:italic;color:var(--on-forest-muted);font-size:32px;">Ще без імені</span>'}</h1>
+                <button class="cf-rename" type="button" data-name="${h.id}" aria-label="${h.name ? 'Змінити ім\'я' : 'Дати ім\'я'}">${I.pencil}</button>
+              </div>
+              <p style="margin:0;color:var(--on-forest-muted);">Ваша з ${dLong(h.paidAt)} · ${days(d)}</p>
+              ${!h.name ? `<button type="button" class="cf-btn lime block" data-name="${h.id}" style="margin-top:14px;">Дати вівці ім'я</button>` : ''}
+
+              <p class="cf-section-title">Стан</p>
+              <div class="cf-health ${healthy ? '' : 'check'}">
+                <span class="cf-health-ico">${I.heart}</span>
+                <span><b>${healthy ? 'Здорова' : 'Під наглядом ветеринара'}</b><small>Останній огляд ${dShort(info.check)}${healthy ? '' : ' · плановий повторний огляд'}</small></span>
+              </div>
+              ${bar('Настрій', info.mood)}
+              ${bar('Ситість', info.fed)}
+
+              <p class="cf-section-title">Дані тварини</p>
+              <div class="cf-rows">
+                <div class="cf-row"><span>Номер бирки</span><span>${esc(sheep ? sheep.EarTagNumber : '—')}</span></div>
+                <div class="cf-row"><span>Порода</span><span>${esc(info.breed)}</span></div>
+                <div class="cf-row"><span>Дата народження</span><span>${dLong(info.birth)}</span></div>
+                <div class="cf-row"><span>Вік</span><span>${age(info.birth)}</span></div>
+                <div class="cf-row"><span>Вага</span><span>${info.weight.toLocaleString('uk-UA')} кг</span></div>
+                <div class="cf-row"><span>Господарство</span><span>${esc(farmer ? farmer.FarmName : '—')}</span></div>
+              </div>
+
+              <p class="cf-section-title">Де зараз · GPS</p>
+              ${mapSvg(info)}
+              <div class="cf-rows" style="margin-top:6px;">
+                <div class="cf-row"><span>GPS-маячок</span><span>${esc(sheep && sheep.GpsTrackerId ? sheep.GpsTrackerId : 'Не підключено')}</span></div>
+                <div class="cf-row"><span>Регіон</span><span>${esc(farmer ? farmer.FarmAddress : '—')}</span></div>
+              </div>
+
+              <p class="cf-section-title">Сертифікат власності</p>
+              <div class="cf-cert">
+                <div class="cf-cert-head">
+                  <span class="cf-cert-seal">${I.seal}</span>
+                  <span><b>Цифровий сертифікат</b><br><span class="cf-cert-num">№ ${esc(h.cert)}</span></span>
+                </div>
+                <p>Сертифікат підтверджує, що саме ця вівця закріплена за вами, ${esc(me.fullName.split(' ').slice(1, 2).join(' ') || me.fullName)}. Запис про це внесено в електронний реєстр: його неможливо підробити чи непомітно змінити заднім числом, а перевірити може будь-хто за номером сертифіката.</p>
+                <div class="cf-cert-actions">
+                  <button type="button" class="cf-btn primary small" id="cert-open">Переглянути сертифікат</button>
+                  <button type="button" class="cf-btn ghost small" id="cert-share">Поділитися</button>
+                </div>
+                <details class="cf-tech">
+                  <summary>Технічний запис у реєстрі</summary>
+                  Унікальний ідентифікатор (токен) цієї вівці. Він потрібен лише для перевірки і нічого не дає зробити з вашою твариною без вас.
+                  <code>${esc(sheep ? sheep.Token : '')}</code>
+                </details>
+              </div>
+            </section>
+            <a class="cf-tile-link" href="#/contribution"><span><b>Мій внесок</b><small>Оплата, договір і дата можливого виведення коштів</small></span><span aria-hidden="true">→</span></a>
+          </div>
+        </div>`;
+      document.getElementById('cert-open').addEventListener('click', (e) => openCertificate(h, e.currentTarget));
+      document.getElementById('cert-share').addEventListener('click', async () => {
+        const text = `Моя вівця ${h.name ? '«' + h.name + '» ' : ''}на CyberFarm · сертифікат № ${h.cert}`;
+        try { if (navigator.share) { await navigator.share({ title: 'CyberFarm', text }); return; } } catch (_) { return; }
+        try { await navigator.clipboard.writeText(text); toast('Скопійовано для надсилання'); } catch (_) { toast(text); }
+      });
+    };
+
+    function openCertificate(h, invoker) {
+      const { sheep, farmer } = CF.animal(h.sheep);
+      const me = CF.me();
+      openModal(`
+        <div class="cf-modal-head"><span class="cf-eyebrow">CyberFarm</span><button class="cf-close" data-close aria-label="Закрити">×</button></div>
+        <div class="cf-certificate">
+          <div class="cf-cert-seal" style="margin:0 auto;">${I.seal}</div>
+          <h3 id="cf-modal-title">Сертифікат власності</h3>
+          <p class="cf-cert-num" style="margin:0;">№ ${esc(h.cert)}</p>
+          <p style="margin:18px 0 0;color:var(--muted);">Цим підтверджується, що</p>
+          <p class="who">${esc(me.fullName)}</p>
+          <p style="margin:0;color:var(--muted);">є власником вівці</p>
+          <p class="who">${h.name ? '«' + esc(h.name) + '»' : 'без імені'}</p>
+          <dl>
+            <dt>Бирка</dt><dd>${esc(sheep ? sheep.EarTagNumber : '')}</dd>
+            <dt>Господарство</dt><dd>${esc(farmer ? farmer.FarmName : '')}</dd>
+            <dt>Володіння з</dt><dd>${dLong(h.paidAt)} (дата оплати)</dd>
+            <dt>Договір</dt><dd>№ ${esc(h.contract || '')}</dd>
+            <dt>CyberFarm ID</dt><dd>${esc(me.id)}</dd>
+          </dl>
+        </div>
+        <button class="cf-btn primary block" type="button" data-close style="margin-top:16px;">Готово</button>`, invoker);
+    }
+
+    // ================= МІЙ ВНЕСОК (екран B) =================
+    VIEWS.contribution = function () {
+      chrome('app', 'contribution');
+      const hs = CF.holdings();
+      const c = CF.contract();
+      const me = CF.me();
+      const head = `
+        <div class="cf-pagehead"><div><span class="cf-eyebrow">Фінанси</span><h1 class="cf-h1">Мій внесок</h1></div></div>`;
+      const notice = `
+        <section class="cf-notice" aria-label="Умови виведення коштів">
+          <p class="cf-notice-big">Виведення коштів можливе після завершення інвестиційного періоду (${CF.PERIOD_YEARS} роки), згідно з договором.</p>
+          ${hs.length ? `<small>Найближча дата завершення: <b style="color:var(--lime);">${dLong(CF.periodEnd(hs[0].paidAt).toISOString())}</b>. Для кожного внеску період рахується від дня його оплати.</small>` : ''}
+        </section>`;
+      if (!hs.length) {
+        app.innerHTML = head + notice + `<div class="cf-panel cf-empty"><p class="cf-sub" style="margin-bottom:16px;">Внесків ще немає.</p><a class="cf-btn primary" href="#/buy">Придбати вівцю</a></div>`;
+        return;
+      }
+      const sum = hs.reduce((a, h) => a + h.amount, 0);
+      app.innerHTML = head + notice + `
+        <div class="cf-kpis">
+          <div class="cf-kpi"><p class="cf-kpi-val">${money(sum)}</p><p class="cf-kpi-lbl">Внесено всього</p></div>
+          <div class="cf-kpi"><p class="cf-kpi-val">${hs.length}</p><p class="cf-kpi-lbl">${plural(hs.length, 'Вівця', 'Вівці', 'Овець')} за договором</p></div>
+          <div class="cf-kpi"><p class="cf-kpi-val" style="font-size:20px;white-space:nowrap;">№ ${esc(c ? c.number : '—')}</p><p class="cf-kpi-lbl"><button class="cf-link" type="button" id="open-contract" style="min-height:0;">Переглянути договір</button></p></div>
+        </div>
+
+        <h2 class="cf-h3" style="margin:22px 0 10px;">Внески</h2>
+        ${hs.map((h) => {
+          const end = CF.periodEnd(h.paidAt);
+          const total = end - new Date(h.paidAt);
+          const pct = Math.min(100, Math.max(0, ((Date.now() - new Date(h.paidAt)) / total) * 100));
+          const label = h.status === 'assigned' ? (h.name ? `Вівця «${esc(h.name)}»` : 'Вівця без імені') : 'Вівцю ще призначають';
+          return `
+            <div class="cf-pay light">
+              <div class="cf-pay-head">
+                <span><b>${label}</b><br><span class="cf-hint">Оплачено ${dLong(h.paidAt)}</span></span>
+                <strong>${money(h.amount)}</strong>
+              </div>
+              ${h.status !== 'assigned' ? '<span class="cf-chip amber" style="margin-bottom:10px;">Очікує призначення</span>' : ''}
+              <div class="cf-bar" style="margin:4px 0 0;"><div class="cf-bar-track"><div class="cf-bar-fill" style="width:${Math.max(pct, 1.5)}%"></div></div></div>
+              <div class="cf-period"><span>Період почався ${dShort(h.paidAt)}</span><span>Виведення з ${dLong(end.toISOString())}</span></div>
+            </div>`;
+        }).join('')}
+
+        <h2 class="cf-h3" style="margin:26px 0 10px;">Результати</h2>
+        <div class="cf-placeholder">
+          <b>Звіт про результати з'явиться тут пізніше.</b><br>
+          Порядок розрахунку виплат зараз погоджується. Щойно методику буде затверджено й додано до договору, ви побачите в цьому розділі звіт і отримаєте сповіщення.
+        </div>
+        <p class="cf-hint" style="margin-top:16px;">Реквізити для майбутніх виплат: ${me.iban ? 'IBAN •••• ' + esc(me.iban.slice(-4)) : '<a class="cf-link" href="#/profile">додати в профілі</a>'}</p>`;
+      document.getElementById('open-contract').addEventListener('click', (e) => openContractModal(e.currentTarget));
+    };
+
+    function openContractModal(invoker) {
+      const me = CF.me();
+      const c = CF.contract();
+      openModal(`
+        <div class="cf-modal-head"><span class="cf-eyebrow" id="cf-modal-title">Договір</span><button class="cf-close" data-close aria-label="Закрити">×</button></div>
+        <div class="cf-doc" style="max-height:none;">${contractText(me, c)}</div>
+        <button class="cf-btn ghost block" type="button" id="dl-pdf" style="margin-top:14px;">Завантажити PDF</button>`, invoker);
+      document.getElementById('dl-pdf').addEventListener('click', () => toast('Демо: PDF надіслано на пошту'));
+    }
+
+    // ================= МАРКЕТ — СКОРО =================
+    VIEWS.market = function () {
+      chrome('app', 'market');
+      const me = CF.me();
+      app.innerHTML = `
+        <div class="cf-pagehead"><div><span class="cf-eyebrow">Маркет</span><h1 class="cf-h1">Скоро</h1></div></div>
+        <section class="cf-soon-hero">
+          <img src="./images/sheep-3.jpg" alt="">
+          <div>
+            <span class="cf-chip lime" style="justify-self:start;">Скоро</span>
+            <h2 class="cf-h2" style="color:var(--on-forest);">Продукти з ферм, де пасуться ваші вівці</h2>
+            <p style="margin:0;color:var(--on-forest-muted);">Бринза, вовна, вироби майстрів. Запустимо, коли ферми-партнери будуть готові до доставки по всій Україні.</p>
+            <button class="cf-btn lime" type="button" id="notify" style="justify-self:start;">${me.notifyMarket ? '✓ Ви в списку очікування' : 'Повідомити про запуск'}</button>
+          </div>
+        </section>`;
+      document.getElementById('notify').addEventListener('click', () => {
+        const on = !CF.me().notifyMarket;
+        CF.updateMe({ notifyMarket: on });
+        toast(on ? 'Повідомимо, щойно маркет запрацює' : 'Сповіщення вимкнено');
+        VIEWS.market();
+      });
+    };
+
+    // ================= ПРОФІЛЬ — CYBERFARM ID =================
+    VIEWS.profile = function () {
+      chrome('app', 'profile');
+      const me = CF.me();
+      const c = CF.contract();
+      const hs = CF.holdings();
+      const certs = hs.filter((h) => h.cert).length;
+      const iban = me.iban ? me.iban.replace(/(.{4})(?=.)/g, '$1 ') : 'Не вказано';
+      app.innerHTML = `
+        <div style="max-width:620px;">
+          <div class="cf-pagehead"><div><span class="cf-eyebrow">Профіль</span><h1 class="cf-h1">CyberFarm ID</h1></div></div>
+          <div class="cf-id-card">
+            <span class="cf-avatar" aria-hidden="true">${esc(initials(me.fullName))}</span>
+            <b style="font-size:20px;">${esc(me.fullName)}</b>
+            <span class="cf-id-num">CyberFarm ID ${esc(me.id)}</span>
+            <span style="margin-top:10px;"><span class="cf-chip lime">${I.check} Особу підтверджено${me.kycMethod ? ' · ' + esc(me.kycMethod) : ''}</span></span>
+          </div>
+
+          <p class="cf-list-title">Контакти</p>
+          <div class="cf-list light">
+            <div class="cf-row"><span>Пошта</span><span>${esc(me.email)}</span></div>
+            <div class="cf-row"><span>Телефон</span><span>${esc(me.phone)} ${me.phoneVerified ? '✓' : ''}</span></div>
+          </div>
+
+          <p class="cf-list-title">Документи</p>
+          <div class="cf-list light">
+            ${c ? `<button class="cf-row" type="button" id="p-contract"><span>Договір</span><span>№ ${esc(c.number)} ›</span></button>` : `<a class="cf-row" href="#/buy"><span>Договір</span><span>Ще не підписано ›</span></a>`}
+            <a class="cf-row" href="#/home"><span>Сертифікати власності</span><span>${certs} ›</span></a>
+          </div>
+
+          <p class="cf-list-title">Реквізити для виплат</p>
+          <div class="cf-list light">
+            <div class="cf-row"><span>IBAN</span><span style="font-variant-numeric:tabular-nums;">${esc(iban)}</span></div>
+            <div class="cf-row"><span>РНОКПП</span><span>${esc(me.taxId || '—')}</span></div>
+            <button class="cf-row" type="button" id="p-edit"><span style="color:var(--lime-ink);font-weight:700;">Змінити реквізити</span><span>›</span></button>
+          </div>
+
+          <button class="cf-btn ghost block" type="button" id="p-logout" style="margin-top:8px;">Вийти</button>
+          <button class="cf-btn block" type="button" id="p-reset" style="margin-top:10px;background:none;color:var(--red);">Скинути демо-дані</button>
+        </div>`;
+      if (c) document.getElementById('p-contract').addEventListener('click', (e) => openContractModal(e.currentTarget));
+      document.getElementById('p-logout').addEventListener('click', () => { CF.logout(); go('#/welcome'); });
+      document.getElementById('p-reset').addEventListener('click', () => {
+        CF.reset();
+        if (Store && Store.resetToDemoData) Store.resetToDemoData();
+        toast('Демо-дані відновлено');
+        go('#/welcome');
+        route();
+      });
+      document.getElementById('p-edit').addEventListener('click', (e) => {
+        openModal(`
+          <div class="cf-modal-head"><h2 class="cf-h2" id="cf-modal-title" style="margin:0;">Реквізити для виплат</h2><button class="cf-close" data-close aria-label="Закрити">×</button></div>
+          <p class="cf-sub" style="margin-bottom:14px;">Рахунок має бути відкритий на ваше ім'я.</p>
+          <form id="f-iban">
+            <div class="cf-field"><label for="e-iban">IBAN</label><input id="e-iban" value="${esc(me.iban)}" placeholder="UA00 0000 0000 0000 0000 0000 000" autocomplete="off" spellcheck="false"></div>
+            <p class="cf-error" id="iban-err" hidden></p>
+            <button class="cf-btn primary block" type="submit">Зберегти</button>
+          </form>`, e.currentTarget);
+        document.getElementById('f-iban').addEventListener('submit', (ev) => {
+          ev.preventDefault();
+          const v = document.getElementById('e-iban').value.replace(/\s+/g, '').toUpperCase();
+          if (!/^UA\d{27}$/.test(v)) { const er = document.getElementById('iban-err'); er.textContent = 'IBAN має починатися з UA і містити 29 символів.'; er.hidden = false; return; }
+          CF.updateMe({ iban: v });
+          closeModal();
+          toast('Реквізити збережено');
+          VIEWS.profile();
+        });
+      });
+    };
+
+    // ---------------- Модальне вікно ----------------
+    const modal = document.getElementById('cf-modal');
+    let modalInvoker = null;
+    function openModal(html, invoker) {
+      modalInvoker = invoker || document.activeElement;
+      document.getElementById('cf-modal-box').innerHTML = html;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      const f = modal.querySelector('input, button:not(.cf-close)') || modal.querySelector('button');
+      if (f) setTimeout(() => f.focus(), 30);
+    }
+    function closeModal() {
+      if (modal.hidden) return;
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      if (modalInvoker && document.contains(modalInvoker)) modalInvoker.focus();
+      modalInvoker = null;
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    const header = document.getElementById('cf-header');
+    window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 4), { passive: true });
+    window.addEventListener('hashchange', route);
+    route();
+  })();
+  </script>
+</body>
+</html>

@@ -2437,3 +2437,630 @@ body.app-investor #view-market.has-cart .ios-scroll {
 .profile-edit-btn {
   margin-block: -8px 24px;
 }
+
+/* ==========================================================================
+   МоєСтадо: «Великий шрифт» — режим для фермерів 50–60+ (увімкнений за замовчуванням)
+   Крупніший текст, темніші підписи, вищі рядки та кнопки. Вимикається в «Господарстві».
+   ========================================================================== */
+body.app-farmer.big-ui {
+  --ios-secondary: #4F4F55;
+  --ios-tertiary: #8A8A90;
+  --ios-separator: rgba(60, 60, 67, 0.32);
+  --ios-green-ink: #17692B;
+}
+
+/* Шапка */
+.big-ui .ios-navbar-eyebrow { font-size: 16px; font-weight: 500; }
+.big-ui .ios-navbar-farm-select { font-size: 22px; }
+.big-ui .ios-large-title { font-size: 36px; }
+.big-ui .ios-nav-btn,
+.big-ui .ios-back-link,
+.big-ui .ios-nav-btn[style*="font-size"] { font-size: 19px !important; min-block-size: 48px; }
+.big-ui .ios-subpage-navbar { min-block-size: 52px; }
+.big-ui .ios-subpage-navbar h1 { font-size: 20px; }
+
+/* Пошук і сегменти */
+.big-ui .ios-search { min-block-size: 48px; border-radius: 12px; }
+.big-ui .ios-search input { font-size: 19px; min-block-size: 48px; }
+.big-ui .ios-seg-btn { min-block-size: 40px; font-size: 16px; font-weight: 600; }
+
+/* Підсумки стада */
+.big-ui .ios-stat-val { font-size: 28px; }
+.big-ui .ios-stat-lbl { font-size: 15px; color: var(--ios-secondary); }
+
+/* Списки */
+.big-ui .ios-section-header { font-size: 15px; font-weight: 600; color: #3C3C43; padding-block-end: 8px; }
+.big-ui .ios-row { min-block-size: 64px; padding-block: 14px; gap: 14px; }
+.big-ui .ios-row.has-thumb + .ios-row::before { inset-inline-start: 90px; }
+.big-ui .ios-thumb { inline-size: 60px; block-size: 60px; border-radius: 12px; }
+.big-ui .ios-row-title,
+.big-ui .ios-row-title[style*="font-size"] { font-size: 20px !important; line-height: 1.25; }
+.big-ui .ios-row-sub { font-size: 16px; white-space: normal; line-height: 1.35; }
+.big-ui .ios-row-Side,
+.big-ui .ios-row span[style*="font-size"],
+.big-ui .ios-row select[style*="font-size"] { font-size: 17px !important; }
+.big-ui .ios-chevron { font-size: 24px; }
+.big-ui .status-dot { inline-size: 11px; block-size: 11px; }
+.big-ui .ios-pill { font-size: 15px; padding: 4px 10px; }
+.big-ui .ios-empty { font-size: 18px; }
+
+/* Поля: підпис над значенням, щоб довгі значення не обрізались */
+.big-ui .ios-field-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  min-block-size: 72px;
+  padding-block: 10px;
+}
+.big-ui .ios-field-row label { inline-size: auto; font-size: 15px; font-weight: 600; color: var(--ios-secondary); }
+.big-ui .ios-field-row input,
+.big-ui .ios-field-row select { font-size: 20px; text-align: start; min-block-size: 40px; }
+.big-ui .ios-field-error { font-size: 16px; }
+
+/* Кнопки */
+.big-ui .ios-primary-btn { min-block-size: 60px; font-size: 20px; border-radius: 16px; }
+.big-ui .ios-secondary-btn { min-block-size: 56px; font-size: 18px; border-radius: 16px; }
+.big-ui .ios-chip { min-block-size: 44px; font-size: 17px; }
+.big-ui .ios-action-sheet-title { font-size: 16px; }
+.big-ui .ios-action-sheet-sub { font-size: 15px; }
+
+/* Нижня панель вкладок */
+.big-ui .ios-tabbar { block-size: 92px; padding-block-end: 26px; }
+.big-ui .ios-tab { font-size: 13px; font-weight: 600; gap: 4px; }
+.big-ui .ios-tab svg { inline-size: 30px; block-size: 30px; }
+.big-ui .ios-tab-badge { min-inline-size: 20px; block-size: 20px; font-size: 12px; }
+
+/* Банер і шторки */
+.big-ui .ios-banner-title { font-size: 17px; }
+.big-ui .ios-banner-sub { font-size: 15px; }
+.big-ui .ios-sheet-header h2 { font-size: 20px; }
+.big-ui .ios-photo-caption { font-size: 15px; }
+
+/* Візард і камера */
+.big-ui .ios-wizard-title { font-size: 30px; }
+.big-ui .ios-wizard-sub { font-size: 18px; line-height: 1.4; color: var(--ios-secondary); }
+.big-ui .ios-wizard-bar { block-size: 6px; }
+.big-ui .ios-cam-title { font-size: 28px; }
+.big-ui .ios-cam-sub { font-size: 17px; }
+.big-ui .ios-vf-status { font-size: 15px; }
+.big-ui .ios-vf-chip { min-block-size: 46px; font-size: 16px; }
+.big-ui .ios-cam-manual-btn { min-block-size: 54px; font-size: 18px; }
+.big-ui .ios-cam-glass-row label { font-size: 17px; }
+.big-ui .ios-cam-glass-row input { font-size: 19px; }
+.big-ui .ios-cam-hint { font-size: 15px; }
+.big-ui .ios-cam-error { font-size: 16px; }
+.big-ui .ios-shutter-btn { inline-size: 76px; block-size: 76px; }
+
+@media (max-width: 600px) {
+  body.app-farmer.big-ui .ios-tabbar {
+    min-block-size: 76px;
+    padding-block: 8px max(14px, env(safe-area-inset-bottom, 14px));
+  }
+}
+
+/* Перемикач iOS (UISwitch) */
+.ios-switch {
+  appearance: none;
+  flex: none;
+  position: relative;
+  inline-size: 51px;
+  block-size: 31px;
+  margin: 0;
+  border-radius: 999px;
+  background: rgba(120, 120, 128, 0.32);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.ios-switch::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 2px;
+  inset-inline-start: 2px;
+  inline-size: 27px;
+  block-size: 27px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.16);
+  transition: transform 0.2s ease;
+}
+.ios-switch:checked { background: var(--ios-green); }
+.ios-switch:checked::after { transform: translateX(20px); }
+.ios-switch:focus-visible { outline: 2px solid var(--ios-tint); outline-offset: 2px; }
+
+/* Великий шрифт: без розривів посеред слова */
+.nowrap { white-space: nowrap; }
+.big-ui .ios-row-sub .nowrap { white-space: nowrap; }
+.big-ui .ios-seg-btn,
+.big-ui .ios-stat-lbl,
+.big-ui .ios-pill,
+.big-ui .ios-row-title,
+.big-ui .ios-row > span,
+.big-ui .ios-field-row label {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+.big-ui .ios-seg-btn { font-size: 15px; padding-inline: 4px; white-space: nowrap; }
+.big-ui .ios-stat-lbl { font-size: 14px; white-space: nowrap; }
+.big-ui .ios-pill,
+.big-ui .ios-row-Side { white-space: nowrap; }
+.big-ui .ios-row-main { min-inline-size: 0; }
+.big-ui .ios-row > .ios-row-main + span { text-align: end; }
+.big-ui .ios-row:has(> .ios-row-main + span) > .ios-row-main { flex: none; max-inline-size: 55%; }
+.big-ui .ios-row:has(> .ios-row-main + span) > .ios-row-main + span { flex: 1 1 auto; min-inline-size: 0; }
+
+/* Поля зі списком (select) лишаються в один рядок, як звичайні рядки */
+.big-ui .ios-field-row:has(select) {
+  flex-direction: row;
+  align-items: center;
+  min-block-size: 64px;
+}
+.big-ui .ios-field-row:has(select) label { font-size: 20px; font-weight: 400; color: var(--ios-label); }
+.big-ui .ios-field-row select,
+.big-ui .ios-field-row select[style*="font-size"] { font-size: 17px !important; text-align: end; }
+
+body.app-farmer.big-ui { overflow-wrap: break-word; }
+
+/* Статус вівці текстом під номером (лише у великому режимі) */
+.st-inline { display: none; }
+.big-ui .st-inline { display: block; font-weight: 600; }
+.big-ui .st-inline.st-pending { color: #A24600; }
+.big-ui .st-inline.st-rejected { color: #C4000F; }
+.big-ui .st-side { display: none; }
+
+/* Перевірка: кнопки дій окремим рядком на всю ширину */
+.big-ui .verify-row { flex-wrap: wrap; }
+.big-ui .verify-row .ios-row-main { flex: 1 1 0; max-inline-size: none; }
+.big-ui .verify-actions { flex: 1 0 100%; padding-inline-start: 74px; gap: 10px !important; }
+.big-ui .verify-actions .ios-pill {
+  min-block-size: 46px;
+  padding: 0 18px !important;
+  font-size: 18px;
+  font-weight: 600;
+  justify-content: center;
+}
+.big-ui .verify-actions .ios-pill.green { flex: 1 1 auto; }
+
+/* Токен — моноширинний, переноситься */
+.big-ui .ios-row-title[style*="monospace"] { font-size: 15px !important; word-break: break-all; }
+
+/* ==========================================================================
+   МоєСтадо: Material 3 (Android-first). Клас body.md3 на сторінках фермера.
+   Поверх базових iOS-компонентів; режим «Великий шрифт» працює разом із ним.
+   ========================================================================== */
+body.md3 {
+  --md-primary: #2E6B2F;
+  --md-on-primary: #FFFFFF;
+  --md-primary-container: #B1F2A8;
+  --md-on-primary-container: #002204;
+  --md-secondary-container: #D5E8CF;
+  --md-on-secondary-container: #111F0F;
+  --md-surface: #F7FBF1;
+  --md-surface-low: #F1F5EB;
+  --md-surface-container: #EBEFE5;
+  --md-surface-high: #E5E9DF;
+  --md-surface-highest: #E0E4DA;
+  --md-on-surface: #181D17;
+  --md-on-surface-variant: #424940;
+  --md-outline: #72796F;
+  --md-outline-variant: #C2C9BD;
+  --md-error: #BA1A1A;
+  --md-error-container: #FFDAD6;
+  --md-on-error-container: #410002;
+  --md-inverse-surface: #2D322B;
+  --md-inverse-on-surface: #EEF2E8;
+
+  --ios-tint: var(--md-primary);
+  --ios-bg: var(--md-surface);
+  --ios-card: var(--md-surface-low);
+  --ios-label: var(--md-on-surface);
+  --ios-secondary: var(--md-on-surface-variant);
+  --ios-tertiary: var(--md-outline);
+  --ios-separator: var(--md-outline-variant);
+  --ios-fill: var(--md-surface-high);
+  --ios-green: var(--md-primary);
+  --ios-green-ink: var(--md-primary);
+  --ios-red: var(--md-error);
+  font-family: Roboto, "Google Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0.1px;
+}
+
+body.md3.big-ui {
+  --ios-secondary: #353B33;
+  --ios-tertiary: #5E655B;
+}
+
+.md3 .ios-app,
+.md3 .ios-navbar { background: var(--md-surface); }
+
+/* Android-статус-бар у десктопному фреймі: «пробита» камера замість Dynamic Island */
+.md3 .dynamic-island { inline-size: 12px; block-size: 12px; border-radius: 50%; }
+.md3 .ios-time { font-weight: 500; }
+
+/* Верхня панель (Top app bar) */
+.md3 .ios-large-title { font-size: 28px; font-weight: 400; letter-spacing: 0; }
+.md3.big-ui .ios-large-title { font-size: 32px; }
+.md3 .ios-navbar-eyebrow { color: var(--md-on-surface-variant); letter-spacing: 0.1px; }
+.md3 .ios-navbar-farm-select { font-weight: 500; letter-spacing: 0; }
+.md3 .ios-nav-btn {
+  border-radius: 999px;
+  padding-inline: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+.md3 .ios-nav-btn:active,
+.md3 .ios-back-link:active { opacity: 1; background: rgba(46, 107, 47, 0.12); }
+
+/* Сторінка вівці / візард: стрілка «назад» + заголовок зліва */
+.md3 .ios-subpage-navbar { grid-template-columns: auto 1fr auto; gap: 4px; padding-inline: 4px 8px; }
+.md3 .ios-subpage-navbar h1 { text-align: start; font-size: 22px; font-weight: 400; letter-spacing: 0; }
+.md3.big-ui .ios-subpage-navbar h1 { font-size: 24px; }
+.md3 .ios-back-link {
+  inline-size: 48px;
+  block-size: 48px;
+  min-block-size: 48px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--md-on-surface);
+}
+.md3 .ios-back-link svg { display: none; }
+.md3 .ios-back-link::before {
+  content: "";
+  inline-size: 24px;
+  block-size: 24px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.md3 .ios-back-link span {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* FAB «Додати» замість плюса у шапці */
+.md3 #open-add-btn {
+  position: absolute;
+  inset-inline-end: 16px;
+  inset-block-end: 16px;
+  z-index: 12;
+  margin: 0;
+  min-block-size: 56px;
+  block-size: 56px;
+  padding: 0 20px 0 16px;
+  gap: 12px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 16px;
+  background: var(--md-primary-container);
+  color: var(--md-on-primary-container);
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.md3 #open-add-btn::after { content: "Додати вівцю"; }
+.md3 #open-add-btn svg { inline-size: 24px; block-size: 24px; }
+.md3.big-ui #open-add-btn { block-size: 64px; min-block-size: 64px; font-size: 19px !important; padding-inline: 20px 24px; border-radius: 20px; }
+.md3 #view-herd .ios-scroll { padding-block-end: 96px; }
+
+/* Пошук (Search bar) */
+.md3 .ios-search,
+.md3.big-ui .ios-search {
+  min-block-size: 56px;
+  border-radius: 28px;
+  padding-inline: 16px;
+  gap: 12px;
+  background: var(--md-surface-high);
+}
+.md3 .ios-search svg { inline-size: 22px; block-size: 22px; color: var(--md-on-surface-variant); }
+.md3 .ios-search input { min-block-size: 56px; }
+
+/* Сегментовані кнопки (Segmented buttons) */
+.md3 .ios-segmented {
+  padding: 0;
+  gap: 0;
+  background: transparent;
+  border: 1px solid var(--md-outline);
+  border-radius: 999px;
+  overflow: clip;
+}
+.md3 .ios-seg-btn {
+  min-block-size: 40px;
+  border-radius: 0;
+  font-weight: 500;
+  color: var(--md-on-surface);
+}
+.md3.big-ui .ios-seg-btn { min-block-size: 48px; }
+.md3 .ios-seg-btn + .ios-seg-btn { border-inline-start: 1px solid var(--md-outline); }
+.md3 .ios-seg-btn.active,
+.md3 .ios-seg-btn[aria-selected="true"] {
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+  box-shadow: none;
+  font-weight: 600;
+}
+.md3 .ios-seg-btn.active::before { content: "✓ "; }
+
+/* Картки та списки */
+.md3 .ios-stats-card,
+.md3 .ios-group { border-radius: 16px; background: var(--md-surface-container); }
+.md3 .ios-section-header {
+  padding-inline: 32px;
+  text-transform: none;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: var(--md-primary);
+}
+.md3.big-ui .ios-section-header { font-size: 17px; font-weight: 600; color: var(--md-primary); }
+.md3 button.ios-row:active,
+.md3 a.ios-row:active { background: rgba(46, 107, 47, 0.1); }
+.md3 .ios-row-title { letter-spacing: 0; font-weight: 500; }
+.md3 .ios-thumb { border-radius: 12px; background: var(--md-surface-highest); }
+.md3 .ios-chevron { color: var(--md-on-surface-variant); }
+
+/* Мітки статусу (chips) */
+.md3 .ios-pill { border-radius: 8px; font-weight: 500; }
+.md3 .ios-pill.green { background: var(--md-primary-container); color: var(--md-on-primary-container); }
+.md3 .ios-pill.red { background: var(--md-error-container); color: var(--md-on-error-container); }
+.md3 .ios-pill.orange { background: #FFDCC1; color: #2E1500; }
+.md3 .verify-actions .ios-pill { border-radius: 999px; }
+.md3 .verify-actions .ios-pill.green { background: var(--md-primary); color: var(--md-on-primary); }
+
+/* Текстові поля (Filled text field) */
+.md3 form.ios-group { background: transparent; border-radius: 0; overflow: visible; }
+.md3 .ios-group > .ios-field-row:has(input),
+.md3 form.ios-group > .ios-field-row {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  min-block-size: 56px;
+  margin-block-end: 10px;
+  padding: 8px 16px 6px;
+  border-radius: 4px 4px 0 0;
+  background: var(--md-surface-highest);
+  box-shadow: inset 0 -1px 0 var(--md-on-surface-variant);
+}
+.md3 .ios-group > .ios-field-row:has(input)::before,
+.md3 form.ios-group > .ios-field-row::before { display: none; }
+.md3 .ios-group > .ios-field-row:focus-within { box-shadow: inset 0 -3px 0 var(--md-primary); }
+.md3 .ios-group > .ios-field-row:focus-within label { color: var(--md-primary); }
+.md3 .ios-field-row label { inline-size: auto; font-size: 12px; font-weight: 400; color: var(--md-on-surface-variant); }
+.md3.big-ui .ios-field-row label { font-size: 15px; font-weight: 500; }
+.md3 .ios-field-row input,
+.md3 form.ios-group > .ios-field-row select { text-align: start; min-block-size: 32px; }
+.md3.big-ui .ios-group > .ios-field-row:has(input),
+.md3.big-ui form.ios-group > .ios-field-row { min-block-size: 72px; padding-block: 10px 8px; }
+.md3 form.ios-group > .ios-field-row:has(select) { flex-direction: column; align-items: stretch; }
+.md3 form.ios-group > .ios-field-row:has(select) label { font-size: 12px; color: var(--md-on-surface-variant); }
+.md3.big-ui form.ios-group > .ios-field-row:has(select) label { font-size: 15px; font-weight: 500; }
+
+/* Кнопки (Filled / Tonal) */
+.md3 .ios-primary-btn {
+  border-radius: 999px;
+  min-block-size: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+.md3.big-ui .ios-primary-btn { min-block-size: 60px; font-size: 20px; border-radius: 999px; }
+.md3 .ios-secondary-btn {
+  border-radius: 999px;
+  font-weight: 500;
+  background: var(--md-secondary-container);
+  color: var(--md-on-secondary-container);
+}
+.md3.big-ui .ios-secondary-btn { border-radius: 999px; }
+.md3 #reset-db-btn,
+.md3 .ios-secondary-btn[style*="ios-red"] { background: transparent; box-shadow: inset 0 0 0 1px var(--md-outline); }
+
+/* Нижня навігаційна панель (Navigation bar) */
+.md3 .ios-tabbar,
+.md3.big-ui .ios-tabbar {
+  block-size: 80px;
+  padding: 12px 8px 16px;
+  background: var(--md-surface-container);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0;
+}
+.md3.big-ui .ios-tabbar { block-size: 92px; }
+.md3 .ios-tab {
+  justify-content: flex-start;
+  gap: 4px;
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+.md3.big-ui .ios-tab { font-size: 14px; }
+.md3 .ios-tab svg {
+  box-sizing: content-box;
+  padding: 4px 20px;
+  border-radius: 16px;
+  transition: background-color 0.2s ease;
+}
+.md3 .ios-tab[aria-selected="true"] { color: var(--md-on-surface); font-weight: 700; }
+.md3 .ios-tab[aria-selected="true"] svg { background: var(--md-secondary-container); color: var(--md-on-secondary-container); }
+.md3 .ios-tab-badge { inset-block-start: -2px; inset-inline-start: calc(50% + 8px); background: var(--md-error); }
+
+@media (max-width: 600px) {
+  body.md3 .ios-tabbar,
+  body.md3.big-ui .ios-tabbar {
+    block-size: auto;
+    min-block-size: 80px;
+    padding-block: 12px max(16px, env(safe-area-inset-bottom, 16px));
+  }
+}
+
+/* Повідомлення (Snackbar) знизу */
+.md3 .ios-banner {
+  inset-block: auto 104px;
+  inset-inline: 16px;
+  border-radius: 4px;
+  padding: 14px 16px;
+  background: var(--md-inverse-surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  transform: translateY(24px);
+}
+.md3 .ios-banner.visible { transform: translateY(0); }
+.md3 .ios-banner-title { color: var(--md-inverse-on-surface); font-weight: 500; }
+.md3 .ios-banner-sub { color: rgba(238, 242, 232, 0.8); }
+@media (max-width: 600px) {
+  .md3 .ios-banner { inset-block-start: auto; }
+}
+
+/* Перемикач (Switch) */
+.md3 .ios-switch {
+  inline-size: 52px;
+  block-size: 32px;
+  background: var(--md-surface-highest);
+  box-shadow: inset 0 0 0 2px var(--md-outline);
+}
+.md3 .ios-switch::after {
+  inset-block-start: 8px;
+  inset-inline-start: 8px;
+  inline-size: 16px;
+  block-size: 16px;
+  background: var(--md-outline);
+  box-shadow: none;
+  transition: transform 0.2s ease, inline-size 0.2s ease, block-size 0.2s ease, inset 0.2s ease;
+}
+.md3 .ios-switch:checked { background: var(--md-primary); box-shadow: none; }
+.md3 .ios-switch:checked::after {
+  inset-block-start: 4px;
+  inset-inline-start: 4px;
+  inline-size: 24px;
+  block-size: 24px;
+  background: var(--md-on-primary);
+  transform: translateX(20px);
+}
+
+/* Шторки та діалоги */
+.md3 .ios-sheet { border-radius: 28px 28px 0 0; background: var(--md-surface-low); }
+.md3 .ios-sheet-grabber { inline-size: 32px; block-size: 4px; background: var(--md-outline); margin-block-start: 16px; }
+.md3 .ios-sheet-header { border: 0; }
+.md3 .ios-action-sheet-dialog[open] { inset-block-end: 0; inline-size: 100%; max-inline-size: 393px; }
+.md3 .ios-action-sheet-group {
+  border-radius: 28px 28px 0 0;
+  background: var(--md-surface-low);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding-block: 8px;
+}
+.md3 .ios-action-sheet-header { text-align: start; border: 0; padding: 16px 24px 8px; }
+.md3 .ios-action-sheet-title { font-size: 22px; font-weight: 400; color: var(--md-on-surface); }
+.md3 .ios-action-sheet-sub { font-size: 14px; color: var(--md-on-surface-variant); }
+.md3 .ios-action-sheet-btn,
+.md3 .ios-action-sheet-cancel {
+  text-align: start;
+  padding-inline: 24px;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: var(--md-on-surface);
+  border: 0 !important;
+}
+.md3.big-ui .ios-action-sheet-btn,
+.md3.big-ui .ios-action-sheet-cancel { font-size: 19px; }
+.md3 .ios-action-sheet-btn.destructive { color: var(--md-error); }
+.md3 .ios-action-sheet-cancel {
+  border-radius: 0;
+  background: var(--md-surface-low);
+  text-align: center;
+  font-weight: 500;
+  color: var(--md-primary);
+}
+
+/* Візард і низ сторінки */
+.md3 .ios-wizard-footer {
+  background: var(--md-surface-container);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0;
+}
+.md3 .ios-wizard-title { font-weight: 400; letter-spacing: 0; }
+.md3 .ios-wizard-bar { border-radius: 2px; background: var(--md-secondary-container); }
+.md3 .ios-wizard-bar.done,
+.md3 .ios-wizard-bar[aria-current="step"] { background: var(--md-primary); }
+.md3 .ios-cam-manual-btn,
+.md3 .ios-vf-chip { border-radius: 999px; }
+.md3 .ios-photo-carousel .ios-photo-slide,
+.md3 .ios-photo-slide { border-radius: 16px; }
+
+/* M3: поле-список усередині картки списку (напр. «Призначення») — як звичайний рядок */
+.md3 .ios-group:not(form) > .ios-field-row:has(select) label { font-size: 17px; font-weight: 400; color: var(--md-on-surface); }
+.md3.big-ui .ios-group:not(form) > .ios-field-row:has(select) label { font-size: 20px; }
+.md3 .ios-action-sheet-form { gap: 0; background: var(--md-surface-low); border-radius: 28px 28px 0 0; overflow: clip; }
+.md3 .ios-action-sheet-cancel { border-block-start: 1px solid var(--md-outline-variant) !important; }
+
+/* M3: візард додавання вівці */
+.md3 #wizard-cancel-btn {
+  inline-size: 48px;
+  block-size: 48px;
+  min-block-size: 48px;
+  padding: 0 !important;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0 !important;
+  color: var(--md-on-surface);
+}
+.md3 #wizard-cancel-btn::before {
+  content: "";
+  inline-size: 24px;
+  block-size: 24px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.md3 #wizard-cancel-btn:active { background: rgba(0, 0, 0, 0.1); }
+/* На першому кроці стрілки «назад» немає — заголовок притискаємо до лівого краю */
+.md3 #wizard-back-nav[style*="hidden"] { display: none; }
+.md3 .ios-subpage-navbar:has(#wizard-back-nav[style*="hidden"]) { grid-template-columns: 1fr auto; padding-inline-start: 16px; }
+
+/* Лінійний індикатор прогресу (Linear progress) замість сегментів */
+.md3 .ios-wizard-progress { gap: 0; margin-inline: 16px; border-radius: 2px; overflow: clip; }
+.md3 .ios-wizard-bar,
+.md3.big-ui .ios-wizard-bar { block-size: 4px; border-radius: 0; }
+.md3.big-ui .ios-wizard-bar { block-size: 6px; }
+
+/* Камера */
+.md3 .ios-cam-title { font-weight: 400; letter-spacing: 0; }
+.md3 .ios-cam-glass-card {
+  border-radius: 16px;
+  border: 0;
+  background: rgba(45, 50, 43, 0.92);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.md3 .ios-vf-chip {
+  border-radius: 8px;
+  border: 1px solid rgba(238, 242, 232, 0.5);
+  background: rgba(45, 50, 43, 0.85);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  font-weight: 500;
+}
+.md3 .ios-cam-manual-btn {
+  background: transparent;
+  border: 1px solid rgba(238, 242, 232, 0.6);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  font-weight: 500;
+}
+.md3 .ios-vf-status { border-radius: 8px; }
+.md3 .ios-shutter-btn { border-width: 4px; }
+.md3 .ios-cam-manual-btn { background: rgba(45, 50, 43, 0.72); }
+.md3 .ios-vf-status { background: var(--md-primary-container); color: var(--md-on-primary-container); font-weight: 500; }
+/* ✕ у візарді: іконка точно по центру (текст кнопки не займає місця в сітці) */
+.md3 #wizard-cancel-btn { position: relative; display: inline-block; overflow: hidden; }
+.md3 #wizard-cancel-btn::before { position: absolute; inset: 0; margin: auto; }

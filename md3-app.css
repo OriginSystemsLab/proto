@@ -1,0 +1,694 @@
+/* ==========================================================================
+   МоєСтадо — головна та картка вівці. Material 3 з нуля (Android-first).
+   Токени, поля й кнопки беруться з md3-add.css (клас .m3).
+   ========================================================================== */
+.m3.m3-app { padding-block-start: 44px; overflow: clip; }
+.m3-app { --list-h: 80px; --thumb: 56px; --navbar-h: 86px; }
+.big-ui .m3-app { --list-h: 96px; --thumb: 64px; --navbar-h: 94px; }
+
+/* ---------- Top app bar ---------- */
+.m3-appbar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-block-size: 64px;
+  padding-inline: 16px;
+  background: var(--surface);
+  transition: background-color 0.2s ease;
+}
+.m3-appbar.has-nav { padding-inline-start: 4px; }
+.m3-appbar.scrolled { background: var(--surface-container); }
+.m3-appbar-title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  margin: 0;
+  font-size: var(--fs-title);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Назва господарства як випадний заголовок */
+.m3-title-select {
+  position: relative;
+  flex: 0 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+}
+.m3-title-select select {
+  appearance: none;
+  max-inline-size: 100%;
+  min-block-size: 48px;
+  margin: 0;
+  padding: 0 36px 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--on-surface);
+  font: inherit;
+  font-size: var(--fs-title);
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  outline: none;
+}
+.m3-title-select svg {
+  position: absolute;
+  inset-inline-end: 4px;
+  inline-size: 24px;
+  block-size: 24px;
+  pointer-events: none;
+  color: var(--on-surface-variant);
+}
+.m3-title-select:has(select:focus-visible) { outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 8px; }
+
+/* ---------- Вкладки ---------- */
+.m3-view {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  display: flex;
+  flex-direction: column;
+}
+.m3-view[hidden] { display: none; }
+.m3-scroll {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px 16px 32px;
+  scrollbar-width: none;
+}
+.m3-scroll::-webkit-scrollbar { display: none; }
+#view-herd .m3-scroll { padding-block-end: calc(var(--btn-h) + 48px); }
+
+.m3-section {
+  margin: 24px 0 8px;
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  color: var(--primary);
+}
+.m3-section:first-child { margin-block-start: 8px; }
+
+/* ---------- Пошук (Search bar) ---------- */
+.m3-search {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  margin: 0 0 8px;
+  padding-block-end: 8px;
+  background: var(--surface);
+}
+.m3-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  block-size: var(--field-h);
+  padding-inline: 4px 16px;
+  border-radius: 999px;
+  background: var(--surface-high);
+}
+.m3-search-bar .m3-search-icon {
+  inline-size: 48px;
+  display: grid;
+  place-items: center;
+  color: var(--on-surface-variant);
+}
+.m3-search-bar svg { inline-size: 24px; block-size: 24px; }
+.m3-search-bar input {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  block-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--on-surface);
+  font: inherit;
+  font-size: var(--fs-field);
+  outline: none;
+}
+.m3-search-bar input::placeholder { color: var(--on-surface-variant); }
+.m3-search-bar input::-webkit-search-cancel-button { display: none; }
+.m3-search-bar:focus-within { box-shadow: inset 0 0 0 2px var(--primary); }
+
+/* ---------- Списки ---------- */
+.m3-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: 16px;
+  background: var(--surface-low);
+  overflow: clip;
+}
+.m3-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-block-size: var(--list-h);
+  padding: 12px 16px;
+  color: inherit;
+  text-decoration: none;
+}
+.m3-rows > li + li .m3-row,
+.m3-rows > .m3-row + .m3-row { border-block-start: 1px solid var(--outline-variant); }
+a.m3-row, label.m3-row { cursor: pointer; }
+a.m3-row:hover, label.m3-row:hover { background: rgba(24, 29, 23, 0.05); }
+a.m3-row:active, label.m3-row:active { background: rgba(24, 29, 23, 0.1); }
+.m3-row-thumb {
+  flex: none;
+  inline-size: var(--thumb);
+  block-size: var(--thumb);
+  border-radius: 12px;
+  overflow: clip;
+  background: var(--surface-highest);
+}
+.m3-row-thumb img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; }
+.m3-row-text { flex: 1 1 auto; min-inline-size: 0; }
+.m3-row-title {
+  margin: 0;
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+.m3-row-sub {
+  margin: 2px 0 0;
+  font-size: var(--fs-support);
+  line-height: 1.35;
+  color: var(--on-surface-variant);
+}
+.m3-row-label {
+  margin: 0 0 2px;
+  font-size: var(--fs-support);
+  line-height: 1.3;
+  color: var(--on-surface-variant);
+}
+.m3-row-value {
+  margin: 0;
+  font-size: var(--fs-body);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.m3-row-value.mono { font-family: ui-monospace, "Roboto Mono", monospace; font-size: var(--fs-support); }
+.m3-row-value.ok { color: var(--primary); font-weight: 500; }
+.m3-row-end {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--on-surface-variant);
+  font-size: var(--fs-support);
+}
+.m3-row-end svg { inline-size: 24px; block-size: 24px; }
+.m3-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--on-surface-variant);
+  font-size: var(--fs-body);
+}
+.nowrap { white-space: nowrap; }
+
+/* Статус (chip) */
+.m3-status {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 28px;
+  margin-block-start: 6px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: calc(var(--fs-support) - 1px);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.m3-status.pending { background: #FFDCC1; color: #2E1500; }
+.m3-status.rejected { background: var(--error-container); color: var(--on-error-container); }
+.m3-status.verified { background: var(--primary-container); color: var(--on-primary-container); }
+
+/* ---------- Картки перевірки ---------- */
+.m3-cards { display: grid; gap: 12px; }
+.m3-card {
+  border-radius: 16px;
+  background: var(--surface-low);
+  box-shadow: inset 0 0 0 1px var(--outline-variant);
+  overflow: clip;
+}
+.m3-card .m3-row { padding-block-end: 4px; }
+.m3-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 8px 16px 16px;
+}
+.m3-card-actions .m3-btn,
+.m3-block-btn {
+  block-size: var(--btn-h);
+  min-block-size: var(--btn-h);
+  padding-inline: 16px;
+}
+.m3-block-btn { inline-size: 100%; margin-block-start: 16px; }
+.m3-btn.danger { color: var(--error); box-shadow: inset 0 0 0 1px var(--outline); background: transparent; }
+.m3-btn.filled.danger { background: var(--error); color: #FFFFFF; box-shadow: none; }
+
+/* ---------- Форма господарства ---------- */
+.m3-form-block { padding-block-start: 8px; }
+.m3-form-block .m3-field { margin-block-end: 16px; }
+.m3-form-block .m3-field:last-of-type { margin-block-end: 0; }
+
+/* Перемикач (Switch) */
+.m3-switch {
+  appearance: none;
+  flex: none;
+  position: relative;
+  inline-size: 52px;
+  block-size: 32px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--surface-highest);
+  box-shadow: inset 0 0 0 2px var(--outline);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.m3-switch::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-start: 8px;
+  inline-size: 16px;
+  block-size: 16px;
+  border-radius: 50%;
+  background: var(--outline);
+  transition: inset-inline-start 0.2s ease, inline-size 0.2s ease, block-size 0.2s ease, inset-block-start 0.2s ease;
+}
+.m3-switch:checked { background: var(--primary); box-shadow: none; }
+.m3-switch:checked::after {
+  inset-block-start: 4px;
+  inset-inline-start: 24px;
+  inline-size: 24px;
+  block-size: 24px;
+  background: var(--on-primary);
+}
+.big-ui .m3-switch { inline-size: 60px; block-size: 36px; }
+.big-ui .m3-switch::after { inset-block-start: 9px; inset-inline-start: 9px; inline-size: 18px; block-size: 18px; }
+.big-ui .m3-switch:checked::after { inset-block-start: 4px; inset-inline-start: 28px; inline-size: 28px; block-size: 28px; }
+
+/* ---------- FAB ---------- */
+.m3-fab {
+  position: absolute;
+  inset-inline-end: 16px;
+  inset-block-end: calc(var(--navbar-h) + 16px);
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  block-size: var(--btn-h);
+  padding-inline: 16px 20px;
+  border-radius: 16px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-size: var(--fs-body);
+  font-weight: 500;
+  text-decoration: none;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+.m3-fab svg { inline-size: 24px; block-size: 24px; }
+.m3-fab:active { filter: brightness(0.94); }
+.m3-fab[hidden] { display: none; }
+
+/* ---------- Navigation bar ---------- */
+.m3-navbar {
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  min-block-size: var(--navbar-h);
+  padding: 12px 8px 30px;
+  background: var(--surface-container);
+}
+.m3-nav-item {
+  appearance: none;
+  min-inline-size: 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--on-surface-variant);
+  font: inherit;
+  font-size: calc(var(--fs-support) - 2px);
+  font-weight: 500;
+  cursor: pointer;
+}
+.big-ui .m3-nav-item { font-size: 15px; }
+.m3-nav-pill {
+  position: relative;
+  inline-size: 64px;
+  block-size: 32px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.2s ease;
+}
+.big-ui .m3-nav-pill { block-size: 36px; }
+.m3-nav-pill svg { inline-size: 24px; block-size: 24px; }
+.m3-nav-item[aria-selected="true"] { color: var(--on-surface); font-weight: 700; }
+.m3-nav-item[aria-selected="true"] .m3-nav-pill { background: var(--secondary-container); color: var(--on-secondary-container); }
+.m3-badge {
+  position: absolute;
+  inset-block-start: -2px;
+  inset-inline-start: 36px;
+  min-inline-size: 18px;
+  block-size: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--error);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 500;
+}
+.m3-badge[hidden] { display: none; }
+
+/* Snackbar для цих сторінок: над нижньою панеллю */
+.md3 .iphone-screen:has(.m3-app) .ios-banner { inset-block-end: calc(var(--navbar-h, 80px) + 24px); z-index: 80; }
+.md3 .iphone-screen:has(.m3-sheep) .ios-banner { inset-block-end: 40px; }
+.iphone-screen:has(.m3-app) .ios-splash-screen { background: #F7FBF1; }
+
+/* ---------- Картка вівці ---------- */
+.m3-carousel {
+  display: flex;
+  gap: 8px;
+  margin-inline: -16px;
+  padding: 0 16px 4px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 16px;
+  scrollbar-width: none;
+}
+.m3-carousel::-webkit-scrollbar { display: none; }
+.m3-slide {
+  position: relative;
+  flex: 0 0 86%;
+  aspect-ratio: 4 / 3;
+  margin: 0;
+  border-radius: 28px;
+  overflow: clip;
+  scroll-snap-align: start;
+  background: var(--surface-highest);
+}
+.m3-slide img { display: block; inline-size: 100%; block-size: 100%; object-fit: cover; }
+.m3-slide figcaption {
+  position: absolute;
+  inset-inline-start: 12px;
+  inset-block-end: 12px;
+  min-block-size: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  background: rgba(24, 29, 23, 0.72);
+  color: #FFFFFF;
+  font-size: var(--fs-support);
+  font-weight: 500;
+}
+.m3-sheep-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-block-start: 16px; }
+.m3-sheep-head .m3-status { margin: 0; min-block-size: 32px; }
+.m3-alert {
+  margin-block-start: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--error-container);
+  color: var(--on-error-container);
+}
+.m3-alert p { margin: 0 0 12px; font-size: var(--fs-body); line-height: 1.4; }
+.m3-alert .m3-btn { inline-size: 100%; block-size: var(--btn-h); background: var(--error); color: #FFFFFF; }
+.m3-sheep .m3-field { margin-block: 4px 0; }
+.m3-sheep .m3-field label { background: var(--surface); }
+
+/* ---------- Діалог (Basic dialog) ---------- */
+.m3-dialog {
+  inline-size: min(340px, calc(100% - 48px));
+  max-inline-size: none;
+  padding: 0;
+  border: 0;
+  border-radius: 28px;
+  background: var(--surface-high);
+  color: var(--on-surface);
+  font-family: Roboto, system-ui, sans-serif;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.m3-dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
+.m3-dialog form { padding: 24px 0 20px; }
+.m3-dialog h2 {
+  margin: 0 24px 12px;
+  font-size: var(--fs-headline);
+  font-weight: 400;
+  line-height: 1.2;
+}
+.m3-dialog .m3-dialog-text {
+  margin: 0 24px 12px;
+  font-size: var(--fs-body);
+  line-height: 1.4;
+  color: var(--on-surface-variant);
+}
+.m3-radio-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-block-size: var(--btn-h);
+  padding-inline: 24px;
+  font-size: var(--fs-body);
+  cursor: pointer;
+}
+.m3-radio-row:active { background: rgba(24, 29, 23, 0.08); }
+.m3-radio-row input {
+  flex: none;
+  inline-size: 22px;
+  block-size: 22px;
+  margin: 0;
+  accent-color: var(--error);
+}
+.big-ui .m3-radio-row input { inline-size: 26px; block-size: 26px; }
+.m3-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 24px 0;
+}
+.m3-dialog-actions .m3-btn { block-size: var(--btn-h); min-block-size: var(--btn-h); }
+.m3-dialog-actions .m3-btn.text { padding-inline: 16px; }
+
+@media (max-width: 600px) {
+  .m3.m3-app { padding-block-start: max(8px, env(safe-area-inset-top, 8px)); }
+  .m3-navbar { padding-block-end: max(16px, env(safe-area-inset-bottom, 16px)); }
+}
+.m3-row-title, .m3-row-sub, .m3-row-label, .m3-row-value { display: block; }
+.m3-row-text > .m3-status { display: inline-flex; }
+.m3-btn.text.danger-text { color: var(--error); }
+.m3-sheep .m3-scroll { padding-block-start: 8px; }
+.m3-sheep { --navbar-h: 0px; }
+/* Діалог має токени .m3, але не його розкладку */
+.m3.m3-dialog { position: fixed; display: block; block-size: fit-content; max-block-size: calc(100% - 48px); padding: 0; overflow: visible; background: var(--surface-high); }
+.m3.m3-dialog:not([open]) { display: none; }
+.m3-sheep .m3-rows .m3-row { min-block-size: 0; padding-block: 14px; }
+
+/* ==========================================================================
+   Android-пристрій замість iPhone: корпус Pixel, статус-бар Android,
+   панель жестів; списки на всю ширину без iOS-груп і стрілок
+   ========================================================================== */
+.android-device {
+  padding: 10px;
+  border-radius: 42px;
+  background: #1F1F1F;
+  box-shadow:
+    0 0 0 2px #3C4043,
+    0 30px 70px rgba(0, 0, 0, 0.24),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.android-device::before {
+  inset-inline: auto -5px;
+  inset-block-start: 170px;
+  block-size: 44px;
+  border-radius: 0 2px 2px 0;
+  background: #5F6368;
+  box-shadow: none;
+}
+.android-device::after {
+  inset-inline-end: -5px;
+  inset-block-start: 250px;
+  block-size: 96px;
+  background: #5F6368;
+}
+.android-device .iphone-screen { border-radius: 32px; }
+.m3-statusbar {
+  block-size: 44px;
+  padding: 0 20px 0 24px;
+  align-items: center;
+}
+.m3-statusbar .ios-time {
+  font-family: Roboto, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  line-height: 1;
+}
+.m3-statusbar .punch-hole {
+  position: absolute;
+  inset-block-start: 14px;
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  inline-size: 16px;
+  block-size: 16px;
+  border-radius: 50%;
+  background: #000000;
+}
+.m3-statusbar .ios-status-icons { gap: 2px; block-size: auto; }
+.m3-statusbar .ios-status-icons svg { inline-size: 16px; block-size: 16px; }
+.android-device .home-indicator {
+  inset-block-end: 8px;
+  inline-size: 108px;
+  block-size: 4px;
+  background: #1F1F1F;
+  opacity: 0.6;
+}
+
+/* Списки Material: без заокруглених груп, на всю ширину */
+.m3-rows {
+  margin-inline: -16px;
+  border-radius: 0;
+  background: transparent;
+}
+.m3-rows > li + li .m3-row,
+.m3-rows > .m3-row + .m3-row { border-block-start: 0; }
+.m3-row { padding-inline: 16px 24px; }
+.m3-rows a.m3-row:hover { background: rgba(24, 29, 23, 0.06); }
+.m3-section { margin-block-end: 4px; }
+.m3-sheep .m3-rows .m3-row { padding-block: 10px; }
+#events-list .m3-row { align-items: flex-start; }
+#events-list .m3-row-end { padding-block-start: 2px; }
+.m3-row-thumb { border-radius: 50%; }
+#herd-list .m3-row-thumb { border-radius: 12px; }
+
+/* ==========================================================================
+   Navigation bar і Extended FAB — точно за специфікацією Material 3
+   (розміри не збільшуються у «Великому шрифті», як у системних Android-апках)
+   ========================================================================== */
+.m3-app, .big-ui .m3-app { --navbar-h: 104px; }
+.m3-navbar {
+  min-block-size: 0;
+  block-size: var(--navbar-h);
+  padding: 12px 0 0;
+  align-items: start;
+  background: var(--surface-container);
+  box-shadow: none;
+}
+.m3-nav-item,
+.big-ui .m3-nav-item {
+  gap: 4px;
+  block-size: 56px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 16px;
+  color: var(--on-surface-variant);
+}
+.m3-nav-item[aria-selected="true"] { color: var(--on-surface); font-weight: 600; }
+.m3-nav-pill,
+.big-ui .m3-nav-pill { inline-size: 64px; block-size: 32px; border-radius: 16px; }
+.m3-nav-item:hover .m3-nav-pill { background: rgba(24, 29, 23, 0.08); }
+.m3-nav-item[aria-selected="true"] .m3-nav-pill { background: var(--secondary-container); color: var(--on-secondary-container); }
+.m3-nav-pill .ic-on { display: none; }
+.m3-nav-item[aria-selected="true"] .ic-on { display: block; }
+.m3-nav-item[aria-selected="true"] .ic-off { display: none; }
+.m3-badge { inset-block-start: 2px; inset-inline-start: 34px; min-inline-size: 16px; block-size: 16px; padding: 0 4px; font-size: 11px; }
+/* Панель жестів системи — під навігацією */
+.android-device:has(.m3-navbar) .home-indicator { inset-block-end: 10px; }
+
+.m3-fab,
+.big-ui .m3-fab {
+  inset-inline-end: 16px;
+  inset-block-end: calc(var(--navbar-h) + 16px);
+  gap: 12px;
+  block-size: 56px;
+  min-inline-size: 80px;
+  padding: 0 20px 0 16px;
+  border-radius: 16px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+}
+.m3-fab svg { inline-size: 24px; block-size: 24px; }
+.m3-fab:hover { box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3), 0 6px 10px 4px rgba(0, 0, 0, 0.15); }
+#view-herd .m3-scroll { padding-block-end: 96px; }
+
+/* ==========================================================================
+   За референсом (Gmail / Settings на Pixel, Material 3)
+   ========================================================================== */
+/* Статус-бар як на Pixel */
+.m3-statusbar .ios-time,
+.m3-statusbar .ios-status-icons { color: #1F1F1F; }
+.m3-statusbar .ios-time { font-weight: 400; font-size: 15px; }
+
+/* Navigation bar: усі підписи темні, активна іконка — у пігулці */
+.m3-app, .big-ui .m3-app { --navbar-h: 88px; }
+.m3-navbar { block-size: var(--navbar-h); padding-block-start: 12px; background: #EEF2E6; }
+.m3-nav-item,
+.big-ui .m3-nav-item,
+.m3-nav-item[aria-selected="true"] {
+  color: var(--on-surface);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  line-height: 18px;
+}
+.m3-nav-item[aria-selected="true"] .m3-nav-pill { background: var(--primary-container); color: var(--on-primary-container); }
+.android-device:has(.m3-navbar) .home-indicator { inset-block-end: 8px; inline-size: 104px; background: #1F1F1F; opacity: 0.35; }
+
+/* Extended FAB: пласкі, тонований, без тіні */
+.m3-fab,
+.big-ui .m3-fab {
+  block-size: 56px;
+  padding: 0 20px 0 16px;
+  border-radius: 16px;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-size: 15px;
+  font-weight: 500;
+  box-shadow: none;
+}
+.m3-fab:hover { box-shadow: none; filter: brightness(0.97); }
+
+/* Пошук: біла пігулка */
+.m3-search-bar { background: #FFFFFF; padding-inline: 8px 16px; }
+.m3-search-bar .m3-search-icon { color: var(--on-surface); }
+
+/* Список стада: круглі фото */
+#herd-list .m3-row-thumb { border-radius: 50%; }
+.m3-nav-pill .ic-off { fill-rule: evenodd; }
+
+/* Тіні (elevation) за Material 3: FAB — рівень 3, пошук — рівень 2 як у Gmail */
+.m3-fab,
+.big-ui .m3-fab { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15); }
+.m3-fab:hover { box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3), 0 6px 10px 4px rgba(0, 0, 0, 0.15); filter: none; }
+.m3-search { padding-block: 4px 12px; }
+.m3-search-bar {
+  border-radius: 8px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+}
+.m3-search-bar:focus-within { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15), inset 0 0 0 2px var(--primary); }
+/* Фокус у пошуку: без подвійної рамки */
+.m3 .m3-search-bar input:focus,
+.m3 .m3-search-bar input:focus-visible { outline: none; box-shadow: none; }
+.m3-search-bar:focus-within { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 6px 2px rgba(0, 0, 0, 0.15); }
+/* Стадо без верхньої панелі: пошук одразу під статус-баром */
+#view-herd .m3-scroll { padding-block-start: 16px; }

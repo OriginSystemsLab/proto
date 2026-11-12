@@ -165,6 +165,11 @@
     body.app-investor.cf-brand .ios-tab { color: rgba(16,38,15,.6); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
     body.app-investor.cf-brand .ios-tab[aria-selected="true"] { color: var(--cf-forest); background: var(--cf-lime); box-shadow: none; }
     .cf-tab-svg { display: block; flex: none; }
+    .cf-footer-bar { flex: none; padding: 10px 0 30px; background: var(--ios-bg); border-block-start: 0.5px solid var(--ios-separator); }
+    .cf-footer-bar .ios-primary-btn, .cf-footer-bar .ios-secondary-btn { margin-block: 0 8px; }
+    .cf-footer-bar > :last-child { margin-block-end: 0; }
+    .cf-footer-bar .cf-link-btn { min-block-size: 36px; }
+    .ios-sheet > .cf-footer-bar { padding-block-end: 32px; }
     .cf-cert .cf-disclosure { margin-top: 6px; background: #fff; border: 1px solid var(--cf-line); border-radius: 12px; overflow: clip; }
     .cf-cert .cf-disclosure summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 10px; min-block-size: 48px; padding: 0 14px; color: var(--cf-forest); font-size: 15px; font-weight: 600; cursor: pointer; }
     .cf-cert .cf-disclosure summary::-webkit-details-marker { display: none; }
@@ -354,6 +359,16 @@
           </header>
           <main class="ios-scroll" style="padding-block-start:14px;">${body}</main>
         </section>`;
+      pinFooter(mainApp.querySelector('.cf-screen'));
+    }
+    // Кнопки дій прибиті до низу екрана/шторки
+    function pinFooter(container) {
+      const parts = container.querySelectorAll('.cf-footer');
+      if (!parts.length) return;
+      const bar = document.createElement('div');
+      bar.className = 'cf-footer-bar';
+      parts.forEach((p) => { while (p.firstChild) bar.appendChild(p.firstChild); p.remove(); });
+      container.appendChild(bar);
     }
     const progress = (total, now) => `<div class="cf-progress" aria-hidden="true">${Array.from({ length: total }, (_, i) => `<span class="${i < now ? 'done' : i === now ? 'now' : ''}"></span>`).join('')}</div>`;
 
@@ -365,6 +380,13 @@
       document.getElementById('sheet-end').innerHTML = end || '';
       document.getElementById('sheet-body').innerHTML = body;
       document.getElementById('sheet-body').scrollTop = 0;
+      sheet.querySelectorAll('.ios-sheet > .cf-footer-bar').forEach((x) => x.remove());
+      const sb = document.getElementById('sheet-body');
+      if (sb.querySelector('.cf-footer')) {
+        const bar = document.createElement('div'); bar.className = 'cf-footer-bar';
+        sb.querySelectorAll('.cf-footer').forEach((p) => { while (p.firstChild) bar.appendChild(p.firstChild); p.remove(); });
+        sb.parentNode.appendChild(bar);
+      }
       UI.openSheet(sheet, mainApp);
     }
     function closeSheet() { if (!sheet.hidden) UI.closeSheet(sheet, mainApp, sheetInvoker); }
@@ -447,7 +469,7 @@
             <label class="ios-row" style="cursor:pointer;"><span class="ios-row-main" style="font-size:15px;">Погоджуюсь з умовами користування та обробкою персональних даних</span><input type="checkbox" class="ios-switch" id="s-agree"></label>
           </div>
           <p class="cf-err" id="err" hidden></p>
-          <button class="ios-primary-btn" type="submit">Продовжити</button>
+          <div class="cf-footer"><button class="ios-primary-btn" type="submit" form="f">Продовжити</button></div>
         </form>`);
       document.getElementById('f').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -497,8 +519,8 @@
             <div class="cf-big-ok"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5.5 12.5 4.2 4.2 8.8-9.4"/></svg></div>
             <h2 class="cf-h cf-center" style="font-size:24px;">Особу підтверджено</h2>
             <p class="cf-p cf-center">CyberFarm ID готовий. Можна укласти договір і придбати першу вівцю.</p>
-            <a class="ios-primary-btn" href="#/buy" style="display:grid;place-items:center;text-decoration:none;">Придбати вівцю</a>
-            <a class="ios-secondary-btn" href="#/home" style="display:grid;place-items:center;text-decoration:none;">Перейти в кабінет</a>`);
+            <div class="cf-footer"><a class="ios-primary-btn" href="#/buy" style="display:grid;place-items:center;text-decoration:none;">Придбати вівцю</a>
+            <a class="ios-secondary-btn" href="#/home" style="display:grid;place-items:center;text-decoration:none;">Перейти в кабінет</a></div>`);
           return;
         }
         subScreen('', '', 'Верифікація', `
@@ -515,8 +537,8 @@
             <div class="ios-field-row"><label for="k-tax">РНОКПП</label><input id="k-tax" inputmode="numeric" maxlength="10" placeholder="10 цифр" value="${esc(me.taxId)}"></div>
           </div>
           <p class="cf-err" id="err" hidden></p>
-          <button class="ios-primary-btn" type="button" id="go">Підтвердити</button>
-          <button class="cf-link-btn" type="button" id="out" style="color:var(--ios-secondary);">Вийти з акаунта</button>`);
+          <div class="cf-footer"><button class="ios-primary-btn" type="button" id="go">Підтвердити</button>
+          <button class="cf-link-btn" type="button" id="out" style="color:var(--ios-secondary);">Вийти з акаунта</button></div>`);
         mainApp.querySelectorAll('[data-m]').forEach((b) => { b.onclick = () => { method = b.dataset.m; const t = document.getElementById('k-tax').value; draw(); document.getElementById('k-tax').value = t; }; });
         document.getElementById('out').onclick = () => { CF.logout(); go('#/welcome'); };
         document.getElementById('go').onclick = () => {
@@ -540,7 +562,7 @@
             <div class="ios-field-row"><label for="l-pass">Пароль</label><input id="l-pass" type="password" autocomplete="current-password" placeholder="Обов'язково"></div>
           </div>
           <p class="cf-err" id="err" hidden></p>
-          <button class="ios-primary-btn" type="submit">Увійти</button>
+          <div class="cf-footer"><button class="ios-primary-btn" type="submit" form="f">Увійти</button></div>
         </form>
         <button class="cf-link-btn" type="button" id="forgot">Забули пароль?</button>
         <div class="ios-section-header" style="margin-top:14px;">Демо</div>
@@ -590,7 +612,7 @@
               <li><span class="dot"></span><span><b>Ви даєте їй ім'я</b>І отримуєте сертифікат власності</span></li>
             </ul>
           </div>
-          <a class="ios-primary-btn" href="#/${hasC ? 'pay' : 'contract'}" style="display:grid;place-items:center;text-decoration:none;">${hasC ? 'До оплати' : 'Далі: договір'}</a>`);
+          <div class="cf-footer"><a class="ios-primary-btn" href="#/${hasC ? 'pay' : 'contract'}" style="display:grid;place-items:center;text-decoration:none;">${hasC ? 'До оплати' : 'Далі: договір'}</a></div>`);
         document.getElementById('minus').onclick = () => { n = Math.max(1, n - 1); sessionStorage.setItem(BUY, n); draw(); };
         document.getElementById('plus').onclick = () => { n = Math.min(10, n + 1); sessionStorage.setItem(BUY, n); draw(); };
       };
@@ -626,7 +648,7 @@
         <div class="ios-group">
           <label class="ios-row" style="cursor:pointer;"><span class="ios-row-main" style="font-size:15px;">Я ознайомився(-лась) і погоджуюсь, зокрема що виведення коштів можливе лише після ${CF.PERIOD_YEARS} років</span><input type="checkbox" class="ios-switch" id="agree"></label>
         </div>
-        <button class="ios-primary-btn" type="button" id="sign" disabled style="opacity:.4;">Підписати кодом з SMS</button>`);
+        <div class="cf-footer"><button class="ios-primary-btn" type="button" id="sign" disabled style="opacity:.4;">Підписати кодом з SMS</button></div>`);
       const agree = document.getElementById('agree'), sign = document.getElementById('sign');
       agree.onchange = () => { sign.disabled = !agree.checked; sign.style.opacity = agree.checked ? '' : '.4'; };
       sign.onclick = () => {
@@ -664,8 +686,8 @@
             <button type="button" class="ios-row" data-m="card"><span class="cf-ico" style="background:#0E2C10;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6.5 15h4"/></svg></span><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Apple Pay або картка</p><p class="ios-row-sub">Visa, Mastercard</p></span>${method === 'card' ? '<span class="cf-tick">✓</span>' : ''}</button>
             <button type="button" class="ios-row" data-m="iban"><span class="cf-ico" style="background:#5F7A4A;"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h14l-3.5-3.5M20 16H6l3.5 3.5"/></svg></span><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Переказ за реквізитами</p><p class="ios-row-sub">Рахунок надійде на пошту</p></span>${method === 'iban' ? '<span class="cf-tick">✓</span>' : ''}</button>
           </div>
-          <button class="ios-primary-btn" type="button" id="go">Оплатити ${money(CF.PRICE_PER_SHEEP * n)}</button>
-          <p class="cf-hint cf-center" style="margin-top:0;">Демо: справжнього списання немає</p>`);
+          <div class="cf-footer"><button class="ios-primary-btn" type="button" id="go">Оплатити ${money(CF.PRICE_PER_SHEEP * n)}</button>
+          <p class="cf-hint cf-center" style="margin:0 32px 4px;">Демо: справжнього списання немає</p></div>`);
         mainApp.querySelectorAll('[data-m]').forEach((b) => { b.onclick = () => { method = b.dataset.m; draw(); }; });
         document.getElementById('go').onclick = (e) => {
           e.currentTarget.disabled = true; e.currentTarget.textContent = 'Обробляємо платіж…';
@@ -685,7 +707,7 @@
           <p style="margin:0 0 4px;font-weight:600;">Що далі</p>
           <p style="margin:0;font-size:15px;color:var(--ios-secondary);line-height:1.4;">Ферма закріпить за вами ${n > 1 ? n + ' ' + plural(n, 'вівцю', 'вівці', 'овець') : 'вівцю'} протягом ${CF.ASSIGN_DAYS} днів. Ми надішлемо сповіщення, і ви дасте ${n > 1 ? 'їм імена' : "їй ім'я"}.</p>
         </div>
-        <a class="ios-primary-btn" href="#/home" style="display:grid;place-items:center;text-decoration:none;">До кабінету</a>`);
+        <div class="cf-footer"><a class="ios-primary-btn" href="#/home" style="display:grid;place-items:center;text-decoration:none;">До кабінету</a></div>`);
     };
 
     // Плашка «Триває перевірка документів» — не блокує користувача
@@ -797,7 +819,7 @@
         <form id="fn">
           <div class="ios-group"><div class="ios-field-row"><label for="nv">Ім'я</label><input id="nv" maxlength="24" value="${esc(h.name)}" placeholder="Наприклад, Хмаринка"></div></div>
           <div class="cf-suggest">${ideas.map((x) => `<button type="button" data-idea="${esc(x)}">${esc(x)}</button>`).join('')}</div>
-        </form>`, '<button type="submit" form="fn" class="ios-nav-btn semibold end-action">Готово</button>', invoker);
+        </form><div class="cf-footer"><button type="submit" form="fn" class="ios-primary-btn">Зберегти ім\'я</button></div>`, '', invoker);
       const input = document.getElementById('nv');
       document.querySelectorAll('[data-idea]').forEach((b) => { b.onclick = () => { input.value = b.dataset.idea; }; });
       document.getElementById('fn').addEventListener('submit', (ev) => {
@@ -888,11 +910,13 @@
           <a class="ios-row" href="#/contribution"><span class="ios-row-main"><p class="ios-row-title" style="font-size:16px;">Мій внесок</p><p class="ios-row-sub">Оплата, договір, дата виведення коштів</p></span><span class="ios-chevron">›</span></a>
         </div>`);
       document.getElementById('cert').onclick = (e) => certSheet(h, e.currentTarget);
-      document.getElementById('share').onclick = async () => {
+      const shareFn = async () => {
         const text = `Моя вівця ${h.name ? '«' + h.name + '» ' : ''}на CyberFarm · сертифікат № ${h.cert}`;
         try { if (navigator.share) { await navigator.share({ title: 'CyberFarm', text }); return; } } catch (_) { return; }
         try { await navigator.clipboard.writeText(text); banner('Скопійовано'); } catch (_) { banner('Поділитися', text); }
       };
+      document.getElementById('share').onclick = shareFn;
+      window.__cfShare = shareFn;
     };
 
     function certSheet(h, invoker) {
@@ -914,7 +938,8 @@
             <dt>Договір</dt><dd>№ ${esc(h.contract || '')}</dd>
             <dt>CyberFarm ID</dt><dd>${esc(me.id)}</dd>
           </dl>
-        </div>`, '<button type="button" class="ios-nav-btn semibold end-action" data-close>Готово</button>', invoker);
+        </div><div class="cf-footer"><button type="button" class="ios-primary-btn" id="cert-share2">Поділитися</button><button type="button" class="ios-secondary-btn" data-close>Готово</button></div>`, '', invoker);
+      document.getElementById('cert-share2').onclick = () => { if (window.__cfShare) window.__cfShare(); };
     }
 
     // ================= МІЙ ВНЕСОК =================
@@ -964,7 +989,7 @@
     };
 
     function contractSheet(invoker) {
-      openSheet('Договір', contractHtml(CF.me(), CF.contract()) + `<button class="ios-secondary-btn" type="button" id="pdf">Завантажити PDF</button>`, '', invoker);
+      openSheet('Договір', contractHtml(CF.me(), CF.contract()) + `<div class="cf-footer"><button class="ios-primary-btn" type="button" id="pdf">Завантажити PDF</button></div>`, '', invoker);
       document.getElementById('pdf').onclick = () => banner('PDF надіслано на пошту');
     }
 
@@ -1020,7 +1045,7 @@
         openSheet('Реквізити', `
           <div class="ios-section-header">Рахунок на ваше ім'я</div>
           <form id="fi"><div class="ios-group"><div class="ios-field-row"><label for="ib">IBAN</label><input id="ib" value="${esc(me.iban)}" placeholder="UA…" autocapitalize="characters" spellcheck="false"></div></div></form>
-          <p class="cf-err" id="ib-err" hidden></p>`, '<button type="submit" form="fi" class="ios-nav-btn semibold end-action">Готово</button>', e.currentTarget);
+          <p class="cf-err" id="ib-err" hidden></p><div class="cf-footer"><button type="submit" form="fi" class="ios-primary-btn">Зберегти</button></div>`, '', e.currentTarget);
         document.getElementById('fi').addEventListener('submit', (ev) => {
           ev.preventDefault();
           const v = document.getElementById('ib').value.replace(/\s+/g, '').toUpperCase();
